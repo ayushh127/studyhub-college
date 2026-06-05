@@ -299,10 +299,16 @@ def publish_material(id):
     if material.college_id != current_user.college_id:
         abort(403)
         
-    material.is_published = True
-    db.session.commit()
-    log_action(current_user.id, 'material_published', 'study_material', material.id)
-    flash('Material published successfully.', 'success')
+    if not material.is_published:
+        material.is_published = True
+        db.session.commit()
+        from ..utils.notifications import notify_material_published
+        notify_material_published(material)
+        log_action(current_user.id, 'material_published', 'study_material', material.id)
+        flash('Material published successfully.', 'success')
+    else:
+        flash('Material is already published.', 'info')
+        
     return redirect(url_for('college_admin.material_detail', id=material.id))
 
 @college_admin_bp.route('/materials/<int:id>/unpublish', methods=['POST'])
@@ -451,10 +457,16 @@ def publish_pyq(id):
     if pyq.college_id != current_user.college_id:
         abort(403)
         
-    pyq.is_published = True
-    db.session.commit()
-    log_action(current_user.id, 'pyq_published', 'pyq_paper', pyq.id)
-    flash('PYQ published successfully.', 'success')
+    if not pyq.is_published:
+        pyq.is_published = True
+        db.session.commit()
+        from ..utils.notifications import notify_pyq_published
+        notify_pyq_published(pyq)
+        log_action(current_user.id, 'pyq_published', 'pyq_paper', pyq.id)
+        flash('PYQ published successfully.', 'success')
+    else:
+        flash('PYQ is already published.', 'info')
+        
     return redirect(url_for('college_admin.pyq_detail', id=pyq.id))
 
 @college_admin_bp.route('/pyqs/<int:id>/unpublish', methods=['POST'])
@@ -574,9 +586,15 @@ def publish_quiz(id):
         flash('Cannot publish a quiz with 0 questions.', 'danger')
         return redirect(url_for('college_admin.quiz_details', id=quiz.id))
     
-    quiz.is_published = True
-    db.session.commit()
-    flash('Quiz published.', 'success')
+    if not quiz.is_published:
+        quiz.is_published = True
+        db.session.commit()
+        from ..utils.notifications import notify_quiz_published
+        notify_quiz_published(quiz)
+        flash('Quiz published.', 'success')
+    else:
+        flash('Quiz is already published.', 'info')
+        
     return redirect(url_for('college_admin.quiz_details', id=quiz.id))
 
 @college_admin_bp.route('/quizzes/<int:id>/unpublish', methods=['POST'])

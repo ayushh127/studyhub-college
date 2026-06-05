@@ -34,15 +34,15 @@ Build the StudyHub College MVP, a multi-role web platform for college content ma
 - [x] Seed script for demo data
 - [x] End-to-end testing
 
-### Phase 7: Notifications (Planned)
-- [ ] Implement SubjectSubscription, Notification, and NotificationRead database models
-- [ ] Build student notification listing, toggle, and read routes
-- [ ] Design header bell count badge and notification lists template
-- [ ] Hook content publisher routes to trigger notifications
+### Phase 7: Notifications (Completed)
+- [x] Implement SubjectSubscription, Notification, and NotificationRead database models
+- [x] Build student notification listing, toggle, and read routes
+- [x] Design header bell count badge and notification lists template
+- [x] Hook content publisher routes to trigger notifications
 
 ## Status
-- **Current Phase:** Completed MVP release (v1).
-- **Next Step:** Ready for production deployment and GitHub push.
+- **Current Phase:** Completed MVP release (v1) and Subject-Wise Notifications (Phase 7).
+- **Next Step:** Ready for production deployment and pilot phase.
 
 ## Emergency Stabilization
 - App was stabilized to ensure all routes and templates run without errors.

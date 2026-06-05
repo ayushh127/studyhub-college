@@ -4,6 +4,8 @@ All notable changes to the StudyHub College project will be documented in this f
 
 ## [Unreleased]
 ### Added
+- Implemented and verified Phase 7 Step 5: Notification E2E QA Verification. Validated all 17 target notification flows, resolved database subquery coercion SQL warnings, and documented results in `NOTIFICATION_QA_REPORT.md`.
+- Implemented Phase 7 Step 4: Notification Dispatch Triggers. Added automatic in-app notification creation when college admins publish Study Materials, PYQ Papers, or Quizzes.
 - Removed demo credentials from login page UI.
 - Implemented student notifications UI components (header and bottom navigation bell alerts, dynamic unread badge count, subject-details subscribe/unsubscribe button, notifications list page, and mark read actions).
 - Implemented student mobile-first UI/UX polish (responsive dashboard grids, responsive subject columns, touch-friendly radio option inputs, mobile sticky footer offset, full-width stacking action buttons, and student bottom navigation bar).

@@ -270,13 +270,18 @@ class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     college_id = db.Column(db.Integer, db.ForeignKey('colleges.id'), nullable=False)
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable=False)
+    unit_id = db.Column(db.Integer, db.ForeignKey('units.id'), nullable=True)
+    notification_type = db.Column(db.String(50), nullable=True) # material, pyq, quiz
     title = db.Column(db.String(150), nullable=False)
     message = db.Column(db.Text, nullable=False)
     link = db.Column(db.String(255), nullable=True)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     college = db.relationship('College', backref='notifications')
     subject = db.relationship('Subject', backref='notifications')
+    unit = db.relationship('Unit', backref='notifications')
+    creator = db.relationship('User', foreign_keys=[created_by], backref='created_notifications')
 
 
 class NotificationRead(db.Model):

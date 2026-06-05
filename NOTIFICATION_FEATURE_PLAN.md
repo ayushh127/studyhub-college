@@ -109,22 +109,22 @@ def trigger_notification(college_id, subject_id, title, message, link):
 2. Add the Bell Icon/unread count badge to the student navbar (`base.html`).
 3. Create `app/templates/student/notifications.html` with read actions.
 
-### Step 4: Admin Triggers
-1. Add helper function to create notifications.
-2. Hook helper function into College Admin publish routes for Quizzes, Materials, and PYQs.
+### Step 4: Admin Triggers (Completed)
+1. Add helper function to create notifications (Done in `app/utils/notifications.py`).
+2. Hook helper function into College Admin publish routes for Quizzes, Materials, and PYQs (Done in `app/routes/college_admin.py`).
 
-### Step 5: Verification & QA
-1. Validate notification dispatch on new uploads.
-2. Verify students receive only their college's/subscriptions' notifications.
+### Step 5: Verification & QA (Completed)
+1. Validate notification dispatch on new uploads (Done, verified via `test_notification_qa.py`).
+2. Verify students receive only their college's/subscriptions' notifications (Done, verified via `test_notification_qa.py`).
 
 ---
 
 ## 7. Testing Checklist
 
 ### Setup Stage
-* [ ] Create two test Student accounts: Student A and Student B (both under College X).
-* [ ] Create a third Student account: Student C (under College Y).
-* [ ] Create a College Admin account for College X.
+* [x] Create two test Student accounts: Student A and Student B (both under College X).
+* [x] Create a third Student account: Student C (under College Y).
+* [x] Create a College Admin account for College X.
 
 ### Test Case 1: Subscription Toggles
 1. Log in as Student A.

@@ -238,14 +238,14 @@ def pyq_details(id):
 @student_bp.route('/notifications', methods=['GET'])
 @check_college_access
 def notifications():
-    # Subscribed subject IDs subquery
-    subscribed_sub_queries = db.session.query(SubjectSubscription.subject_id).filter_by(user_id=current_user.id).subquery()
-    
-    # Query notifications for student's college and subscribed subjects
-    notifications_list = Notification.query.filter(
-        Notification.college_id == current_user.college_id,
-        Notification.subject_id.in_(subscribed_sub_queries)
-    ).order_by(Notification.created_at.desc()).all()
+    sub_ids = [s.subject_id for s in current_user.subscriptions]
+    if not sub_ids:
+        notifications_list = []
+    else:
+        notifications_list = Notification.query.filter(
+            Notification.college_id == current_user.college_id,
+            Notification.subject_id.in_(sub_ids)
+        ).order_by(Notification.created_at.desc()).all()
     
     # Get read notification IDs for this user
     read_notification_ids = {r.notification_id for r in NotificationRead.query.filter_by(user_id=current_user.id).all()}
@@ -281,14 +281,14 @@ def read_notification(id):
 @student_bp.route('/notifications/read-all', methods=['POST'])
 @check_college_access
 def read_all_notifications():
-    # Subscribed subject IDs
-    subscribed_sub_queries = db.session.query(SubjectSubscription.subject_id).filter_by(user_id=current_user.id).subquery()
-    
-    # Query all unread notifications for student's college and subscribed subjects
-    unread_notifications = Notification.query.filter(
-        Notification.college_id == current_user.college_id,
-        Notification.subject_id.in_(subscribed_sub_queries)
-    ).all()
+    sub_ids = [s.subject_id for s in current_user.subscriptions]
+    if not sub_ids:
+        unread_notifications = []
+    else:
+        unread_notifications = Notification.query.filter(
+            Notification.college_id == current_user.college_id,
+            Notification.subject_id.in_(sub_ids)
+        ).all()
     
     read_notification_ids = {r.notification_id for r in NotificationRead.query.filter_by(user_id=current_user.id).all()}
     

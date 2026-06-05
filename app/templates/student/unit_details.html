@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Unit {{ unit.unit_number }}: {{ unit.title }} - StudyHub College{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 2rem auto;">
+    <!-- Breadcrumbs -->
+    <nav style="margin-bottom: 1.5rem; font-size: 0.9rem;">
+        <a href="{{ url_for('student.dashboard') }}" style="color: var(--muted); text-decoration: none;">Dashboard</a>
+        <span style="color: var(--muted); margin: 0 0.5rem;">&rarr;</span>
+        <a href="{{ url_for('student.subjects') }}" style="color: var(--muted); text-decoration: none;">Subjects</a>
+        <span style="color: var(--muted); margin: 0 0.5rem;">&rarr;</span>
+        <a href="{{ url_for('student.subject_details', id=unit.subject_id) }}" style="color: var(--muted); text-decoration: none;">{{ unit.subject.name }}</a>
+        <span style="color: var(--muted); margin: 0 0.5rem;">&rarr;</span>
+        <span style="color: var(--text); font-weight: 500;">Unit {{ unit.unit_number }}: {{ unit.title }}</span>
+    </nav>
+
+    <div style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+            <span class="badge" style="background-color: var(--primary); color: white; margin-bottom: 0.5rem;">Unit {{ unit.unit_number }}</span>
+            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin: 0; color: var(--primary-dark);">{{ unit.title }}</h2>
+            <p class="muted" style="margin: 0.25rem 0 0 0;">Subject: <strong>{{ unit.subject.name }} ({{ unit.subject.code }})</strong></p>
+        </div>
+        <a href="{{ url_for('student.subject_details', id=unit.subject_id) }}" class="btn" style="border: 1px solid var(--border); text-decoration: none; color: var(--text); font-size: 0.9rem;">Back to Subject</a>
+    </div>
+
+    {% if unit.description %}
+    <div class="card" style="margin-bottom: 2.5rem; background-color: var(--surface-soft);">
+        <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-family: 'Inter', sans-serif; font-weight: 600; color: var(--primary-dark);">Topics Outline</h4>
+        <p>{{ unit.description }}</p>
+    </div>
+    {% endif %}
+
+    <div style="display: flex; flex-direction: column; gap: 2.5rem;">
+        <!-- Study Materials -->
+        <div>
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem; color: var(--primary-dark);">Study Materials for this Unit</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
+                {% for mat in materials %}
+                <div class="card" style="padding: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="display: block; font-size: 1rem; color: var(--primary-dark);">{{ mat.title }}</strong>
+                        <span class="muted" style="font-size: 0.85rem; text-transform: capitalize;">Type: {{ mat.file_type }}</span>
+                    </div>
+                    <a href="{{ url_for('files.serve_material', id=mat.id) }}" target="_blank" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; text-decoration: none;">Download PDF</a>
+                </div>
+                {% else %}
+                <div class="card" style="text-align: center; color: var(--muted); padding: 2rem;">
+                    <p style="margin: 0;">No study materials published for this unit yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- PYQs -->
+        <div>
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem; color: var(--primary-dark);">Question Papers (PYQs) for this Unit</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
+                {% for pyq in pyqs %}
+                <div class="card" style="padding: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="display: block; font-size: 1rem; color: var(--primary-dark);">{{ pyq.title }}</strong>
+                        <span class="muted" style="font-size: 0.85rem;">Year: {{ pyq.year }} | {{ pyq.exam_type.replace('_', ' ')|title }}</span>
+                    </div>
+                    <a href="{{ url_for('files.serve_pyq', id=pyq.id) }}" target="_blank" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; text-decoration: none;">Download PDF</a>
+                </div>
+                {% else %}
+                <div class="card" style="text-align: center; color: var(--muted); padding: 2rem;">
+                    <p style="margin: 0;">No question papers published for this unit yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Quizzes -->
+        <div>
+            <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem; color: var(--primary-dark);">Quizzes for this Unit</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1rem;">
+                {% for quiz in quizzes %}
+                <div class="card" style="padding: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="display: block; font-size: 1rem; color: var(--primary-dark);">{{ quiz.title }}</strong>
+                        <span class="muted" style="font-size: 0.85rem;">{{ quiz.questions|length }} Questions | Difficulty: <span style="text-transform: capitalize;">{{ quiz.difficulty }}</span></span>
+                    </div>
+                    <a href="{{ url_for('student.start_quiz', id=quiz.id) }}" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; text-decoration: none;">Start Test</a>
+                </div>
+                {% else %}
+                <div class="card" style="text-align: center; color: var(--muted); padding: 2rem;">
+                    <p style="margin: 0;">No quizzes published for this unit yet.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

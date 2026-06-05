@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Study Material Details - College Admin{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <!-- Sidebar -->
+    <aside style="width: 250px;">
+        {% include "components/college_admin_sidebar.html" %}
+    </aside>
+    
+    <!-- Main Content -->
+    <div style="flex: 1;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+            <div>
+                <h2>{{ material.title }}</h2>
+                <p class="muted">Subject: <strong>{{ material.subject.name }} ({{ material.subject.code }})</strong></p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <a href="{{ url_for('college_admin.edit_material', id=material.id) }}" class="btn" style="border: 1px solid var(--primary); color: var(--primary);">Edit</a>
+                <form method="POST" action="{{ url_for('college_admin.delete_material', id=material.id) }}" onsubmit="return confirm('Delete this study material permanently?');" style="display: inline-block;">
+                    <button type="submit" class="btn" style="border: 1px solid var(--danger); color: var(--danger); background: none;">Delete</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card" style="margin-bottom: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+                <p><strong>Associated Unit:</strong> {% if material.unit %}{{ 'Unit ' ~ material.unit.unit_number ~ ': ' ~ material.unit.title }}{% else %}General / None{% endif %}</p>
+                <p><strong>Material Type:</strong> <span style="text-transform: capitalize;">{{ material.file_type }}</span></p>
+                <p><strong>Uploaded By:</strong> {{ material.uploader.full_name }}</p>
+            </div>
+            <div>
+                <p><strong>Uploaded On:</strong> {{ material.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                <p><strong>Status:</strong> 
+                    {% if material.is_published %}
+                    <span style="color: var(--success); font-weight: bold;">Published (Visible to Students)</span>
+                    {% else %}
+                    <span style="color: var(--muted); font-weight: bold;">Draft (Hidden from Students)</span>
+                    {% endif %}
+                </p>
+                <p>
+                    <strong>Secure File Link:</strong> 
+                    <a href="{{ url_for('files.serve_material', id=material.id) }}" target="_blank" style="color: var(--primary); font-weight: bold;">View/Download PDF Document</a>
+                </p>
+            </div>
+        </div>
+        
+        {% if material.description %}
+        <div class="card" style="margin-bottom: 2rem;">
+            <h4 style="margin-top: 0; margin-bottom: 0.5rem;">Description</h4>
+            <p>{{ material.description }}</p>
+        </div>
+        {% endif %}
+        
+        <div class="card" style="background-color: var(--surface-soft); display: flex; align-items: center; justify-content: space-between; padding: 1.5rem;">
+            <div>
+                <h4 style="margin: 0; margin-bottom: 0.25rem;">Publication Settings</h4>
+                <p class="muted" style="margin: 0; font-size: 0.9rem;">Toggle if students of your college can view this study material document.</p>
+            </div>
+            <div>
+                {% if material.is_published %}
+                <form method="POST" action="{{ url_for('college_admin.unpublish_material', id=material.id) }}">
+                    <button type="submit" class="btn" style="background-color: var(--warning); color: white; border: none; font-weight: 500;">Unpublish / Set Draft</button>
+                </form>
+                {% else %}
+                <form method="POST" action="{{ url_for('college_admin.publish_material', id=material.id) }}">
+                    <button type="submit" class="btn" style="background-color: var(--success); color: white; border: none; font-weight: 500;">Publish Document</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

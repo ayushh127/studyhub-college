@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Users - Admin{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <aside style="width: 250px;">
+        {% include "components/admin_sidebar.html" %}
+    </aside>
+    
+    <div style="flex: 1;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>Users & Impersonation</h2>
+            {% if current_user.role == 'platform_admin' %}
+            <a href="{{ url_for('admin.create_platform_admin') }}" class="btn btn-primary">Create Platform Admin</a>
+            {% endif %}
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 2px solid var(--border);">
+                    <th style="padding: 0.5rem;">Name</th>
+                    <th style="padding: 0.5rem;">Email</th>
+                    <th style="padding: 0.5rem;">Role</th>
+                    <th style="padding: 0.5rem;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 0.5rem;">{{ u.full_name }}</td>
+                    <td style="padding: 0.5rem;">{{ u.email }}</td>
+                    <td style="padding: 0.5rem;">{{ u.role }}</td>
+                    <td style="padding: 0.5rem;">
+                        {% if u.role != 'platform_admin' and current_user.id != u.id %}
+                        <form method="POST" action="{{ url_for('admin.impersonate', id=u.id) }}" style="display:inline;">
+                            <button type="submit" class="btn" style="padding: 0.2rem 0.5rem; font-size: 0.8rem; background-color: var(--accent);">Impersonate</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

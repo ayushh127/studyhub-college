@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - StudyHub College{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <!-- Sidebar -->
+    <aside style="width: 250px;">
+        {% include "components/admin_sidebar.html" %}
+    </aside>
+    
+    <!-- Main Content -->
+    <div style="flex: 1;">
+        <h2>Dashboard Overview</h2>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+            <div class="card" style="flex: 1; text-align: center;">
+                <h3>{{ stats.users }}</h3>
+                <p class="muted">Total Users</p>
+            </div>
+            <div class="card" style="flex: 1; text-align: center;">
+                <h3>{{ stats.colleges }}</h3>
+                <p class="muted">Total Colleges</p>
+            </div>
+            <div class="card" style="flex: 1; text-align: center;">
+                <h3>{{ stats.pending_requests }}</h3>
+                <p class="muted">Pending Requests</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

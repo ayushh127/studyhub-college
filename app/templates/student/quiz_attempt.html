@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Attempt - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 2rem auto; padding: 0 1rem; padding-bottom: 5rem;">
+    <!-- Quiz Info & Mode Selector Header -->
+    <div style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2.25rem; margin: 0; color: var(--primary-dark);">{{ quiz.title }}</h2>
+            <p class="muted" style="margin: 0.5rem 0 0 0;">{{ quiz.subject.name }} • {{ quiz.questions|length }} Questions</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; background-color: var(--surface-soft); padding: 0.25rem; border-radius: 4px; border: 1px solid var(--border);">
+            <button type="button" id="toggleLearning" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: all 0.2s; background: none; color: var(--text);">Learning Mode</button>
+            <button type="button" id="toggleExam" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: all 0.2s; background: none; color: var(--text);">Exam Mode</button>
+        </div>
+    </div>
+
+    <!-- Mode Info Display Banner -->
+    <div id="modeBanner" style="padding: 1rem; margin-bottom: 2rem; border-radius: 4px; font-size: 0.95rem; border: 1px solid var(--border); background-color: var(--surface); color: var(--text); border-left: 4px solid var(--accent); transition: all 0.2s;">
+        <span id="modeDescription"></span>
+    </div>
+
+    <form method="POST" action="{{ url_for('student.submit_quiz', attempt_id=attempt.id) }}" id="quizForm">
+        <!-- Hidden input to pass the final selected mode back to the DB -->
+        <input type="hidden" name="final_mode" id="finalMode" value="{{ attempt.mode }}">
+        
+        {% for q in quiz.questions|sort(attribute='order_number') %}
+        <div class="card question-card" style="margin-bottom: 2rem; padding: 2rem; border: 1px solid var(--border); border-radius: 8px; background-color: var(--surface);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+                <h3 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--primary-dark); line-height: 1.3;">{{ loop.index }}. {{ q.question_text }}</h3>
+                <span class="muted" style="font-size: 0.85rem; white-space: nowrap; font-weight: bold; background-color: var(--background); padding: 0.2rem 0.5rem; border-radius: 4px;">{{ q.marks }} Mark{% if q.marks > 1 %}s{% endif %}</span>
+            </div>
+            
+            <!-- Question Choices -->
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+                {% for opt in q.options|sort(attribute='order_number') %}
+                {% set is_checked = answered_options.get(q.id) == opt.id %}
+                <label class="option-label q-{{ q.id }}-opt" data-correct="{{ 'true' if opt.is_correct else 'false' }}" style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; transition: all 0.2s; background-color: transparent;">
+                    <input type="radio" name="q_{{ q.id }}" value="{{ opt.id }}" style="margin: 0;" {% if is_checked %}checked{% endif %}>
+                    <span style="font-size: 1rem; color: var(--text);">{{ opt.option_text }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            
+            <!-- Learning Mode Explanations Panel -->
+            <div class="learning-controls" style="display: none; border-top: 1px dashed var(--border); padding-top: 1.25rem; margin-top: 1rem;">
+                <button type="button" class="btn show-answer-btn" data-question-id="{{ q.id }}" style="padding: 0.4rem 1rem; border: 1px solid var(--primary); background: none; color: var(--primary); font-size: 0.85rem; cursor: pointer; border-radius: 4px; font-weight: bold; transition: all 0.2s;">Show Answer</button>
+                
+                <div id="explanation-{{ q.id }}" class="explanation-block" style="display: none; margin-top: 1rem; padding: 1.25rem; background-color: var(--surface-soft); border-left: 4px solid var(--accent); border-radius: 0 4px 4px 0; font-size: 0.95rem;">
+                    <p style="margin: 0 0 0.5rem 0; font-weight: bold; color: var(--primary-dark); font-size: 1rem;">
+                        Correct Answer: 
+                        {% for opt in q.options %}
+                            {% if opt.is_correct %}
+                                <span style="color: var(--success);">{{ opt.option_text }}</span>
+                            {% endif %}
+                        {% endfor %}
+                    </p>
+                    <div style="margin: 0; color: var(--text); line-height: 1.5;">
+                        <strong style="color: var(--primary-dark);">Explanation:</strong> 
+                        {% if q.explanation %}
+                            <span>{{ q.explanation }}</span>
+                        {% else %}
+                            <span class="muted" style="font-style: italic;">No explanation added for this question yet.</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        
+        <!-- Sticky Submission Footer Bar -->
+        <div style="position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 2px solid var(--border); padding: 1rem 0; box-shadow: 0 -4px 15px rgba(0,0,0,0.05); z-index: 100;">
+            <div style="max-width: 800px; margin: 0 auto; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <span class="muted" style="font-size: 0.9rem;">Verify your selections before submitting.</span>
+                <button type="submit" class="btn btn-primary" style="font-size: 1rem; padding: 0.6rem 2rem; font-weight: bold; border-radius: 4px; cursor: pointer;">Submit Quiz</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnLearning = document.getElementById('toggleLearning');
+    const btnExam = document.getElementById('toggleExam');
+    const modeDesc = document.getElementById('modeDescription');
+    const finalModeInput = document.getElementById('finalMode');
+    const quizForm = document.getElementById('quizForm');
+    
+    // Core Mode Selector Logic
+    function setMode(mode) {
+        finalModeInput.value = mode;
+        if (mode === 'learning') {
+            btnLearning.style.backgroundColor = 'var(--primary)';
+            btnLearning.style.color = 'white';
+            btnExam.style.backgroundColor = 'transparent';
+            btnExam.style.color = 'var(--text)';
+            modeDesc.innerHTML = '<strong>Learning Mode active</strong>: You can check explanations and answers using the "Show Answer" buttons below.';
+            
+            // Show all Show Answer controls
+            document.querySelectorAll('.learning-controls').forEach(ctrl => {
+                ctrl.style.display = 'block';
+            });
+            
+            // Re-render highlights for any already revealed answers
+            document.querySelectorAll('.explanation-block').forEach(block => {
+                if (block.style.display === 'block') {
+                    const qId = block.id.replace('explanation-', '');
+                    updateHighlights(qId, true);
+                }
+            });
+        } else {
+            btnExam.style.backgroundColor = 'var(--primary)';
+            btnExam.style.color = 'white';
+            btnLearning.style.backgroundColor = 'transparent';
+            btnLearning.style.color = 'var(--text)';
+            modeDesc.innerHTML = '<strong>Exam Mode active</strong>: Explanations and correctness badges are hidden. Work through all questions and submit when finished.';
+            
+            // Hide all Show Answer controls & reset styles
+            document.querySelectorAll('.learning-controls').forEach(ctrl => {
+                ctrl.style.display = 'none';
+            });
+            document.querySelectorAll('.explanation-block').forEach(block => {
+                block.style.display = 'none';
+            });
+            document.querySelectorAll('.show-answer-btn').forEach(btn => {
+                btn.textContent = 'Show Answer';
+            });
+            
+            // Reset borders of all options
+            document.querySelectorAll('.option-label').forEach(opt => {
+                opt.style.borderColor = 'var(--border)';
+                opt.style.backgroundColor = 'transparent';
+                opt.style.color = 'var(--text)';
+            });
+        }
+    }
+    
+    btnLearning.addEventListener('click', () => setMode('learning'));
+    btnExam.addEventListener('click', () => setMode('exam'));
+    
+    // Initialize Mode
+    setMode('{{ attempt.mode }}');
+    
+    // Highlight logic updater
+    function updateHighlights(qId, active) {
+        const selectedRadio = document.querySelector(`input[name="q_${qId}"]:checked`);
+        const options = document.querySelectorAll(`.q-${qId}-opt`);
+        
+        options.forEach(opt => {
+            const radio = opt.querySelector('input');
+            const isCorrect = opt.getAttribute('data-correct') === 'true';
+            const isSelected = selectedRadio && (radio.value === selectedRadio.value);
+            
+            if (active) {
+                if (isCorrect) {
+                    opt.style.borderColor = 'var(--success)';
+                    opt.style.backgroundColor = '#f0fdf4'; // very light green
+                    opt.style.color = 'var(--success)';
+                } else if (isSelected) {
+                    opt.style.borderColor = 'var(--danger)';
+                    opt.style.backgroundColor = '#fef2f2'; // very light red
+                    opt.style.color = 'var(--danger)';
+                } else {
+                    opt.style.borderColor = 'var(--border)';
+                    opt.style.backgroundColor = 'transparent';
+                    opt.style.color = 'var(--text)';
+                }
+            } else {
+                opt.style.borderColor = 'var(--border)';
+                opt.style.backgroundColor = 'transparent';
+                opt.style.color = 'var(--text)';
+            }
+        });
+    }
+    
+    // Add change listeners to all radios to trigger styling updates instantly
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const qId = this.name.replace('q_', '');
+            const expBlock = document.getElementById(`explanation-${qId}`);
+            if (expBlock && expBlock.style.display === 'block') {
+                updateHighlights(qId, true);
+            }
+        });
+    });
+    
+    // Click events for Show Answer buttons
+    document.querySelectorAll('.show-answer-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const qId = this.getAttribute('data-question-id');
+            const expBlock = document.getElementById(`explanation-${qId}`);
+            
+            if (expBlock.style.display === 'none') {
+                expBlock.style.display = 'block';
+                this.textContent = 'Hide Answer';
+                this.style.borderColor = 'var(--border)';
+                this.style.color = 'var(--muted)';
+                updateHighlights(qId, true);
+            } else {
+                expBlock.style.display = 'none';
+                this.textContent = 'Show Answer';
+                this.style.borderColor = 'var(--primary)';
+                this.style.color = 'var(--primary)';
+                updateHighlights(qId, false);
+            }
+        });
+    });
+    
+    // Form submit confirmation dialog
+    if (quizForm) {
+        quizForm.addEventListener('submit', function(e) {
+            const currentMode = finalModeInput.value;
+            let msg = 'Are you sure you want to submit your quiz?';
+            if (currentMode === 'exam') {
+                msg = 'Are you sure you want to submit your exam attempt? This will submit all your answers.';
+            }
+            if (!confirm(msg)) {
+                e.preventDefault();
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

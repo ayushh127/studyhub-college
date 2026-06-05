@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Add College Admin - StudyHub{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <!-- Sidebar -->
+    <aside style="width: 250px;">
+        {% include "components/admin_sidebar.html" %}
+    </aside>
+    
+    <!-- Main Content -->
+    <div style="flex: 1;">
+        <!-- Breadcrumbs -->
+        <nav style="margin-bottom: 1.5rem; font-size: 0.9rem;">
+            <a href="{{ url_for('admin.dashboard') }}" style="color: var(--muted); text-decoration: none;">Dashboard</a>
+            <span style="color: var(--muted); margin: 0 0.5rem;">&rarr;</span>
+            <a href="{{ url_for('admin.colleges') }}" style="color: var(--muted); text-decoration: none;">Colleges</a>
+            <span style="color: var(--muted); margin: 0 0.5rem;">&rarr;</span>
+            <a href="{{ url_for('admin.college_detail', id=college.id) }}" style="color: var(--muted); text-decoration: none;">{{ college.name }}</a>
+            <span style="color: var(--muted); margin: 0 0.5rem;">&rarr;</span>
+            <span style="color: var(--text); font-weight: 500;">Add Admin</span>
+        </nav>
+
+        <div class="card" style="max-width: 600px;">
+            <h2 style="margin-top: 0; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">Add Admin for {{ college.name }}</h2>
+            
+            <form method="POST" action="{{ url_for('admin.create_college_admin', id=college.id) }}">
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="full_name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" class="form-control" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="email" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Email Address</label>
+                    <input type="email" id="email" name="email" class="form-control" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="phone" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Phone (Optional)</label>
+                    <input type="text" id="phone" name="phone" class="form-control" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                    <div class="form-group">
+                        <label for="password" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Temporary Password</label>
+                        <input type="password" id="password" name="password" class="form-control" required minlength="6" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm_password" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Confirm Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" class="form-control" required minlength="6" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">Create Admin Account</button>
+                    <a href="{{ url_for('admin.college_detail', id=college.id) }}" style="color: var(--muted); text-decoration: underline;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Register College - StudyHub College{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 3rem auto;">
+    <div class="card" style="padding: 2.5rem;">
+        <h2 style="text-align: center; margin-top: 0; font-family: 'Cormorant Garamond', serif;">Register Your College</h2>
+        <p style="text-align: center; color: var(--muted); margin-bottom: 2rem;">
+            Submit a request to add your institution to StudyHub College. Our platform admins will review and approve your request.
+        </p>
+        
+        <form method="POST" action="{{ url_for('public.college_register') }}">
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="college_name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">College Name</label>
+                <input type="text" id="college_name" name="college_name" class="form-control" placeholder="e.g. Oxford University" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="college_code" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">College Code (Abbreviation)</label>
+                <input type="text" id="college_code" name="college_code" class="form-control" placeholder="e.g. OXF" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="form-group">
+                    <label for="city" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">City</label>
+                    <input type="text" id="city" name="city" class="form-control" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+                </div>
+                <div class="form-group">
+                    <label for="state" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">State</label>
+                    <input type="text" id="state" name="state" class="form-control" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="address" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Address</label>
+                <textarea id="address" name="address" class="form-control" rows="2" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px; font-family: inherit;"></textarea>
+            </div>
+
+            <hr style="margin: 2rem 0; border: none; border-top: 1px solid var(--border);">
+            <h3 style="margin-top: 0; font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; margin-bottom: 1.5rem;">College Admin Details</h3>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="admin_full_name" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Admin Full Name</label>
+                <input type="text" id="admin_full_name" name="admin_full_name" class="form-control" placeholder="John Doe" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="form-group">
+                    <label for="admin_email" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Admin Email</label>
+                    <input type="email" id="admin_email" name="admin_email" class="form-control" placeholder="admin@college.edu" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+                </div>
+                <div class="form-group">
+                    <label for="admin_phone" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Admin Phone</label>
+                    <input type="text" id="admin_phone" name="admin_phone" class="form-control" placeholder="+1234567890" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="form-group">
+                    <label for="password" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Minimum 6 characters" minlength="6" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Confirm Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Confirm password" minlength="6" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px;">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <label for="message" style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Additional Information (Optional)</label>
+                <textarea id="message" name="message" class="form-control" rows="4" placeholder="Any details for verification..." style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px; font-family: inherit;"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 0.75rem;">Submit Request</button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <a href="{{ url_for('public.index') }}" style="color: var(--muted); text-decoration: underline;">Cancel and return Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

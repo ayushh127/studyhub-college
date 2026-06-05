@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Request Submitted - StudyHub College{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 4rem auto;">
+    <div class="card" style="text-align: center; padding: 3rem 2rem;">
+        <div style="width: 80px; height: 80px; background-color: var(--success); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 2.5rem;">
+            ✓
+        </div>
+        
+        <h2 style="margin-top: 0; font-family: 'Cormorant Garamond', serif; color: var(--success);">Request Submitted</h2>
+        <p style="color: var(--muted); margin-bottom: 2rem; line-height: 1.6;">
+            Your college registration request has been successfully submitted. Our platform administrators will review the details and contact you at the provided email address shortly.
+        </p>
+        
+        <div>
+            <a href="{{ url_for('public.index') }}" class="btn btn-primary" style="padding: 0.75rem 2rem;">Return Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

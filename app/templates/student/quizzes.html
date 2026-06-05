@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Available Quizzes - StudyHub College{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 2rem auto;">
+    <h2>Available Quizzes</h2>
+    <p class="muted">Quizzes available for your selected college.</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+        {% for quiz in quizzes %}
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h3 style="margin-top: 0; margin-bottom: 0.5rem;">{{ quiz.title }}</h3>
+                <p style="color: var(--primary); font-weight: bold; margin-bottom: 0.5rem;">{{ quiz.subject.name }}</p>
+                <div style="display: flex; gap: 1rem; font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem;">
+                    <span><i class="icon">📝</i> {{ quiz.questions|length }} Questions</span>
+                    <span style="text-transform: capitalize;"><i class="icon">📈</i> {{ quiz.difficulty }}</span>
+                </div>
+            </div>
+            
+            <a href="{{ url_for('student.start_quiz', id=quiz.id) }}" class="btn btn-primary" style="text-align: center; width: 100%;">View Quiz</a>
+        </div>
+        {% else %}
+        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <h3 style="color: var(--muted);">No Quizzes Available</h3>
+            <p>There are no published quizzes for your college yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

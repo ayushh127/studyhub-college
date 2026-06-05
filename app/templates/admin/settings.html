@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - Platform Admin{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <!-- Sidebar -->
+    <aside style="width: 250px;">
+        {% include "components/admin_sidebar.html" %}
+    </aside>
+    
+    <!-- Main Content -->
+    <div style="flex: 1;">
+        <div class="card" style="max-width: 600px; margin: 0 auto; padding: 2.5rem; text-align: center;">
+            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--primary-dark); margin-bottom: 1rem;">Platform Settings</h2>
+            <p class="muted" style="font-size: 1.1rem; margin-bottom: 2rem;">
+                This section serves as a placeholder for system-wide configurations, backup utilities, and global administrative properties.
+            </p>
+            <div style="border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                <span class="badge" style="background-color: var(--accent); color: var(--text); padding: 0.4rem 0.8rem; border-radius: 4px; font-weight: 600; font-size: 0.9rem;">
+                    MVP Version 1.0 (Stable)
+                </span>
+            </div>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary" style="margin-top: 2rem;">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

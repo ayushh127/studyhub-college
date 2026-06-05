@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Review Quiz - {{ attempt.quiz_rel.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 2rem auto;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem;">
+        <div>
+            <h2 style="margin: 0; margin-bottom: 0.5rem;">Review: {{ attempt.quiz_rel.title }}</h2>
+            <span class="muted">Score: {{ attempt.percentage|round|int }}% ({{ attempt.score }} marks)</span>
+        </div>
+        <div>
+            <a href="{{ url_for('student.dashboard') }}" class="btn btn-primary">Dashboard</a>
+        </div>
+    </div>
+    
+    {% for q in attempt.quiz_rel.questions|sort(attribute='order_number') %}
+    {% set sub = submissions.get(q.id) %}
+    <div class="card" style="margin-bottom: 2rem; border-left: 5px solid {% if sub and sub.is_correct %}var(--success){% elif sub %}var(--danger){% else %}var(--warning){% endif %};">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+            <h3 style="margin: 0;">{{ loop.index }}. {{ q.question_text }}</h3>
+            <span style="font-weight: bold; color: {% if sub and sub.is_correct %}var(--success){% else %}var(--danger){% endif %};">
+                {% if sub %}{{ sub.marks_awarded }} / {{ q.marks }}{% else %}0 / {{ q.marks }} (Unanswered){% endif %}
+            </span>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            {% for opt in q.options|sort(attribute='order_number') %}
+            {% set is_selected = sub and sub.selected_option_id == opt.id %}
+            
+            <div style="padding: 0.75rem 1rem; border: 1px solid {% if opt.is_correct %}var(--success){% elif is_selected %}var(--danger){% else %}var(--border){% endif %}; border-radius: 4px; background-color: {% if opt.is_correct %}#f0fdf4{% elif is_selected %}#fef2f2{% else %}transparent{% endif %}; display: flex; justify-content: space-between;">
+                <span>{{ opt.option_text }}</span>
+                {% if opt.is_correct %}
+                    <span style="color: var(--success); font-weight: bold;">✓ Correct Answer</span>
+                {% elif is_selected %}
+                    <span style="color: var(--danger); font-weight: bold;">✗ Your Answer</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if q.explanation %}
+        <div style="margin-top: 1rem; padding: 1rem; background-color: var(--background); border-left: 4px solid var(--secondary);">
+            <strong>Explanation:</strong> {{ q.explanation }}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+    <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center; margin-top: 3rem; border-top: 1px dashed var(--border); padding-top: 2rem;">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+            <a href="{{ url_for('student.start_quiz', id=attempt.quiz_rel.id) }}" class="btn" style="border: 1px solid var(--primary); color: var(--primary); padding: 0.75rem 1.5rem; text-decoration: none; font-weight: bold; background: none;">Retry Quiz</a>
+            {% if attempt.quiz_rel.unit_id %}
+            <a href="{{ url_for('student.unit_details', id=attempt.quiz_rel.unit_id) }}" class="btn" style="border: 1px solid var(--border); padding: 0.75rem 1.5rem; text-decoration: none; color: var(--text); background-color: var(--surface-soft);">Back to Unit</a>
+            {% endif %}
+            {% if attempt.quiz_rel.subject_id %}
+            <a href="{{ url_for('student.subject_details', id=attempt.quiz_rel.subject_id) }}" class="btn" style="border: 1px solid var(--border); padding: 0.75rem 1.5rem; text-decoration: none; color: var(--text); background-color: var(--surface-soft);">Back to Subject</a>
+            {% endif %}
+            <a href="{{ url_for('student.dashboard') }}" class="btn btn-primary" style="padding: 0.75rem 2rem; text-decoration: none;">Go to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

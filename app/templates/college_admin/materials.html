@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Materials - College Admin{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <aside style="width: 250px;">
+        {% include "components/college_admin_sidebar.html" %}
+    </aside>
+    
+    <div style="flex: 1;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+            <h2>Manage Study Materials</h2>
+            <a href="{{ url_for('college_admin.upload_material') }}" class="btn btn-primary">Upload Study Material</a>
+        </div>
+        
+        <h3>Existing Materials</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 2px solid var(--border);">
+                    <th style="padding: 0.75rem;">Title</th>
+                    <th style="padding: 0.75rem;">Subject</th>
+                    <th style="padding: 0.75rem;">Unit / Chapter</th>
+                    <th style="padding: 0.75rem;">Status</th>
+                    <th style="padding: 0.75rem; text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mat in materials %}
+                <tr style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 0.75rem;">
+                        <a href="{{ url_for('college_admin.material_detail', id=mat.id) }}" style="color: var(--primary-dark); font-weight: bold; text-decoration: none;">
+                            {{ mat.title }}
+                        </a>
+                    </td>
+                    <td style="padding: 0.75rem;">{{ mat.subject.name }} ({{ mat.subject.code }})</td>
+                    <td style="padding: 0.75rem;">
+                        {% if mat.unit %}
+                        Unit {{ mat.unit.unit_number }}: {{ mat.unit.title }}
+                        {% else %}
+                        General / None
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem;">
+                        {% if mat.is_published %}
+                        <span style="color: var(--success); font-weight: bold;">Published</span>
+                        {% else %}
+                        <span style="color: var(--muted);">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem; text-align: right;">
+                        <a href="{{ url_for('college_admin.material_detail', id=mat.id) }}" class="btn" style="padding: 0.25rem 0.5rem; border: 1px solid var(--border); font-size: 0.8rem; text-decoration: none; color: var(--text);">Manage</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="padding: 3rem; text-align: center; color: var(--muted);">
+                        <h3>No Materials Uploaded</h3>
+                        <p>Get started by uploading PDFs, lecture notes, or assignments for your subjects.</p>
+                        <a href="{{ url_for('college_admin.upload_material') }}" class="btn btn-primary" style="margin-top: 1rem;">Upload First PDF</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+<div class="card">
+    <div style="border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+        <strong style="display: block; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--primary-dark);">{{ current_user.full_name }}</strong>
+        <span class="badge" style="background-color: var(--primary); color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: inline-block; margin-top: 0.25rem;">Platform Admin</span>
+    </div>
+    <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem; font-family: 'Cormorant Garamond', serif;">Admin Menu</h3>
+    <ul style="list-style: none; line-height: 2;">
+        <li><a href="{{ url_for('admin.dashboard') }}" style="text-decoration: none; color: var(--text);">Dashboard</a></li>
+        <li><a href="{{ url_for('admin.college_requests') }}" style="text-decoration: none; color: var(--text);">College Requests</a></li>
+        <li><a href="{{ url_for('admin.colleges') }}" style="text-decoration: none; color: var(--text);">Colleges</a></li>
+        <li><a href="{{ url_for('admin.create_college') }}" style="text-decoration: none; color: var(--text);">Add College</a></li>
+        <li><a href="{{ url_for('admin.users') }}" style="text-decoration: none; color: var(--text);">Users</a></li>
+        <li><a href="{{ url_for('admin.audit_logs') }}" style="text-decoration: none; color: var(--text);">Audit Logs</a></li>
+        <li><a href="{{ url_for('admin.settings') }}" style="text-decoration: none; color: var(--text);">Settings</a></li>
+        <li style="margin-top: 0.75rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+            <a href="{{ url_for('auth.logout') }}" style="color: var(--danger); text-decoration: none; font-weight: 500;">Logout</a>
+        </li>
+    </ul>
+</div>

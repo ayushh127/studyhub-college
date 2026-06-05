@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}PYQ Paper Details - College Admin{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <!-- Sidebar -->
+    <aside style="width: 250px;">
+        {% include "components/college_admin_sidebar.html" %}
+    </aside>
+    
+    <!-- Main Content -->
+    <div style="flex: 1;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+            <div>
+                <h2>{{ pyq.title }}</h2>
+                <p class="muted">Subject: <strong>{{ pyq.subject.name }} ({{ pyq.subject.code }})</strong></p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <a href="{{ url_for('college_admin.edit_pyq', id=pyq.id) }}" class="btn" style="border: 1px solid var(--primary); color: var(--primary);">Edit</a>
+                <form method="POST" action="{{ url_for('college_admin.delete_pyq', id=pyq.id) }}" onsubmit="return confirm('Delete this PYQ permanently?');" style="display: inline-block;">
+                    <button type="submit" class="btn" style="border: 1px solid var(--danger); color: var(--danger); background: none;">Delete</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card" style="margin-bottom: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+                <p><strong>Associated Unit:</strong> {% if pyq.unit %}{{ 'Unit ' ~ pyq.unit.unit_number ~ ': ' ~ pyq.unit.title }}{% else %}General / Subject-wide{% endif %}</p>
+                <p><strong>Year of Exam:</strong> {{ pyq.year }}</p>
+                <p><strong>Exam Type:</strong> <span style="text-transform: capitalize;">{{ pyq.exam_type.replace('_', ' ') }}</span></p>
+            </div>
+            <div>
+                <p><strong>Uploaded By:</strong> {{ pyq.uploader.full_name }}</p>
+                <p><strong>Uploaded On:</strong> {{ pyq.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                <p><strong>Status:</strong> 
+                    {% if pyq.is_published %}
+                    <span style="color: var(--success); font-weight: bold;">Published (Visible to Students)</span>
+                    {% else %}
+                    <span style="color: var(--muted); font-weight: bold;">Draft (Hidden from Students)</span>
+                    {% endif %}
+                </p>
+                <p>
+                    <strong>Secure File Link:</strong> 
+                    <a href="{{ url_for('files.serve_pyq', id=pyq.id) }}" target="_blank" style="color: var(--primary); font-weight: bold;">View/Download PDF Question Paper</a>
+                </p>
+            </div>
+        </div>
+        
+        <div class="card" style="background-color: var(--surface-soft); display: flex; align-items: center; justify-content: space-between; padding: 1.5rem;">
+            <div>
+                <h4 style="margin: 0; margin-bottom: 0.25rem;">Publication Settings</h4>
+                <p class="muted" style="margin: 0; font-size: 0.9rem;">Toggle if students of your college can view this PYQ paper.</p>
+            </div>
+            <div>
+                {% if pyq.is_published %}
+                <form method="POST" action="{{ url_for('college_admin.unpublish_pyq', id=pyq.id) }}">
+                    <button type="submit" class="btn" style="background-color: var(--warning); color: white; border: none; font-weight: 500;">Unpublish / Set Draft</button>
+                </form>
+                {% else %}
+                <form method="POST" action="{{ url_for('college_admin.publish_pyq', id=pyq.id) }}">
+                    <button type="submit" class="btn" style="background-color: var(--success); color: white; border: none; font-weight: 500;">Publish Paper</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

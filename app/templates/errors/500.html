@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Internal Server Error (500) - StudyHub College{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 4rem auto; text-align: center;">
+    <div class="card" style="padding: 4rem 2rem;">
+        <h1 style="font-size: 5rem; color: var(--danger); margin-bottom: 1rem;">500</h1>
+        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin-bottom: 1rem;">Internal Server Error</h2>
+        <p class="muted" style="margin-bottom: 2rem;">An unexpected error occurred on the server. Our administrators have been notified.</p>
+        
+        <div style="display: flex; justify-content: center; gap: 1rem;">
+            <a href="{{ url_for('public.index') }}" class="btn btn-primary">Go Home</a>
+            {% if current_user.is_authenticated %}
+                {% if current_user.role == 'platform_admin' %}
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn" style="border: 1px solid var(--border);">Dashboard</a>
+                {% elif current_user.role == 'college_admin' %}
+                    <a href="{{ url_for('college_admin.dashboard') }}" class="btn" style="border: 1px solid var(--border);">Dashboard</a>
+                {% else %}
+                    <a href="{{ url_for('student.dashboard') }}" class="btn" style="border: 1px solid var(--border);">Dashboard</a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

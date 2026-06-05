@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if quiz else 'Create' }} Quiz - College Admin{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 2rem auto;">
+    <div class="card">
+        <h2>{{ 'Edit' if quiz else 'Create' }} Quiz</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label>Quiz Title</label>
+                <input type="text" name="title" class="form-control" value="{{ quiz.title if quiz else '' }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="subject_id">Subject</label>
+                <select id="subject_id" name="subject_id" class="form-control" required>
+                    <option value="" disabled {{ 'selected' if not quiz and not preselected_subject_id else '' }}>-- Select Subject --</option>
+                    {% for sub in subjects %}
+                    <option value="{{ sub.id }}" {{ 'selected' if (quiz and quiz.subject_id == sub.id) or (not quiz and preselected_subject_id == sub.id) else '' }}>{{ sub.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="unit_id">Unit / Chapter Link (Optional)</label>
+                <select id="unit_id" name="unit_id" class="form-control">
+                    <option value="">-- General / Subject-wide --</option>
+                    {% for unit in units %}
+                    <option value="{{ unit.id }}" data-subject="{{ unit.subject_id }}" {{ 'selected' if (quiz and quiz.unit_id == unit.id) or (not quiz and preselected_unit_id == unit.id) else '' }}>
+                        [{{ unit.subject.code }}] Unit {{ unit.unit_number }}: {{ unit.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Quiz Type</label>
+                <select name="quiz_type" class="form-control" required>
+                    <option value="practice" {{ 'selected' if quiz and quiz.quiz_type == 'practice' else '' }}>Practice</option>
+                    <option value="exam" {{ 'selected' if quiz and quiz.quiz_type == 'exam' else '' }}>Exam</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Difficulty</label>
+                <select name="difficulty" class="form-control" required>
+                    <option value="easy" {{ 'selected' if quiz and quiz.difficulty == 'easy' else '' }}>Easy</option>
+                    <option value="medium" {{ 'selected' if quiz and quiz.difficulty == 'medium' else '' }}>Medium</option>
+                    <option value="hard" {{ 'selected' if quiz and quiz.difficulty == 'hard' else '' }}>Hard</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Time Limit (minutes) - Optional</label>
+                <input type="number" name="time_limit_minutes" class="form-control" min="1" value="{{ quiz.time_limit_minutes if quiz and quiz.time_limit_minutes else '' }}">
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="submit" class="btn btn-primary">{{ 'Save Changes' if quiz else 'Create Quiz' }}</button>
+                <a href="{{ url_for('college_admin.quizzes') }}" class="btn" style="border: 1px solid var(--border);">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const subjectSelect = document.getElementById('subject_id');
+    const unitSelect = document.getElementById('unit_id');
+    const unitOptions = Array.from(unitSelect.options);
+
+    function filterUnits(keepSelection = false) {
+        const selectedSubject = subjectSelect.value;
+        if (!keepSelection) {
+            unitSelect.value = "";
+        }
+        
+        unitOptions.forEach(option => {
+            if (option.value === "") return;
+            const optSubjectId = option.getAttribute('data-subject');
+            if (optSubjectId === selectedSubject) {
+                option.style.display = "block";
+            } else {
+                option.style.display = "none";
+            }
+        });
+
+        if (keepSelection) {
+            const selectedOption = unitSelect.options[unitSelect.selectedIndex];
+            if (selectedOption && selectedOption.style.display === "none") {
+                unitSelect.value = "";
+            }
+        }
+    }
+
+    subjectSelect.addEventListener('change', () => filterUnits(false));
+    if (subjectSelect.value) {
+        filterUnits(true);
+    }
+</script>
+{% endblock %}

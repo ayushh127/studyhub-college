@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Subjects - StudyHub College{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 2rem auto;">
+    <div style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin: 0;">Subjects & Course Materials</h2>
+            <p class="muted" style="margin: 0.5rem 0 0 0;">Browse course syllabus, lecture materials, and unit tests available for your college.</p>
+        </div>
+        <div>
+            <input type="text" id="subjectSearch" placeholder="Search subjects..." style="width: 100%; max-width: 320px; padding: 0.6rem 1rem; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; font-size: 0.95rem; background-color: var(--surface);">
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;" id="subjectsGrid">
+        {% for subject in subjects %}
+        <div class="card subject-card" data-name="{{ subject.name|lower }}" data-code="{{ subject.code|lower }}" data-semester="{% if subject.semester %}semester {{ subject.semester }}{% endif %}" data-desc="{{ subject.description|lower if subject.description else '' }}" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                    <span class="badge" style="background-color: var(--primary); color: white;">{{ subject.code }}</span>
+                    {% if subject.semester %}
+                    <span class="muted" style="font-size: 0.85rem; font-weight: bold;">Sem {{ subject.semester }}</span>
+                    {% endif %}
+                </div>
+                <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--primary-dark);">{{ subject.name }}</h3>
+                <p class="muted" style="font-size: 0.9rem; line-height: 1.4; margin-bottom: 1rem;">
+                    {{ subject.description|truncate(120) if subject.description else 'No description available for this subject.' }}
+                </p>
+            </div>
+            
+            <a href="{{ url_for('student.subject_details', id=subject.id) }}" class="btn btn-primary" style="text-align: center; width: 100%; text-decoration: none;">View Course Content</a>
+        </div>
+        {% else %}
+        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+            <h3 style="color: var(--muted); font-family: 'Cormorant Garamond', serif; font-size: 1.75rem;">No Subjects Available</h3>
+            <p>There are no active subjects registered for your college currently.</p>
+        </div>
+        {% endfor %}
+        
+        <!-- Empty search results state -->
+        <div id="searchEmptyState" class="card" style="display: none; grid-column: 1 / -1; text-align: center; padding: 4rem; margin-bottom: 0;">
+            <h3 style="color: var(--muted); font-family: 'Cormorant Garamond', serif; font-size: 1.75rem;">No subjects match your search.</h3>
+            <p class="muted" style="margin-top: 0.5rem;">Try searching for a different subject name, code, or description.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('subjectSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.subject-card');
+            let hasResults = false;
+            
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name') || '';
+                const code = card.getAttribute('data-code') || '';
+                const semester = card.getAttribute('data-semester') || '';
+                const desc = card.getAttribute('data-desc') || '';
+                
+                if (name.includes(query) || code.includes(query) || semester.includes(query) || desc.includes(query)) {
+                    card.style.display = 'flex';
+                    hasResults = true;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            const emptyState = document.getElementById('searchEmptyState');
+            if (emptyState) {
+                if (hasResults) {
+                    emptyState.style.display = 'none';
+                } else {
+                    emptyState.style.display = 'block';
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

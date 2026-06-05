@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if question else 'Add' }} Question - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 2rem auto;">
+    <div class="card">
+        <h2>{{ 'Edit' if question else 'Add' }} Question for "{{ quiz.title }}"</h2>
+        
+        <form method="POST">
+            <div class="form-group">
+                <label>Question Text</label>
+                <textarea name="question_text" class="form-control" rows="3" required>{{ question.question_text if question else '' }}</textarea>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <div class="form-group" style="flex: 1;">
+                    <label>Marks</label>
+                    <input type="number" name="marks" class="form-control" value="{{ question.marks if question else '1' }}" min="1" required>
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>Order Number</label>
+                    <input type="number" name="order_number" class="form-control" value="{{ question.order_number if question else quiz.questions|length + 1 }}" min="1" required>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Options</h3>
+            <p class="muted" style="font-size: 0.9rem;">Provide 4 options and select the correct one.</p>
+            
+            {% set options = question.options|sort(attribute='order_number') if question else [] %}
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                {% for i in range(4) %}
+                <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid var(--border); border-radius: 4px; {% if options and options[i].is_correct %}background-color: #f0fdf4;{% endif %}">
+                    <input type="radio" name="correct_option_index" value="{{ i }}" {{ 'checked' if (options and options[i].is_correct) or (not options and i == 0) else '' }} required>
+                    <span style="font-weight: bold;">Option {{ i+1 }}:</span>
+                    
+                    {% if question and options|length > i %}
+                    <input type="hidden" name="option_id[]" value="{{ options[i].id }}">
+                    {% endif %}
+                    
+                    <input type="text" name="option_text[]" class="form-control" style="flex: 1; margin: 0;" value="{{ options[i].option_text if options|length > i else '' }}" required placeholder="Enter option text...">
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="form-group" style="margin-top: 2rem;">
+                <label>Explanation (Optional)</label>
+                <textarea name="explanation" class="form-control" rows="3" placeholder="Explain the correct answer...">{{ question.explanation if question else '' }}</textarea>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">{{ 'Save Changes' if question else 'Add Question' }}</button>
+                <a href="{{ url_for('college_admin.quiz_details', id=quiz.id) }}" class="btn" style="border: 1px solid var(--border);">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

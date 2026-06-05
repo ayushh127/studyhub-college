@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if material else 'Upload' }} Study Material - College Admin{% endblock %}
+
+{% block content %}
+<div style="max-width: 650px; margin: 2rem auto;">
+    <div class="card">
+        <h2>{{ 'Edit' if material else 'Upload' }} Study Material</h2>
+        
+        <form method="POST" enctype="multipart/form-data" style="margin-top: 1.5rem;">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" class="form-control" value="{{ material.title if material else '' }}" required placeholder="e.g. Lecture Notes on Cache Memory">
+            </div>
+            
+            <div class="form-group">
+                <label for="subject_id">Subject</label>
+                <select id="subject_id" name="subject_id" class="form-control" required>
+                    <option value="" disabled {{ 'selected' if not material and not preselected_subject_id else '' }}>-- Select Subject --</option>
+                    {% for sub in subjects %}
+                    <option value="{{ sub.id }}" {{ 'selected' if (material and material.subject_id == sub.id) or (not material and preselected_subject_id == sub.id) else '' }}>{{ sub.name }} ({{ sub.code }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="unit_id">Unit / Chapter (Optional)</label>
+                <select id="unit_id" name="unit_id" class="form-control">
+                    <option value="">-- General / No Unit --</option>
+                    {% for unit in units %}
+                    <option value="{{ unit.id }}" data-subject="{{ unit.subject_id }}" {{ 'selected' if (material and material.unit_id == unit.id) or (not material and preselected_unit_id == unit.id) else '' }}>
+                        [{{ unit.subject.code }}] Unit {{ unit.unit_number }}: {{ unit.title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="file_type">Material Type</label>
+                <select id="file_type" name="file_type" class="form-control" required>
+                    <option value="pdf" {{ 'selected' if (material and material.file_type == 'pdf') or not material else '' }}>PDF Lecture Notes</option>
+                    <option value="notes" {{ 'selected' if (material and material.file_type == 'notes') else '' }}>General Notes</option>
+                    <option value="assignment" {{ 'selected' if (material and material.file_type == 'assignment') else '' }}>Assignment Details</option>
+                    <option value="important_questions" {{ 'selected' if (material and material.file_type == 'important_questions') else '' }}>Important Questions / Solutions</option>
+                    <option value="other" {{ 'selected' if (material and material.file_type == 'other') else '' }}>Other Material</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description (Optional)</label>
+                <textarea id="description" name="description" class="form-control" rows="3" placeholder="Topics covered, assignments due, etc...">{{ material.description if material else '' }}</textarea>
+            </div>
+
+            <div class="form-group" style="margin-top: 1.5rem;">
+                <label for="file"><strong>PDF Document File</strong></label>
+                {% if material %}
+                <p class="muted" style="font-size: 0.85rem; margin-bottom: 0.5rem;">Current File: <code>{{ material.file_path }}</code></p>
+                <p class="muted" style="font-size: 0.85rem; margin-bottom: 0.5rem;">Only upload a file if you want to replace the current one.</p>
+                {% endif %}
+                <input type="file" id="file" name="file" class="form-control" accept=".pdf" {{ 'required' if not material else '' }}>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">{{ 'Save Changes' if material else 'Upload Material' }}</button>
+                <a href="{{ url_for('college_admin.materials') }}" class="btn" style="border: 1px solid var(--border);">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const subjectSelect = document.getElementById('subject_id');
+    const unitSelect = document.getElementById('unit_id');
+    const unitOptions = Array.from(unitSelect.options);
+
+    function filterUnits(keepSelection = false) {
+        const selectedSubject = subjectSelect.value;
+        if (!keepSelection) {
+            unitSelect.value = "";
+        }
+        
+        unitOptions.forEach(option => {
+            if (option.value === "") return;
+            const optSubjectId = option.getAttribute('data-subject');
+            if (optSubjectId === selectedSubject) {
+                option.style.display = "block";
+            } else {
+                option.style.display = "none";
+            }
+        });
+
+        if (keepSelection) {
+            const selectedOption = unitSelect.options[unitSelect.selectedIndex];
+            if (selectedOption && selectedOption.style.display === "none") {
+                unitSelect.value = "";
+            }
+        }
+    }
+
+    subjectSelect.addEventListener('change', () => filterUnits(false));
+    if (subjectSelect.value) {
+        filterUnits(true);
+    }
+</script>
+{% endblock %}

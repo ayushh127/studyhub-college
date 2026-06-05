@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz (Exam) - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 2rem auto;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem;">
+        <div>
+            <h2 style="margin: 0; margin-bottom: 0.5rem;">{{ quiz.title }}</h2>
+            <span class="muted" style="text-transform: capitalize;">{{ quiz.subject.name }} | Exam Mode</span>
+        </div>
+        <div style="text-align: right;">
+            <span style="font-size: 1.25rem; font-weight: bold; color: var(--primary);">{{ quiz.questions|length }} Questions</span>
+        </div>
+    </div>
+    
+    <form method="POST" action="{{ url_for('student.submit_quiz', attempt_id=attempt.id) }}" id="examForm">
+        {% for q in quiz.questions|sort(attribute='order_number') %}
+        <div class="card" style="margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                <h3 style="margin: 0;">{{ loop.index }}. {{ q.question_text }}</h3>
+                <span class="muted">[{{ q.marks }} Marks]</span>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                {% for opt in q.options|sort(attribute='order_number') %}
+                <label style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 4px; cursor: pointer;">
+                    <input type="radio" name="q_{{ q.id }}" value="{{ opt.id }}" required>
+                    <span>{{ opt.option_text }}</span>
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        <div style="position: sticky; bottom: 0; background: white; padding: 1rem; border-top: 1px solid var(--border); text-align: right; box-shadow: 0 -4px 10px rgba(0,0,0,0.05);">
+            <button type="submit" class="btn btn-primary" style="font-size: 1.1rem; padding: 0.75rem 2rem;" onclick="return confirm('Are you sure you want to submit your exam?');">Submit Exam</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

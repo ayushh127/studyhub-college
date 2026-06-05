@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Subjects - College Admin{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <aside style="width: 250px;">
+        {% include "components/college_admin_sidebar.html" %}
+    </aside>
+    
+    <div style="flex: 1;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+            <h2>Manage Subjects</h2>
+            <a href="{{ url_for('college_admin.create_subject') }}" class="btn btn-primary">Create New Subject</a>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+            <h3>Existing Subjects</h3>
+            <input type="text" id="adminSubjectSearch" placeholder="Search subjects..." style="width: 100%; max-width: 320px; padding: 0.5rem 1rem; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; font-size: 0.95rem; background-color: var(--surface);">
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 2px solid var(--border);">
+                    <th style="padding: 0.75rem;">Code</th>
+                    <th style="padding: 0.75rem;">Name</th>
+                    <th style="padding: 0.75rem;">Semester</th>
+                    <th style="padding: 0.75rem; text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="subjectsTableBody">
+                {% for sub in subjects %}
+                <tr class="subject-row" data-name="{{ sub.name|lower }}" data-code="{{ sub.code|lower }}" data-semester="{% if sub.semester %}semester {{ sub.semester }}{% else %}general{% endif %}" data-desc="{{ sub.description|lower if sub.description else '' }}" style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 0.75rem; font-weight: bold;">{{ sub.code }}</td>
+                    <td style="padding: 0.75rem;">
+                        <a href="{{ url_for('college_admin.subject_detail', id=sub.id) }}" style="color: var(--primary-dark); text-decoration: none; font-weight: bold;">{{ sub.name }}</a>
+                    </td>
+                    <td style="padding: 0.75rem;">{{ sub.semester if sub.semester else 'General' }}</td>
+                    <td style="padding: 0.75rem; text-align: right; display: flex; gap: 0.5rem; justify-content: flex-end;">
+                        <a href="{{ url_for('college_admin.subject_detail', id=sub.id) }}" class="btn" style="padding: 0.25rem 0.5rem; border: 1px solid var(--border); font-size: 0.8rem; text-decoration: none; color: var(--text);">View Details</a>
+                        <a href="{{ url_for('college_admin.edit_subject', id=sub.id) }}" class="btn" style="padding: 0.25rem 0.5rem; border: 1px solid var(--primary); color: var(--primary); font-size: 0.8rem; text-decoration: none;">Edit</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" style="padding: 3rem; text-align: center; color: var(--muted);">
+                        <h3>No Subjects Found</h3>
+                        <p>Begin by creating subjects for your college course offerings.</p>
+                        <a href="{{ url_for('college_admin.create_subject') }}" class="btn btn-primary" style="margin-top: 1rem;">Create First Subject</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                
+                <!-- Empty search results state row -->
+                <tr id="adminSearchEmptyRow" style="display: none;">
+                    <td colspan="4" style="padding: 3rem; text-align: center; color: var(--muted);">
+                        <h3>No subjects match your search.</h3>
+                        <p>Try searching for a different subject name, code, or description.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('adminSubjectSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('.subject-row');
+            let hasResults = false;
+            
+            rows.forEach(row => {
+                const name = row.getAttribute('data-name') || '';
+                const code = row.getAttribute('data-code') || '';
+                const semester = row.getAttribute('data-semester') || '';
+                const desc = row.getAttribute('data-desc') || '';
+                
+                if (name.includes(query) || code.includes(query) || semester.includes(query) || desc.includes(query)) {
+                    row.style.display = '';
+                    hasResults = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            const emptyRow = document.getElementById('adminSearchEmptyRow');
+            if (emptyRow) {
+                if (hasResults) {
+                    emptyRow.style.display = 'none';
+                } else {
+                    emptyRow.style.display = 'table-row';
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

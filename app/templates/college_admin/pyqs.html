@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Previous Year Question Papers - College Admin{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <!-- Sidebar -->
+    <aside style="width: 250px;">
+        {% include "components/college_admin_sidebar.html" %}
+    </aside>
+    
+    <!-- Main Content -->
+    <div style="flex: 1;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+            <h2>Manage Previous Year Question Papers (PYQs)</h2>
+            <a href="{{ url_for('college_admin.upload_pyq') }}" class="btn btn-primary">Upload PYQ Paper</a>
+        </div>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 2px solid var(--border);">
+                    <th style="padding: 0.75rem;">Paper Title</th>
+                    <th style="padding: 0.75rem;">Subject</th>
+                    <th style="padding: 0.75rem;">Year</th>
+                    <th style="padding: 0.75rem;">Exam Type</th>
+                    <th style="padding: 0.75rem;">Status</th>
+                    <th style="padding: 0.75rem; text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pyq in pyqs %}
+                <tr style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 0.75rem;">
+                        <a href="{{ url_for('college_admin.pyq_detail', id=pyq.id) }}" style="color: var(--primary-dark); font-weight: bold; text-decoration: none;">
+                            {{ pyq.title }}
+                        </a>
+                    </td>
+                    <td style="padding: 0.75rem;">{{ pyq.subject.name }} ({{ pyq.subject.code }})</td>
+                    <td style="padding: 0.75rem;">{{ pyq.year }}</td>
+                    <td style="padding: 0.75rem; text-transform: capitalize;">{{ pyq.exam_type.replace('_', ' ') }}</td>
+                    <td style="padding: 0.75rem;">
+                        {% if pyq.is_published %}
+                        <span style="color: var(--success); font-weight: bold;">Published</span>
+                        {% else %}
+                        <span style="color: var(--muted);">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem; text-align: right;">
+                        <a href="{{ url_for('college_admin.pyq_detail', id=pyq.id) }}" class="btn" style="padding: 0.25rem 0.5rem; border: 1px solid var(--border); font-size: 0.8rem; text-decoration: none; color: var(--text);">Manage</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="padding: 3rem; text-align: center; color: var(--muted);">
+                        <h3>No PYQs Found</h3>
+                        <p>Get started by uploading previous years' question papers for your college.</p>
+                        <a href="{{ url_for('college_admin.upload_pyq') }}" class="btn btn-primary" style="margin-top: 1rem;">Upload First PYQ</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

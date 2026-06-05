@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Edit' if subject else 'Create' }} Subject - College Admin{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 2rem auto;">
+    <div class="card">
+        <h2>{{ 'Edit' if subject else 'Create' }} Subject</h2>
+        <form method="POST">
+            <div class="form-group">
+                <label for="name">Subject Name</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ subject.name if subject else '' }}" required placeholder="e.g. Introduction to Programming">
+            </div>
+            
+            <div class="form-group">
+                <label for="code">Subject Code</label>
+                <input type="text" id="code" name="code" class="form-control" value="{{ subject.code if subject else '' }}" required placeholder="e.g. CS101">
+            </div>
+
+            <div class="form-group">
+                <label for="semester">Semester (Optional)</label>
+                <input type="number" id="semester" name="semester" class="form-control" min="1" max="10" value="{{ subject.semester if (subject and subject.semester) else '' }}" placeholder="e.g. 1">
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description (Optional)</label>
+                <textarea id="description" name="description" class="form-control" rows="4" placeholder="Brief subject syllabus or overview...">{{ subject.description if subject else '' }}</textarea>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button type="submit" class="btn btn-primary">{{ 'Save Changes' if subject else 'Create Subject' }}</button>
+                <a href="{{ url_for('college_admin.subjects') }}" class="btn" style="border: 1px solid var(--border);">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

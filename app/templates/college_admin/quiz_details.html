@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Details - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div style="margin: 2rem auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2>Quiz: {{ quiz.title }}</h2>
+        <div>
+            <a href="{{ url_for('college_admin.quizzes') }}" class="btn" style="border: 1px solid var(--border);">Back to Quizzes</a>
+            <a href="{{ url_for('college_admin.edit_quiz', id=quiz.id) }}" class="btn" style="border: 1px solid var(--primary); color: var(--primary);">Edit</a>
+            
+            {% if quiz.is_published %}
+            <form method="POST" action="{{ url_for('college_admin.unpublish_quiz', id=quiz.id) }}" style="display: inline-block;">
+                <button type="submit" class="btn" style="background-color: var(--warning); color: white; border: none;">Unpublish</button>
+            </form>
+            {% else %}
+            <form method="POST" action="{{ url_for('college_admin.publish_quiz', id=quiz.id) }}" style="display: inline-block;">
+                <button type="submit" class="btn" style="background-color: var(--success); color: white; border: none;">Publish</button>
+            </form>
+            {% endif %}
+            
+            <form method="POST" action="{{ url_for('college_admin.delete_quiz', id=quiz.id) }}" style="display: inline-block;" onsubmit="return confirm('Are you sure you want to delete this quiz?');">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="card" style="margin-bottom: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+            <p><strong>Subject:</strong> {{ quiz.subject.name }}</p>
+            <p><strong>Type:</strong> <span style="text-transform: capitalize;">{{ quiz.quiz_type }}</span></p>
+            <p><strong>Difficulty:</strong> <span style="text-transform: capitalize;">{{ quiz.difficulty }}</span></p>
+        </div>
+        <div>
+            <p><strong>Time Limit:</strong> {{ quiz.time_limit_minutes ~ ' minutes' if quiz.time_limit_minutes else 'None' }}</p>
+            <p><strong>Status:</strong> 
+                {% if quiz.is_published %}
+                <span style="color: var(--success); font-weight: bold;">Published</span>
+                {% else %}
+                <span style="color: var(--muted);">Draft</span>
+                {% endif %}
+            </p>
+            <p><strong>Total Questions:</strong> {{ quiz.questions|length }}</p>
+        </div>
+    </div>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3>Questions</h3>
+        <a href="{{ url_for('college_admin.create_question', quiz_id=quiz.id) }}" class="btn btn-primary">Add Question</a>
+    </div>
+    
+    {% for q in quiz.questions|sort(attribute='order_number') %}
+    <div class="card" style="margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <strong>Q{{ q.order_number }}. {{ q.question_text }}</strong>
+                <span style="color: var(--muted); font-size: 0.9rem; margin-left: 1rem;">({{ q.marks }} mark{{ 's' if q.marks > 1 else '' }})</span>
+            </div>
+            <div>
+                <a href="{{ url_for('college_admin.edit_question', id=q.id) }}" class="btn" style="padding: 0.2rem 0.5rem; font-size: 0.8rem; border: 1px solid var(--primary); color: var(--primary);">Edit</a>
+                <form method="POST" action="{{ url_for('college_admin.delete_question', id=q.id) }}" style="display: inline-block;" onsubmit="return confirm('Delete this question?');">
+                    <button type="submit" class="btn btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;">Delete</button>
+                </form>
+            </div>
+        </div>
+        
+        <ul style="margin-top: 1rem; list-style-type: none; padding-left: 0;">
+            {% for opt in q.options|sort(attribute='order_number') %}
+            <li style="padding: 0.5rem; margin-bottom: 0.25rem; {{ 'background-color: #e8f5e9; border: 1px solid var(--success); border-radius: 4px;' if opt.is_correct else 'border: 1px solid transparent;' }}">
+                {{ loop.index }}. {{ opt.option_text }}
+                {% if opt.is_correct %}
+                <span style="color: var(--success); font-weight: bold; margin-left: 0.5rem;">(Correct)</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        
+        {% if q.explanation %}
+        <div style="margin-top: 1rem; padding: 1rem; background-color: var(--background); border-left: 4px solid var(--secondary);">
+            <strong>Explanation:</strong> {{ q.explanation }}
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div class="card" style="text-align: center; color: var(--muted);">
+        <p>No questions added yet. Add questions before publishing.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

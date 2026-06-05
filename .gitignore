@@ -1,0 +1,15 @@
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.db
+instance/
+.env
+.flaskenv
+app/static/uploads/
+uploads/
+.DS_Store
+.pytest_cache/
+.mypy_cache/

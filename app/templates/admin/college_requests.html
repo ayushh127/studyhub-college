@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}College Requests - Admin{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <aside style="width: 250px;">
+        {% include "components/admin_sidebar.html" %}
+    </aside>
+    
+    <div style="flex: 1;">
+        <h2>College Requests</h2>
+        
+        {% if not requests %}
+        <div class="card">
+            <p>No college requests found.</p>
+        </div>
+        {% endif %}
+        
+        {% for req in requests %}
+        <div class="card" style="margin-top: 1rem;">
+            <h3>{{ req.college_name }} ({{ req.college_code }})</h3>
+            <p><strong>Status:</strong> {{ req.status }}</p>
+            <p><strong>Admin:</strong> {{ req.admin_full_name }} ({{ req.admin_email }})</p>
+            <p><strong>Location:</strong> {{ req.city }}, {{ req.state }}</p>
+            
+            {% if req.status == 'pending' %}
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                <form method="POST" action="{{ url_for('admin.approve_college_request', id=req.id) }}">
+                    <button type="submit" class="btn btn-primary" style="background-color: var(--success);">Approve</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.reject_college_request', id=req.id) }}">
+                    <button type="submit" class="btn btn-primary" style="background-color: var(--danger);">Reject</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

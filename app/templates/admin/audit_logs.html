@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Audit Logs - Admin{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <aside style="width: 250px;">
+        {% include "components/admin_sidebar.html" %}
+    </aside>
+    
+    <div style="flex: 1;">
+        <h2>Audit Logs</h2>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 2px solid var(--border);">
+                    <th style="padding: 0.5rem;">Time</th>
+                    <th style="padding: 0.5rem;">User</th>
+                    <th style="padding: 0.5rem;">Action</th>
+                    <th style="padding: 0.5rem;">Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr style="border-bottom: 1px solid var(--border);">
+                    <td style="padding: 0.5rem;">{{ log.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td style="padding: 0.5rem;">{{ log.actor.full_name if log.actor else 'System' }}</td>
+                    <td style="padding: 0.5rem;">{{ log.action }}</td>
+                    <td style="padding: 0.5rem;">{{ log.details or '-' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

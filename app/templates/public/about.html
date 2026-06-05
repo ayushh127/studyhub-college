@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}About - StudyHub College{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 3rem auto; padding: 2rem; background-color: var(--surface); border: 1px solid var(--border); border-radius: 8px;">
+    <h1 style="font-family: 'Cormorant Garamond', serif; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">About StudyHub</h1>
+    
+    <div style="line-height: 1.8; color: var(--text); font-size: 1.1rem;">
+        <p>
+            StudyHub College is a dedicated platform designed to bridge the gap between academic institutions and their students. 
+            Our mission is to provide a serene, distraction-free environment for rigorous academic preparation.
+        </p>
+        
+        <h2 style="margin-top: 2rem;">Our Philosophy</h2>
+        <p>
+            We believe that learning tools should not distract. Adopting a Classical Minimal Academic aesthetic, StudyHub focuses on clarity and focus—reducing cognitive load so students can immerse themselves in their studies.
+        </p>
+
+        <h2 style="margin-top: 2rem;">Core Features (MVP)</h2>
+        <ul style="padding-left: 2rem;">
+            <li><strong>College-Specific Curricula:</strong> Materials strictly mapped to your college's official syllabus.</li>
+            <li><strong>Quiz Engine:</strong> Comprehensive manual quizzes to test readiness.</li>
+            <li><strong>PYQ Management:</strong> Centralized access to Previous Year Question papers.</li>
+        </ul>
+        
+        <div style="margin-top: 3rem; text-align: center;">
+            <a href="{{ url_for('public.index') }}" class="btn btn-primary" style="padding: 0.75rem 2rem;">Return Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

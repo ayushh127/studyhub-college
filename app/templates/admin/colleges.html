@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Colleges - Platform Admin{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <!-- Sidebar -->
+    <aside style="width: 250px;">
+        {% include "components/admin_sidebar.html" %}
+    </aside>
+    
+    <!-- Main Content -->
+    <div style="flex: 1;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+            <h2>Colleges</h2>
+            <a href="{{ url_for('admin.create_college') }}" class="btn btn-primary">Add College</a>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for college in colleges %}
+            <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 1.25rem;">
+                <div>
+                    <h3 style="margin: 0 0 0.25rem 0; font-size: 1.35rem;">
+                        <a href="{{ url_for('admin.college_detail', id=college.id) }}" style="color: var(--primary-dark); text-decoration: none; font-weight: bold;">
+                            {{ college.name }}
+                        </a>
+                    </h3>
+                    <span class="muted" style="font-size: 0.85rem;">
+                        Code: <strong>{{ college.code }}</strong> | Location: {{ college.city }}, {{ college.state }} | Contact: {{ college.contact_email }}
+                    </span>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    {% if college.status == 'active' %}
+                    <span class="badge" style="background-color: var(--success); color: white; padding: 0.25rem 0.5rem; font-size: 0.8rem; font-weight: bold;">Active</span>
+                    {% elif college.status == 'inactive' %}
+                    <span class="badge" style="background-color: var(--muted); color: white; padding: 0.25rem 0.5rem; font-size: 0.8rem; font-weight: bold;">Inactive</span>
+                    {% else %}
+                    <span class="badge" style="background-color: var(--warning); color: white; padding: 0.25rem 0.5rem; font-size: 0.8rem; font-weight: bold; text-transform: capitalize;">{{ college.status }}</span>
+                    {% endif %}
+                    
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="{{ url_for('admin.college_detail', id=college.id) }}" class="btn" style="border: 1px solid var(--border); padding: 0.25rem 0.5rem; font-size: 0.8rem; color: var(--text); background: white;">View</a>
+                        
+                        {% if college.status == 'active' %}
+                        <form method="POST" action="{{ url_for('admin.deactivate_college', id=college.id) }}" style="display: inline-block;">
+                            <button type="submit" class="btn" style="border: 1px solid var(--danger); color: var(--danger); background: none; padding: 0.25rem 0.5rem; font-size: 0.8rem;">Deactivate</button>
+                        </form>
+                        {% else %}
+                        <form method="POST" action="{{ url_for('admin.activate_college', id=college.id) }}" style="display: inline-block;">
+                            <button type="submit" class="btn" style="border: 1px solid var(--success); color: var(--success); background: none; padding: 0.25rem 0.5rem; font-size: 0.8rem;">Activate</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card" style="text-align: center; color: var(--muted); padding: 3rem;">
+                <p>No colleges registered in the platform yet.</p>
+                <a href="{{ url_for('admin.create_college') }}" class="btn btn-primary" style="margin-top: 1rem;">Register First College</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

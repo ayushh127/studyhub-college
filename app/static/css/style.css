@@ -1,0 +1,226 @@
+:root {
+  --background: #FAF7F0; /* warm cream */
+  --surface: #FFFFFF; /* white */
+  --surface-soft: #F3EBDD; /* parchment/ivory */
+  --primary: #8B5E34; /* classical brown/walnut */
+  --primary-dark: #5C3A21;
+  --accent: #FFB340; /* light golden-orange */
+  --text: #1F1A17; /* warm charcoal */
+  --muted: #7A6F64; /* brown-gray */
+  --border: #E5D6C3;
+  --success: #2F855A;
+  --danger: #B42318;
+  --warning: #B7791F;
+  --ai-accent: #6D28D9; /* royal purple */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--primary-dark);
+  margin-bottom: 1rem;
+}
+
+/* Layout */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+header {
+  background-color: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 0;
+}
+
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  text-decoration: none;
+}
+
+nav a {
+  margin-left: 1rem;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 500;
+}
+
+nav a:hover {
+  color: var(--primary);
+}
+
+main {
+  padding: 2rem 0;
+  min-height: 70vh;
+}
+
+footer {
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--muted);
+}
+
+/* Components */
+.card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--primary-dark);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--surface-soft);
+  font-family: 'Inter', sans-serif;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: var(--surface);
+}
+
+/* Impersonation Banner */
+.impersonation-banner {
+  background-color: var(--warning);
+  color: white;
+  text-align: center;
+  padding: 0.5rem;
+  font-weight: 600;
+}
+.impersonation-banner a {
+  color: white;
+  text-decoration: underline;
+  margin-left: 1rem;
+}
+
+/* Mobile First Helpers */
+@media (max-width: 768px) {
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  nav {
+    margin-top: 1rem;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  nav a {
+    margin-left: 0 !important;
+    margin-right: 0.5rem;
+  }
+  .user-profile-info {
+    margin-left: 0 !important;
+    width: 100%;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+  .btn-logout {
+    margin-left: 0 !important;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* User profile styling */
+.badge {
+  background-color: var(--accent);
+  color: var(--text);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  display: inline-block;
+}
+
+.user-profile-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.btn-logout {
+  transition: all 0.2s ease;
+}
+.btn-logout:hover {
+  background-color: var(--danger) !important;
+  color: white !important;
+}
+
+/* Interactive Clickable Cards */
+.card-clickable {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+.card-clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 94, 52, 0.1);
+  border-color: var(--primary);
+}
+
+

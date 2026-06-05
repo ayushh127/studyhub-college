@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}College Details: {{ college.name }} - Platform Admin{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 2rem;">
+    <!-- Sidebar -->
+    <aside style="width: 250px;">
+        {% include "components/admin_sidebar.html" %}
+    </aside>
+    
+    <!-- Main Content -->
+    <div style="flex: 1;">
+        <!-- Breadcrumbs -->
+        <nav style="margin-bottom: 1.5rem; font-size: 0.9rem;">
+            <a href="{{ url_for('admin.dashboard') }}" style="color: var(--muted); text-decoration: none;">Dashboard</a>
+            <span style="color: var(--muted); margin: 0 0.5rem;">&rarr;</span>
+            <a href="{{ url_for('admin.colleges') }}" style="color: var(--muted); text-decoration: none;">Colleges</a>
+            <span style="color: var(--muted); margin: 0 0.5rem;">&rarr;</span>
+            <span style="color: var(--text); font-weight: 500;">{{ college.name }}</span>
+        </nav>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+            <div>
+                <h2 style="margin-bottom: 0.25rem;">{{ college.name }}</h2>
+                <p class="muted" style="margin: 0;">Code: <strong>{{ college.code }}</strong> | Registered on: {{ college.created_at.strftime('%Y-%m-%d') }}</p>
+            </div>
+            
+            <div>
+                {% if college.status == 'active' %}
+                <form method="POST" action="{{ url_for('admin.deactivate_college', id=college.id) }}" style="display: inline-block;">
+                    <button type="submit" class="btn" style="border: 1px solid var(--danger); color: var(--danger); background: none;">Deactivate College</button>
+                </form>
+                {% else %}
+                <form method="POST" action="{{ url_for('admin.activate_college', id=college.id) }}" style="display: inline-block;">
+                    <button type="submit" class="btn btn-primary">Activate College</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem;">
+            <!-- Left Side: Basic Info & Actions -->
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                <div class="card">
+                    <h3 style="font-size: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;">College Profile</h3>
+                    
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.95rem;">
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <th style="padding: 0.5rem 0; color: var(--muted);">Status</th>
+                            <td style="padding: 0.5rem 0; font-weight: bold;">
+                                {% if college.status == 'active' %}
+                                <span style="color: var(--success);">Active</span>
+                                {% else %}
+                                <span style="color: var(--danger);">Inactive</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <th style="padding: 0.5rem 0; color: var(--muted);">City</th>
+                            <td style="padding: 0.5rem 0;">{{ college.city }}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <th style="padding: 0.5rem 0; color: var(--muted);">State</th>
+                            <td style="padding: 0.5rem 0;">{{ college.state }}</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border);">
+                            <th style="padding: 0.5rem 0; color: var(--muted);">Contact Email</th>
+                            <td style="padding: 0.5rem 0;">
+                                <a href="mailto:{{ college.contact_email }}" style="color: var(--primary);">{{ college.contact_email }}</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th style="padding: 0.5rem 0; color: var(--muted);">Contact Phone</th>
+                            <td style="padding: 0.5rem 0;">{{ college.contact_phone }}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card" style="background-color: var(--surface-soft);">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem;">Address</h3>
+                    <p style="white-space: pre-wrap; font-size: 0.95rem; line-height: 1.5; color: var(--text);">{{ college.address }}</p>
+                </div>
+            </div>
+
+            <!-- Right Side: College Statistics & Activity counts -->
+            <div>
+                <div class="card">
+                    <h3 style="font-size: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">Associated Records</h3>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
+                        <div style="padding: 1rem; border: 1px solid var(--border); border-radius: 6px; background-color: var(--background);">
+                            <span style="display: block; font-size: 2.25rem; font-weight: bold; font-family: 'Cormorant Garamond', serif; color: var(--primary-dark);">{{ subject_count }}</span>
+                            <span style="font-size: 0.85rem; color: var(--muted); text-transform: uppercase;">Subjects</span>
+                        </div>
+
+                        <div style="padding: 1rem; border: 1px solid var(--border); border-radius: 6px; background-color: var(--background);">
+                            <span style="display: block; font-size: 2.25rem; font-weight: bold; font-family: 'Cormorant Garamond', serif; color: var(--primary-dark);">{{ student_count }}</span>
+                            <span style="font-size: 0.85rem; color: var(--muted); text-transform: uppercase;">Students</span>
+                        </div>
+
+                        <div style="padding: 1rem; border: 1px solid var(--border); border-radius: 6px; background-color: var(--background);">
+                            <span style="display: block; font-size: 2.25rem; font-weight: bold; font-family: 'Cormorant Garamond', serif; color: var(--primary-dark);">{{ admin_count }}</span>
+                            <span style="font-size: 0.85rem; color: var(--muted); text-transform: uppercase;">College Admins</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem;">
+                    <h3 style="font-size: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;">Platform Control Actions</h3>
+                    <p class="muted" style="font-size: 0.9rem; margin-bottom: 1rem;">
+                        Deactivating a college makes it inaccessible to all associated college admins and students. Re-activating restores normal access immediately.
+                    </p>
+                    {% if college.status == 'active' %}
+                    <form method="POST" action="{{ url_for('admin.deactivate_college', id=college.id) }}">
+                        <button type="submit" class="btn" style="background-color: var(--danger); color: white; width: 100%;">Deactivate Access for this College</button>
+                    </form>
+                    {% else %}
+                    <form method="POST" action="{{ url_for('admin.activate_college', id=college.id) }}">
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Re-activate Access for this College</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                <h3 style="font-size: 1.25rem; margin: 0;">College Admins</h3>
+                <a href="{{ url_for('admin.create_college_admin', id=college.id) }}" class="btn btn-primary btn-sm" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;">+ Add College Admin</a>
+            </div>
+            
+            <table class="table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--border); text-align: left;">
+                        <th style="padding: 0.75rem;">Name</th>
+                        <th style="padding: 0.75rem;">Email</th>
+                        <th style="padding: 0.75rem;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for admin in college_admins %}
+                    <tr style="border-bottom: 1px solid var(--border);">
+                        <td style="padding: 0.75rem;">{{ admin.full_name }}</td>
+                        <td style="padding: 0.75rem;">{{ admin.email }}</td>
+                        <td style="padding: 0.75rem;">
+                            {% if admin.is_active %}
+                            <span style="color: var(--success); font-weight: bold;">Active</span>
+                            {% else %}
+                            <span style="color: var(--danger); font-weight: bold;">Inactive</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3" style="padding: 1rem; text-align: center; color: var(--muted);">No admins found for this college.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

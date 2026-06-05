@@ -5,6 +5,7 @@ All notable changes to the StudyHub College project will be documented in this f
 ## [Unreleased]
 ### Added
 - Removed demo credentials from login page UI.
+- Implemented student notifications UI components (header and bottom navigation bell alerts, dynamic unread badge count, subject-details subscribe/unsubscribe button, notifications list page, and mark read actions).
 - Implemented student mobile-first UI/UX polish (responsive dashboard grids, responsive subject columns, touch-friendly radio option inputs, mobile sticky footer offset, full-width stacking action buttons, and student bottom navigation bar).
 - Added `create_admin.py` script for secure platform admin creation.
 - Added UI to create additional platform admins from the Admin Dashboard.

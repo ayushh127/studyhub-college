@@ -39,6 +39,13 @@
                         <a href="{{ url_for('student.subjects') }}" class="student-header-link">Subjects</a>
                         <a href="{{ url_for('student.pyqs') }}" class="student-header-link">PYQs</a>
                         <a href="{{ url_for('student.quizzes') }}" class="student-header-link">Quizzes</a>
+                        <a href="{{ url_for('student.notifications') }}" class="student-header-link" style="position: relative;">
+                            🔔 Notifications
+                            {% set unread_count = current_user.get_unread_notification_count() %}
+                            {% if unread_count > 0 %}
+                            <span style="background-color: var(--danger); color: white; border-radius: 50%; padding: 0.1rem 0.35rem; font-size: 0.75rem; font-weight: bold; position: absolute; top: -8px; right: -12px;">{{ unread_count }}</span>
+                            {% endif %}
+                        </a>
                     {% endif %}
                     
                     <span class="user-profile-info" style="margin-left: 1rem; color: var(--muted); font-size: 0.9rem;">
@@ -110,6 +117,14 @@
         <a href="{{ url_for('student.subjects') }}" class="{% if request.path == url_for('student.subjects') or '/student/subjects/' in request.path %}active{% endif %}">
             <span class="nav-icon">📚</span>
             <span class="nav-label">Subjects</span>
+        </a>
+        <a href="{{ url_for('student.notifications') }}" class="{% if request.path == url_for('student.notifications') %}active{% endif %}" style="position: relative;">
+            <span class="nav-icon">🔔</span>
+            <span class="nav-label">Alerts</span>
+            {% set unread_count = current_user.get_unread_notification_count() %}
+            {% if unread_count > 0 %}
+            <span style="background-color: var(--danger); color: white; border-radius: 50%; padding: 0.05rem 0.3rem; font-size: 0.7rem; font-weight: bold; position: absolute; top: 4px; right: 22%;">{{ unread_count }}</span>
+            {% endif %}
         </a>
         <a href="{{ url_for('student.pyqs') }}" class="{% if request.path == url_for('student.pyqs') or '/student/pyqs/' in request.path %}active{% endif %}">
             <span class="nav-icon">📝</span>

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_login import login_required, current_user
-from app.models import College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress
+from app.models import College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead
 from app.extensions import db
 from datetime import datetime
 from functools import wraps
@@ -233,3 +233,98 @@ def pyq_details(id):
     if not pyq.is_published:
         abort(403)
     return render_template('student/pyq_details.html', pyq=pyq)
+
+
+@student_bp.route('/notifications', methods=['GET'])
+@check_college_access
+def notifications():
+    # Subscribed subject IDs subquery
+    subscribed_sub_queries = db.session.query(SubjectSubscription.subject_id).filter_by(user_id=current_user.id).subquery()
+    
+    # Query notifications for student's college and subscribed subjects
+    notifications_list = Notification.query.filter(
+        Notification.college_id == current_user.college_id,
+        Notification.subject_id.in_(subscribed_sub_queries)
+    ).order_by(Notification.created_at.desc()).all()
+    
+    # Get read notification IDs for this user
+    read_notification_ids = {r.notification_id for r in NotificationRead.query.filter_by(user_id=current_user.id).all()}
+    
+    return render_template('student/notifications.html', 
+                           notifications=notifications_list, 
+                           read_notification_ids=read_notification_ids)
+
+
+@student_bp.route('/notifications/<int:id>/read', methods=['POST'])
+@check_college_access
+def read_notification(id):
+    notification = Notification.query.get_or_404(id)
+    if notification.college_id != current_user.college_id:
+        abort(403)
+        
+    # Check if a subscription exists for that subject
+    sub = SubjectSubscription.query.filter_by(user_id=current_user.id, subject_id=notification.subject_id).first()
+    if not sub:
+        flash('You are not subscribed to this subject.', 'warning')
+        return redirect(url_for('student.notifications'))
+        
+    already_read = NotificationRead.query.filter_by(user_id=current_user.id, notification_id=notification.id).first()
+    if not already_read:
+        read_entry = NotificationRead(user_id=current_user.id, notification_id=notification.id)
+        db.session.add(read_entry)
+        db.session.commit()
+        
+    flash('Notification marked as read.', 'success')
+    return redirect(url_for('student.notifications'))
+
+
+@student_bp.route('/notifications/read-all', methods=['POST'])
+@check_college_access
+def read_all_notifications():
+    # Subscribed subject IDs
+    subscribed_sub_queries = db.session.query(SubjectSubscription.subject_id).filter_by(user_id=current_user.id).subquery()
+    
+    # Query all unread notifications for student's college and subscribed subjects
+    unread_notifications = Notification.query.filter(
+        Notification.college_id == current_user.college_id,
+        Notification.subject_id.in_(subscribed_sub_queries)
+    ).all()
+    
+    read_notification_ids = {r.notification_id for r in NotificationRead.query.filter_by(user_id=current_user.id).all()}
+    
+    count = 0
+    for notification in unread_notifications:
+        if notification.id not in read_notification_ids:
+            read_entry = NotificationRead(user_id=current_user.id, notification_id=notification.id)
+            db.session.add(read_entry)
+            count += 1
+            
+    if count > 0:
+        db.session.commit()
+        flash(f'Marked {count} notifications as read.', 'success')
+    else:
+        flash('No new notifications to mark as read.', 'info')
+        
+    return redirect(url_for('student.notifications'))
+
+
+@student_bp.route('/subjects/<int:id>/toggle-subscription', methods=['POST'])
+@check_college_access
+def toggle_subscription(id):
+    subject = Subject.query.get_or_404(id)
+    if subject.college_id != current_user.college_id:
+        abort(403)
+        
+    sub = SubjectSubscription.query.filter_by(user_id=current_user.id, subject_id=subject.id).first()
+    if sub:
+        db.session.delete(sub)
+        db.session.commit()
+        flash(f'Unsubscribed from {subject.name} notifications.', 'info')
+    else:
+        new_sub = SubjectSubscription(user_id=current_user.id, subject_id=subject.id)
+        db.session.add(new_sub)
+        db.session.commit()
+        flash(f'Subscribed to {subject.name} notifications.', 'success')
+        
+    return redirect(url_for('student.subject_details', id=subject.id))
+

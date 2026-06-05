@@ -24,6 +24,20 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
+    def get_unread_notification_count(self):
+        if self.role != 'student' or not self.college_id:
+            return 0
+        from .models import Notification, SubjectSubscription, NotificationRead
+        sub_ids = [s.subject_id for s in self.subscriptions]
+        if not sub_ids:
+            return 0
+        total_notifications = Notification.query.filter(
+            Notification.college_id == self.college_id,
+            Notification.subject_id.in_(sub_ids)
+        ).all()
+        read_ids = {r.notification_id for r in NotificationRead.query.filter_by(user_id=self.id).all()}
+        return sum(1 for n in total_notifications if n.id not in read_ids)
+
 
 class College(db.Model):
     __tablename__ = 'colleges'
@@ -236,3 +250,44 @@ class AuditLog(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     actor = db.relationship('User', foreign_keys=[actor_user_id])
+
+
+class SubjectSubscription(db.Model):
+    __tablename__ = 'subject_subscriptions'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'subject_id', name='_user_subject_uc'),)
+
+    user = db.relationship('User', backref='subscriptions')
+    subject = db.relationship('Subject', backref='subscribers')
+
+
+class Notification(db.Model):
+    __tablename__ = 'notifications'
+    id = db.Column(db.Integer, primary_key=True)
+    college_id = db.Column(db.Integer, db.ForeignKey('colleges.id'), nullable=False)
+    subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable=False)
+    title = db.Column(db.String(150), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    link = db.Column(db.String(255), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    college = db.relationship('College', backref='notifications')
+    subject = db.relationship('Subject', backref='notifications')
+
+
+class NotificationRead(db.Model):
+    __tablename__ = 'notification_reads'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    notification_id = db.Column(db.Integer, db.ForeignKey('notifications.id'), nullable=False)
+    read_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'notification_id', name='_user_notification_uc'),)
+
+    user = db.relationship('User', backref='reads')
+    notification = db.relationship('Notification', backref='reads')
+

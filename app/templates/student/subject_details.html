@@ -18,7 +18,15 @@
             <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2.25rem; margin: 0; color: var(--primary-dark);">{{ subject.name }}</h2>
             <p class="muted" style="margin: 0.5rem 0 0 0;">Course Code: <strong>{{ subject.code }}</strong> | Semester: {{ subject.semester if subject.semester else 'General' }}</p>
         </div>
-        <div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            {% set is_subscribed = current_user.subscriptions|selectattr('subject_id', 'equalto', subject.id)|list|length > 0 %}
+            <form method="POST" action="{{ url_for('student.toggle_subscription', id=subject.id) }}" style="display: inline;">
+                {% if is_subscribed %}
+                <button type="submit" class="btn" style="border: 1px solid var(--primary); background-color: var(--primary); color: white; font-size: 0.9rem;">🔕 Unsubscribe</button>
+                {% else %}
+                <button type="submit" class="btn" style="border: 1px solid var(--primary); background: none; color: var(--primary); font-size: 0.9rem;">🔔 Subscribe</button>
+                {% endif %}
+            </form>
             <a href="{{ url_for('student.subjects') }}" class="btn" style="border: 1px solid var(--border); text-decoration: none; color: var(--text); font-size: 0.9rem; display: inline-block;">Back to Subjects</a>
         </div>
     </div>

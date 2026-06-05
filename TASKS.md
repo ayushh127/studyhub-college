@@ -121,11 +121,11 @@ This document tracks the granular development tasks for the StudyHub College MVP
 - [x] Implement auto-stacking behavior for result and review action button groups on small screens
 
 ## Phase 7: Subject-Wise Notifications (Planned)
-- [ ] Implement `SubjectSubscription`, `Notification`, and `NotificationRead` database models in `app/models.py`
-- [ ] Create and run migration script for new database tables
-- [ ] Implement student endpoints (`/student/notifications`, read status actions, and subscription toggle) in `app/routes/student.py`
-- [ ] Add subscription action button on student subject details view
-- [ ] Add interactive bell notification counts pill to student layout header
-- [ ] Implement notifications list template (`student/notifications.html`)
+- [x] Implement `SubjectSubscription`, `Notification`, and `NotificationRead` database models in `app/models.py`
+- [x] Create and run migration script for new database tables
+- [x] Implement student endpoints (`/student/notifications`, read status actions, and subscription toggle) in `app/routes/student.py`
+- [x] Add subscription action button on student subject details view
+- [x] Add interactive bell notification counts pill to student layout header
+- [x] Implement notifications list template (`student/notifications.html`)
 - [ ] Integrate trigger dispatch calls in College Admin material, PYQ, and quiz publishing routes
 - [ ] Conduct end-to-end verification checks for isolation and read states

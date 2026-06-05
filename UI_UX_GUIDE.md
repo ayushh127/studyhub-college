@@ -46,8 +46,11 @@ h1, h2, h3 {
 ### Design Principles
 
 1. **Mobile-First Layout:** 
-   - Cards stack vertically on mobile.
-   - Use bottom navigation for students on mobile.
+   - Cards stack vertically on mobile (specifically using grid breakpoint triggers to switch from 2-column or 1.5-column layouts to single-column layouts).
+   - Use bottom navigation for students on mobile with clear icons (📊, 📚, 📝, ❓) and text labels, while automatically hiding redundant top-header navigation links.
+   - Pad the body bottom (`padding-bottom: 80px`) to prevent bottom navigation overlaps with footer or content blocks.
+   - Offset the fixed quiz submission footer above the bottom navigation bar (`bottom: 60px`) on mobile viewports.
+   - Stack button groups vertically on screens under 480px wide to provide full-width, easy-to-tap touch targets.
    - Use a sidebar for admin interfaces on desktop (collapsible on mobile).
 2. **Component Aesthetics:**
    - Use soft, warm borders (`--border`).
@@ -65,6 +68,7 @@ h1, h2, h3 {
 - **Card Interactivity**: Subject cards on the student dashboard use soft parchment/brown highlights and scale slightly on hover (`.card-clickable`) to make the interface feel alive. They also present quantitative summaries (units, quizzes, resources count) to avoid dead layouts.
 - **Context-Rich Available Items**: All listed items (such as quizzes) must describe their placement in the Subject/Unit structure.
 - **Real-Time Instant Filters**: List structures (subjects directory) are equipped with real-time text input matching name, code, semester, and description with immediate empty-state warnings.
+- **Notifications UI & Subscription States**: The notification bell should display a small numeric badge (`--danger`) when unread items exist. Notification card elements should share the soft borders (`--border`) and clean card shapes of the standard dashboard layout. Subject subscription buttons must change dynamically from "🔔 Subscribe" (outlined) to "🔕 Unsubscribe" (solid brown/filled) to ensure immediate visual feedback of subscription status.
 
 ### Avoid:
 - Generic blue SaaS themes.

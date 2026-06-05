@@ -15,13 +15,15 @@
         <span style="color: var(--text); font-weight: 500;">Unit {{ unit.unit_number }}: {{ unit.title }}</span>
     </nav>
 
-    <div style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;">
+    <div class="flex-header-responsive" style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
         <div>
             <span class="badge" style="background-color: var(--primary); color: white; margin-bottom: 0.5rem;">Unit {{ unit.unit_number }}</span>
             <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin: 0; color: var(--primary-dark);">{{ unit.title }}</h2>
             <p class="muted" style="margin: 0.25rem 0 0 0;">Subject: <strong>{{ unit.subject.name }} ({{ unit.subject.code }})</strong></p>
         </div>
-        <a href="{{ url_for('student.subject_details', id=unit.subject_id) }}" class="btn" style="border: 1px solid var(--border); text-decoration: none; color: var(--text); font-size: 0.9rem;">Back to Subject</a>
+        <div>
+            <a href="{{ url_for('student.subject_details', id=unit.subject_id) }}" class="btn" style="border: 1px solid var(--border); text-decoration: none; color: var(--text); font-size: 0.9rem; display: inline-block;">Back to Subject</a>
+        </div>
     </div>
 
     {% if unit.description %}

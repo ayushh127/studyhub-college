@@ -110,3 +110,22 @@ This document tracks the granular development tasks for the StudyHub College MVP
 - [x] Add `.env.example` file with placeholder values
 - [x] Verify `SECRET_KEY` reads from environment variables with fallback
 - [x] Update documentation with deployment instructions and safety warnings
+
+## Student Mobile UX Polish
+- [x] Implement responsive layout column switching for student dashboard grid
+- [x] Implement responsive layout column switching for student subject details grid
+- [x] Create touch-friendly option labels for quiz attempt radio selectors
+- [x] Offset fixed quiz submission sticky footer above the bottom navigation bar on mobile
+- [x] Implement bottom navigation bar specifically for logged-in students on mobile viewports
+- [x] Hide redundant student header links on mobile to save screen space
+- [x] Implement auto-stacking behavior for result and review action button groups on small screens
+
+## Phase 7: Subject-Wise Notifications (Planned)
+- [ ] Implement `SubjectSubscription`, `Notification`, and `NotificationRead` database models in `app/models.py`
+- [ ] Create and run migration script for new database tables
+- [ ] Implement student endpoints (`/student/notifications`, read status actions, and subscription toggle) in `app/routes/student.py`
+- [ ] Add subscription action button on student subject details view
+- [ ] Add interactive bell notification counts pill to student layout header
+- [ ] Implement notifications list template (`student/notifications.html`)
+- [ ] Integrate trigger dispatch calls in College Admin material, PYQ, and quiz publishing routes
+- [ ] Conduct end-to-end verification checks for isolation and read states

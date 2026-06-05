@@ -4,7 +4,7 @@
 
 {% block content %}
 <div style="max-width: 1000px; margin: 2rem auto;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; border-bottom: 2px solid var(--border); padding-bottom: 1rem;">
+    <div class="flex-header-responsive" style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
         <div>
             <h2 style="margin: 0; margin-bottom: 0.5rem; font-family: 'Cormorant Garamond', serif;">Student Dashboard</h2>
             <span class="muted">Welcome back, {{ current_user.full_name }}</span>
@@ -12,13 +12,13 @@
             <span class="badge" style="background-color: var(--primary); color: white; margin-left: 0.5rem;">{{ current_user.college.name }}</span>
             {% endif %}
         </div>
-        <div style="display: flex; gap: 0.5rem;">
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
             <a href="{{ url_for('student.select_college') }}" class="btn" style="border: 1px solid var(--border); padding: 0.5rem 1rem; font-size: 0.9rem; text-decoration: none; color: var(--text);">Change College</a>
             <a href="{{ url_for('auth.logout') }}" class="btn btn-logout" style="border: 1px solid var(--danger); padding: 0.5rem 1rem; font-size: 0.9rem; text-decoration: none; color: var(--danger); background: none;">Logout</a>
         </div>
     </div>
     
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+    <div class="grid-2col">
         <div>
             <h3 style="font-family: 'Cormorant Garamond', serif; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">Your Subjects</h3>
             <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">

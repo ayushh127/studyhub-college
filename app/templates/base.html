@@ -11,7 +11,7 @@
     <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body>
+<body class="{% if current_user.is_authenticated and current_user.role == 'student' %}student-body{% endif %}">
     {% if session.get('original_admin_id') or session.get('impersonated_user_id') %}
     <div class="impersonation-banner">
         You are currently impersonating {{ current_user.full_name }} ({{ current_user.role }}). 
@@ -35,10 +35,10 @@
                         <a href="{{ url_for('college_admin.materials') }}">Materials</a>
                         <a href="{{ url_for('college_admin.quizzes') }}">Quizzes</a>
                     {% else %}
-                        <a href="{{ url_for('student.dashboard') }}">Dashboard</a>
-                        <a href="{{ url_for('student.subjects') }}">Subjects</a>
-                        <a href="{{ url_for('student.pyqs') }}">PYQs</a>
-                        <a href="{{ url_for('student.quizzes') }}">Quizzes</a>
+                        <a href="{{ url_for('student.dashboard') }}" class="student-header-link">Dashboard</a>
+                        <a href="{{ url_for('student.subjects') }}" class="student-header-link">Subjects</a>
+                        <a href="{{ url_for('student.pyqs') }}" class="student-header-link">PYQs</a>
+                        <a href="{{ url_for('student.quizzes') }}" class="student-header-link">Quizzes</a>
                     {% endif %}
                     
                     <span class="user-profile-info" style="margin-left: 1rem; color: var(--muted); font-size: 0.9rem;">
@@ -100,5 +100,26 @@
             }, 5000);
         });
     </script>
+    
+    {% if current_user.is_authenticated and current_user.role == 'student' %}
+    <div class="student-bottom-nav">
+        <a href="{{ url_for('student.dashboard') }}" class="{% if request.path == url_for('student.dashboard') %}active{% endif %}">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Dashboard</span>
+        </a>
+        <a href="{{ url_for('student.subjects') }}" class="{% if request.path == url_for('student.subjects') or '/student/subjects/' in request.path %}active{% endif %}">
+            <span class="nav-icon">📚</span>
+            <span class="nav-label">Subjects</span>
+        </a>
+        <a href="{{ url_for('student.pyqs') }}" class="{% if request.path == url_for('student.pyqs') or '/student/pyqs/' in request.path %}active{% endif %}">
+            <span class="nav-icon">📝</span>
+            <span class="nav-label">PYQs</span>
+        </a>
+        <a href="{{ url_for('student.quizzes') }}" class="{% if request.path == url_for('student.quizzes') or '/student/attempts/' in request.path or '/student/quizzes/' in request.path %}active{% endif %}">
+            <span class="nav-icon">❓</span>
+            <span class="nav-label">Quizzes</span>
+        </a>
+    </div>
+    {% endif %}
 </body>
 </html>

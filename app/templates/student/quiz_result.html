@@ -23,13 +23,13 @@
             </div>
         </div>
         
-        <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center; margin-top: 1.5rem;">
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+        <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center; margin-top: 1.5rem; width: 100%;">
+            <div class="btn-group-responsive">
                 <a href="{{ url_for('student.quiz_review', attempt_id=attempt.id) }}" class="btn btn-primary" style="padding: 0.75rem 1.5rem; text-decoration: none;">Review Answers</a>
                 <a href="{{ url_for('student.start_quiz', id=attempt.quiz_rel.id) }}" class="btn" style="border: 1px solid var(--primary); color: var(--primary); padding: 0.75rem 1.5rem; text-decoration: none; font-weight: bold; background: none;">Retry Quiz</a>
             </div>
             
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin-top: 0.5rem; border-top: 1px dashed var(--border); padding-top: 1.5rem; width: 100%;">
+            <div class="btn-group-responsive" style="margin-top: 0.5rem; border-top: 1px dashed var(--border); padding-top: 1.5rem;">
                 {% if attempt.quiz_rel.unit_id %}
                 <a href="{{ url_for('student.unit_details', id=attempt.quiz_rel.unit_id) }}" class="btn" style="border: 1px solid var(--border); padding: 0.75rem 1.5rem; text-decoration: none; color: var(--text); background-color: var(--surface-soft);">Back to Unit</a>
                 {% endif %}

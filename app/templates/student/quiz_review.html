@@ -47,8 +47,8 @@
     </div>
     {% endfor %}
     
-    <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center; margin-top: 3rem; border-top: 1px dashed var(--border); padding-top: 2rem;">
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+    <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center; margin-top: 3rem; border-top: 1px dashed var(--border); padding-top: 2rem; width: 100%;">
+        <div class="btn-group-responsive">
             <a href="{{ url_for('student.start_quiz', id=attempt.quiz_rel.id) }}" class="btn" style="border: 1px solid var(--primary); color: var(--primary); padding: 0.75rem 1.5rem; text-decoration: none; font-weight: bold; background: none;">Retry Quiz</a>
             {% if attempt.quiz_rel.unit_id %}
             <a href="{{ url_for('student.unit_details', id=attempt.quiz_rel.unit_id) }}" class="btn" style="border: 1px solid var(--border); padding: 0.75rem 1.5rem; text-decoration: none; color: var(--text); background-color: var(--surface-soft);">Back to Unit</a>

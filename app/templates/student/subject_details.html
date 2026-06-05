@@ -13,12 +13,14 @@
         <span style="color: var(--text); font-weight: 500;">{{ subject.name }}</span>
     </nav>
 
-    <div style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;">
+    <div class="flex-header-responsive" style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
         <div>
             <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2.25rem; margin: 0; color: var(--primary-dark);">{{ subject.name }}</h2>
             <p class="muted" style="margin: 0.5rem 0 0 0;">Course Code: <strong>{{ subject.code }}</strong> | Semester: {{ subject.semester if subject.semester else 'General' }}</p>
         </div>
-        <a href="{{ url_for('student.subjects') }}" class="btn" style="border: 1px solid var(--border); text-decoration: none; color: var(--text); font-size: 0.9rem;">Back to Subjects</a>
+        <div>
+            <a href="{{ url_for('student.subjects') }}" class="btn" style="border: 1px solid var(--border); text-decoration: none; color: var(--text); font-size: 0.9rem; display: inline-block;">Back to Subjects</a>
+        </div>
     </div>
 
     {% if subject.description %}
@@ -28,7 +30,7 @@
     </div>
     {% endif %}
 
-    <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem;">
+    <div class="grid-subject-details">
         <!-- Left Column: Units -->
         <div>
             <h3 style="font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1.5rem; color: var(--primary-dark);">Course Units</h3>

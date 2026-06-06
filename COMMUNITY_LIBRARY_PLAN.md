@@ -130,7 +130,7 @@ Materials flag for review but **are not auto-deleted**. They are queued in the P
   * Define `CommunityMaterial`, `CommunityMaterialLike`, `CommunityMaterialRating`, and `CommunityMaterialReport` in `app/models.py`.
   * Create a migration script to add the tables to SQLite without affecting existing data.
   * *Note: Community Library database models added. Routes/UI/interactions/moderation not implemented yet.*
-* **Step 2: Student Interface - Browsing & Searching**
+* **Step 2: Student Interface - Browsing & Searching** (COMPLETED)
   * Create templates `student/community_list.html` and the student route `/student/community`.
   * Add filters (search input, type selector, college tag dropdown) and sorting logic (latest, views, likes).
 * **Step 3: Student Interface - Uploads & File Handling**

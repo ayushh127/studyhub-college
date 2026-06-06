@@ -4,6 +4,7 @@ All notable changes to the StudyHub College project will be documented in this f
 
 ## [Unreleased]
 ### Added
+- Implemented Phase 10 Step 2: Student Browsing & Searching for Community Library. Created student route `/student/community` in `app/routes/student.py` and browsing template `app/templates/student/community_list.html`. Integrated search, filtering by material type and college tags, and sorting options. Added link to student navigation header. Note: Upload, file handling, interactions, and moderation are not implemented yet.
 - Implemented Phase 10 Step 1: Database Setup for Community Library. Added `CommunityMaterial`, `CommunityMaterialLike`, `CommunityMaterialRating`, and `CommunityMaterialReport` models. Note: Community Library database models added. Routes/UI/interactions/moderation not implemented yet.
 - Implemented Modern Minimal SaaS Redesign. Replaced the old cream/brown theme with a clean white/black/blue modern UI design system. Overwrote CSS variables in `style.css`, globally overridden serif/Cormorant Garamond styling with clean sans-serif/Inter font stacks, modernized buttons, borders, shadow cards, and form inputs. Removed decorative Cormorant Garamond Google Font references, and updated `UI_UX_GUIDE.md` design parameters.
 - Implemented Phase 8: PythonAnywhere & PWA Support. Configured file upload size limits to 5MB, created custom 413 error templates, added PWA `manifest.json` and `sw.js` registration, generated solid-color placeholder icons, and wrote detailed hosting/installation guides.

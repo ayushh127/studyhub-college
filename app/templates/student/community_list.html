@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Community Library - StudyHub College{% endblock %}
+
+{% block content %}
+<div style="max-width: 1100px; margin: 2rem auto;">
+    <!-- Header -->
+    <div class="flex-header-responsive" style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+        <div>
+            <h2 style="font-size: 2rem; margin: 0; font-weight: 800;">Community Library</h2>
+            <p class="muted" style="margin: 0.5rem 0 0 0;">An open, student-to-student sharing hub for study materials, assignments, and notes across all colleges.</p>
+        </div>
+        <div>
+            <!-- Upload Material placeholder -->
+            <button class="btn btn-primary" style="opacity: 0.6; cursor: not-allowed;" disabled title="Upload feature is coming in a future step!">
+                ➕ Share Material
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters and Search Form -->
+    <form method="GET" action="{{ url_for('student.community_library') }}" class="card" style="padding: 1.5rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+        <div style="flex: 2 1 250px;">
+            <label for="q" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">Search Title, Description or Subject</label>
+            <input type="text" name="q" id="q" value="{{ search_query }}" placeholder="e.g. Physics notes, chemistry lab..." class="form-control" style="padding: 0.5rem 0.75rem;">
+        </div>
+        <div style="flex: 1 1 150px;">
+            <label for="material_type" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">Material Type</label>
+            <select name="material_type" id="material_type" class="form-control" style="padding: 0.5rem 0.75rem;">
+                <option value="">All Types</option>
+                <option value="notes" {% if selected_material_type == 'notes' %}selected{% endif %}>Notes</option>
+                <option value="assignment" {% if selected_material_type == 'assignment' %}selected{% endif %}>Assignment</option>
+                <option value="pyq" {% if selected_material_type == 'pyq' %}selected{% endif %}>PYQ</option>
+                <option value="other" {% if selected_material_type == 'other' %}selected{% endif %}>Other</option>
+            </select>
+        </div>
+        <div style="flex: 1 1 180px;">
+            <label for="college_tag_id" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">College Tag</label>
+            <select name="college_tag_id" id="college_tag_id" class="form-control" style="padding: 0.5rem 0.75rem;">
+                <option value="">All Colleges</option>
+                {% for college in colleges %}
+                <option value="{{ college.id }}" {% if selected_college_tag_id == college.id %}selected{% endif %}>{{ college.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div style="flex: 1 1 150px;">
+            <label for="sort" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">Sort By</label>
+            <select name="sort" id="sort" class="form-control" style="padding: 0.5rem 0.75rem;">
+                <option value="latest" {% if sort_by == 'latest' %}selected{% endif %}>Latest</option>
+                <option value="views" {% if sort_by == 'views' %}selected{% endif %}>Most Viewed</option>
+                <option value="likes" {% if sort_by == 'likes' %}selected{% endif %}>Most Liked</option>
+                <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Top Rated</option>
+            </select>
+        </div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.25rem;">Apply</button>
+            <a href="{{ url_for('student.community_library') }}" class="btn btn-outline" style="padding: 0.55rem 1.25rem;">Reset</a>
+        </div>
+    </form>
+
+    <!-- Grid of Material Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+        {% for material in materials %}
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.25rem;">
+                    <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">
+                        {{ material.material_type|title }}
+                    </span>
+                    {% if material.college_tag %}
+                    <span class="badge" style="font-size: 0.75rem; font-weight: normal; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ material.college_tag.name }}">
+                        📍 {{ material.college_tag.name }}
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <h3 style="margin-top: 0; margin-bottom: 0.25rem; font-size: 1.25rem; font-weight: 600; line-height: 1.3;">
+                    {{ material.title }}
+                </h3>
+                
+                <div style="font-size: 0.8rem; color: var(--primary-dark); font-weight: 600; margin-bottom: 0.75rem;">
+                    Subject: {{ material.subject_name }}
+                </div>
+                
+                <p class="muted" style="font-size: 0.9rem; line-height: 1.4; margin-bottom: 1.25rem;">
+                    {{ material.description|truncate(120) if material.description else 'No description provided.' }}
+                </p>
+            </div>
+            
+            <div>
+                <!-- Stats -->
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 0.75rem; margin-bottom: 1rem;">
+                    <span>👁️ {{ material.views_count }} views</span>
+                    <span>❤️ {{ material.likes_count }} likes</span>
+                    <span>⭐ {{ '%.1f' | format(material.average_rating) }} ({{ material.ratings_count }})</span>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="muted" style="font-size: 0.75rem;">
+                        Shared on {{ material.created_at.strftime('%Y-%m-%d') }}
+                    </span>
+                    
+                    <!-- Open/View button placeholder -->
+                    <button class="btn btn-outline" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; color: var(--primary); border-color: var(--primary); opacity: 0.6; cursor: not-allowed;" disabled title="View details is not implemented yet">
+                        View Info
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
+            <h3 style="color: var(--muted); font-size: 1.75rem; font-weight: 700;">No materials found.</h3>
+            <p class="muted" style="margin-top: 0.5rem;">There are no active community shared resources matching your filter criteria.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

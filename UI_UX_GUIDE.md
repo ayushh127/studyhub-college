@@ -72,6 +72,7 @@ h1, h2, h3, h4, h5, h6 {
 8. **Context-Rich Available Items**: All listed items (such as quizzes) must describe their placement in the Subject/Unit structure.
 9. **Real-Time Instant Filters**: List structures (subjects directory) are equipped with real-time text input matching name, code, semester, and description with immediate empty-state warnings.
 10. **Notifications UI & Subscription States**: The notification bell displays a small numeric badge (`--danger`) when unread items exist. Notification card elements share the soft borders (`--border`) and clean card shapes of the standard dashboard layout. Subject subscription buttons change dynamically from "🔔 Subscribe" (outlined blue) to "🔕 Unsubscribe" (solid blue/filled) to ensure immediate visual feedback of subscription status.
+11. **Community Library**: Clean card layout displaying material titles, subject names, description previews, material types, and optional college tag labels. Dynamic filtering options include search keywords, material types, college tag filters, and sorting parameters (latest, views, likes, and rating). Soft, rounded badges are used to represent tags. Empty states provide feedback when no results match the filter criteria.
 
 ### Avoid:
 - Bakery/cafe styling, cream backgrounds, and brown colors.

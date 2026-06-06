@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_login import login_required, current_user
-from app.models import College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead
+from app.models import College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial
 from app.extensions import db
+from sqlalchemy import or_
 from datetime import datetime
 from functools import wraps
 
@@ -327,4 +328,58 @@ def toggle_subscription(id):
         flash(f'Subscribed to {subject.name} notifications.', 'success')
         
     return redirect(url_for('student.subject_details', id=subject.id))
+
+
+@student_bp.route('/community', methods=['GET'])
+@check_college_access
+def community_library():
+    search_query = request.args.get('q', '', type=str)
+    material_type = request.args.get('material_type', '', type=str)
+    college_tag_id = request.args.get('college_tag_id', type=int)
+    sort_by = request.args.get('sort', 'latest', type=str)
+
+    # Base query: active status only
+    query = CommunityMaterial.query.filter_by(status='active')
+
+    # Apply search filter
+    if search_query:
+        query = query.filter(
+            or_(
+                CommunityMaterial.title.ilike(f'%{search_query}%'),
+                CommunityMaterial.description.ilike(f'%{search_query}%'),
+                CommunityMaterial.subject_name.ilike(f'%{search_query}%')
+            )
+        )
+
+    # Apply material type filter
+    if material_type:
+        query = query.filter_by(material_type=material_type)
+
+    # Apply college tag filter
+    if college_tag_id:
+        query = query.filter_by(college_tag_id=college_tag_id)
+
+    # Apply sorting
+    if sort_by == 'views':
+        query = query.order_by(CommunityMaterial.views_count.desc(), CommunityMaterial.created_at.desc())
+    elif sort_by == 'likes':
+        query = query.order_by(CommunityMaterial.likes_count.desc(), CommunityMaterial.created_at.desc())
+    elif sort_by == 'rating':
+        query = query.order_by(CommunityMaterial.average_rating.desc(), CommunityMaterial.created_at.desc())
+    else: # default latest
+        query = query.order_by(CommunityMaterial.created_at.desc())
+
+    materials = query.all()
+    colleges = College.query.filter_by(status='active').all()
+
+    return render_template(
+        'student/community_list.html',
+        materials=materials,
+        colleges=colleges,
+        search_query=search_query,
+        selected_material_type=material_type,
+        selected_college_tag_id=college_tag_id,
+        sort_by=sort_by
+    )
+
 

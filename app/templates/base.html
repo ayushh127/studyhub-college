@@ -41,6 +41,7 @@
                         <a href="{{ url_for('student.subjects') }}" class="student-header-link">Subjects</a>
                         <a href="{{ url_for('student.pyqs') }}" class="student-header-link">PYQs</a>
                         <a href="{{ url_for('student.quizzes') }}" class="student-header-link">Quizzes</a>
+                        <a href="{{ url_for('student.community_library') }}" class="student-header-link">Community Library</a>
                         <a href="{{ url_for('student.notifications') }}" class="student-header-link" style="position: relative;">
                             🔔 Notifications
                             {% set unread_count = current_user.get_unread_notification_count() %}

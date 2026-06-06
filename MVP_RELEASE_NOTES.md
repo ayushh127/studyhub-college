@@ -26,6 +26,7 @@ Welcome to the official release documentation for **StudyHub College MVP v1**. T
 8. **Secure Admin Provisioning**: Added `create_admin.py` CLI script and `/admin/users/create-platform-admin` dashboard form to securely register administrators using Werkzeug password hashing.
 9. **In-App Notifications (Phase 7)**: Subject-wise subscription model notifying students when new materials, PYQs, or quizzes are published, complete with unread badge counters and read status tracking.
 10. **Progressive Web App (PWA) Support**: Basic mobile installation support allowing users to save the portal directly to their home screens, running in standalone full-screen windows matching the academic theme.
+11. **Community Library**: An open student-to-student sharing hub allowing resource uploading (PDF and/or URL), dynamic keyword search, type filtering, college tag tagging, unique view counting, Instagram-style AJAX liking, star-based ratings, content reporting, programmatic moderation risk scoring, and a platform admin moderation dashboard with hide/restore/remove actions.
 
 ---
 
@@ -52,6 +53,11 @@ Welcome to the official release documentation for **StudyHub College MVP v1**. T
    - Student signs up &rarr; selects **College** (only active ones listed).
    - Searches for **Subject** &rarr; views unit study materials, past papers, or takes quizzes.
    - Conducts practice attempts, submits, reviews explanations, and tracks performance averages.
+4. **Community Material Sharing & Moderation**:
+   - Student uploads PDF or link &rarr; tagged with optional college label.
+   - Other students browse the library &rarr; view/download securely (views increment uniquely).
+   - Students toggle likes via AJAX instantly or submit ratings/reports.
+   - Flagged materials move to platform admin moderation dashboard for hide/restore/remove review.
 
 ---
 

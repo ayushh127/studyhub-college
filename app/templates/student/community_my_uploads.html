@@ -88,6 +88,10 @@
                     {% if material.external_url %}
                     <span class="badge" style="font-size: 0.75rem; font-weight: normal; background-color: var(--surface-soft);">🔗 Link</span>
                     {% endif %}
+                    
+                    <a href="{{ url_for('student.community_material_details', id=material.id) }}" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; margin-left: auto;">
+                        View Details
+                    </a>
                 </div>
             </div>
         </div>

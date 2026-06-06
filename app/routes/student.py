@@ -463,4 +463,20 @@ def my_community_uploads():
     return render_template('student/community_my_uploads.html', materials=materials)
 
 
+@student_bp.route('/community/materials/<int:id>', methods=['GET'])
+@check_college_access
+def community_material_details(id):
+    material = CommunityMaterial.query.get_or_404(id)
+    
+    # Allow uploader or platform_admin to see it regardless of active status,
+    # otherwise only 'active' materials can be viewed by others.
+    if material.status != 'active':
+        if current_user.id != material.uploaded_by and current_user.role != 'platform_admin':
+            flash('This material is currently unavailable.', 'danger')
+            return redirect(url_for('student.community_library'))
 
+    # Increment views
+    material.views_count += 1
+    db.session.commit()
+
+    return render_template('student/community_details.html', material=material)

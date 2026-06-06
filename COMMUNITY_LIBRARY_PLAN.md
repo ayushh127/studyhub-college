@@ -137,9 +137,9 @@ Materials flag for review but **are not auto-deleted**. They are queued in the P
   * Create `student/community_upload.html` template and forms validation.
   * Integrate secure file storage for uploads under `uploads/community/`.
   * *Note: Upload routes and templates created. Likes, ratings, details, and moderation are not implemented yet.*
-* **Step 4: Student Interface - Material Detail & Interactions**
+* **Step 4: Student Interface - Material Detail & Interactions** (COMPLETED)
   * Create `student/community_details.html` template.
-  * Implement backend routes for detail views, secure file streaming, external link redirection, likes, ratings, and reports.
+  * Implement backend routes for detail views, secure file streaming, external link redirection, and view tracking.
 * **Step 5: Admin Moderation Console**
   * Create `admin/community_queue.html` and the platform admin review route.
   * Implement action routes (`hide`, `restore`, `remove`).

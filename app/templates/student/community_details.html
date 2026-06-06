@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}{{ material.title }} - Community Library{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 2rem auto;">
+    <!-- Breadcrumbs -->
+    <div style="margin-bottom: 1.5rem; font-size: 0.9rem;">
+        <a href="{{ url_for('student.dashboard') }}" style="color: var(--primary); text-decoration: none;">Dashboard</a>
+        <span class="muted" style="margin: 0 0.5rem;">/</span>
+        <a href="{{ url_for('student.community_library') }}" style="color: var(--primary); text-decoration: none;">Community Library</a>
+        <span class="muted" style="margin: 0 0.5rem;">/</span>
+        <span class="muted">Material Details</span>
+    </div>
+
+    <!-- Main Content -->
+    <div class="card" style="padding: 2rem; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem;">
+                    <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">
+                        {{ material.material_type|title }}
+                    </span>
+                    
+                    {% if material.status != 'active' %}
+                        <span class="badge" style="background-color: #FEF3C7; color: #D97706; border-color: #FDE68A;">
+                            Status: {{ material.status|replace('_', ' ')|title }}
+                        </span>
+                    {% endif %}
+
+                    {% if material.college_tag %}
+                    <span class="badge" style="font-size: 0.8rem; font-weight: normal;">
+                        📍 {{ material.college_tag.name }}
+                    </span>
+                    {% endif %}
+                </div>
+                <h1 style="margin: 0 0 0.5rem 0; font-size: 2rem; font-weight: 800; line-height: 1.2;">
+                    {{ material.title }}
+                </h1>
+                <div style="font-size: 1rem; color: var(--primary-dark); font-weight: 600;">
+                    Subject: {{ material.subject_name }}
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 2rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.5rem 0; margin-bottom: 1.5rem;">
+            <div style="flex: 1 1 min-content; min-width: 150px;">
+                <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Uploaded By</div>
+                <div style="font-weight: 500;">{{ material.uploader.full_name }}</div>
+            </div>
+            <div style="flex: 1 1 min-content; min-width: 150px;">
+                <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Upload Date</div>
+                <div style="font-weight: 500;">{{ material.created_at.strftime('%B %d, %Y') }}</div>
+            </div>
+            <div style="flex: 1 1 min-content; min-width: 150px;">
+                <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Views</div>
+                <div style="font-weight: 500;">👁️ {{ material.views_count }}</div>
+            </div>
+            <div style="flex: 1 1 min-content; min-width: 150px;">
+                <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Likes</div>
+                <div style="font-weight: 500;">❤️ {{ material.likes_count }}</div>
+            </div>
+            <div style="flex: 1 1 min-content; min-width: 150px;">
+                <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Rating</div>
+                <div style="font-weight: 500;">⭐ {{ '%.1f' | format(material.average_rating) }} ({{ material.ratings_count }})</div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 2rem;">
+            <h3 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1.2rem;">Description</h3>
+            <p style="line-height: 1.6; color: var(--text);">
+                {{ material.description if material.description else 'No description provided.' }}
+            </p>
+        </div>
+
+        <!-- Access Resources Section -->
+        <div style="background-color: var(--surface-soft); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border);">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">Access Material</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                {% if material.file_path %}
+                <a href="{{ url_for('files.serve_community_material', id=material.id) }}" class="btn btn-primary" target="_blank" rel="noopener noreferrer" style="flex: 1; min-width: 200px; justify-content: center;">
+                    📄 View/Download PDF
+                </a>
+                {% endif %}
+
+                {% if material.external_url %}
+                <div style="flex: 1; min-width: 200px; display: flex; gap: 0.5rem;">
+                    <a href="{{ material.external_url }}" class="btn btn-outline" target="_blank" rel="noopener noreferrer" style="flex: 1; justify-content: center;">
+                        🔗 Open Link
+                    </a>
+                    <button class="btn btn-outline" onclick="navigator.clipboard.writeText('{{ material.external_url }}'); alert('Link copied to clipboard!');" title="Copy Link" style="padding: 0.5rem 1rem;">
+                        📋
+                    </button>
+                </div>
+                {% endif %}
+                
+                {% if not material.file_path and not material.external_url %}
+                <p class="muted" style="margin: 0; padding: 0.5rem;">No file or link is associated with this material.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

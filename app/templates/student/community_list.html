@@ -102,10 +102,9 @@
                         Shared on {{ material.created_at.strftime('%Y-%m-%d') }}
                     </span>
                     
-                    <!-- Open/View button placeholder -->
-                    <button class="btn btn-outline" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; color: var(--primary); border-color: var(--primary); opacity: 0.6; cursor: not-allowed;" disabled title="View details is not implemented yet">
+                    <a href="{{ url_for('student.community_material_details', id=material.id) }}" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; color: var(--primary); border-color: var(--primary);">
                         View Info
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>

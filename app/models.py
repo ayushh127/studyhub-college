@@ -296,3 +296,70 @@ class NotificationRead(db.Model):
     user = db.relationship('User', backref='reads')
     notification = db.relationship('Notification', backref='reads')
 
+
+class CommunityMaterial(db.Model):
+    __tablename__ = 'community_materials'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    subject_name = db.Column(db.String(100), nullable=False)
+    college_tag_id = db.Column(db.Integer, db.ForeignKey('colleges.id'), nullable=True)
+    uploaded_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    material_type = db.Column(db.String(50), default='notes')
+    file_path = db.Column(db.String(255), nullable=True)
+    external_url = db.Column(db.String(255), nullable=True)
+    status = db.Column(db.String(20), default='active')
+    views_count = db.Column(db.Integer, default=0)
+    likes_count = db.Column(db.Integer, default=0)
+    reports_count = db.Column(db.Integer, default=0)
+    ratings_count = db.Column(db.Integer, default=0)
+    average_rating = db.Column(db.Float, default=0.0)
+    moderation_score = db.Column(db.Float, default=0.0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    college_tag = db.relationship('College', foreign_keys=[college_tag_id])
+    uploader = db.relationship('User', foreign_keys=[uploaded_by])
+
+
+class CommunityMaterialLike(db.Model):
+    __tablename__ = 'community_material_likes'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    material_id = db.Column(db.Integer, db.ForeignKey('community_materials.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'material_id', name='_user_community_material_like_uc'),)
+
+    user = db.relationship('User', backref='community_likes')
+    material = db.relationship('CommunityMaterial', backref='likes_rel')
+
+
+class CommunityMaterialRating(db.Model):
+    __tablename__ = 'community_material_ratings'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    material_id = db.Column(db.Integer, db.ForeignKey('community_materials.id'), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'material_id', name='_user_community_material_rating_uc'),)
+
+    user = db.relationship('User', backref='community_ratings')
+    material = db.relationship('CommunityMaterial', backref='ratings_rel')
+
+
+class CommunityMaterialReport(db.Model):
+    __tablename__ = 'community_material_reports'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    material_id = db.Column(db.Integer, db.ForeignKey('community_materials.id'), nullable=False)
+    reason = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'material_id', name='_user_community_material_report_uc'),)
+
+    user = db.relationship('User', backref='community_reports')
+    material = db.relationship('CommunityMaterial', backref='reports_rel')
+

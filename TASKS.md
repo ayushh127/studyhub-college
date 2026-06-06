@@ -144,3 +144,14 @@ This document tracks the granular development tasks for the StudyHub College MVP
 - [x] Add font-family overrides for inline styles in `style.css`
 - [x] Modernize buttons, forms, navigation headers, cards, and bottom nav styles
 - [x] Update `UI_UX_GUIDE.md` with new Modern Minimal SaaS style guide
+
+## Phase 10: Community Library
+- [x] Step 1: Database models setup (`CommunityMaterial`, `CommunityMaterialLike`, `CommunityMaterialRating`, `CommunityMaterialReport`)
+  - *Note: Community Library database models added. Routes/UI/interactions/moderation not implemented yet.*
+- [ ] Step 2: Student library list/search UI
+- [ ] Step 3: Upload material with PDF/link
+- [ ] Step 4: Material detail/view/download/copy link
+- [ ] Step 5: Likes and ratings
+- [ ] Step 6: Reports + moderation score
+- [ ] Step 7: Platform admin moderation queue
+- [ ] Step 8: QA and deployment update

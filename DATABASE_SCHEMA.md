@@ -170,3 +170,49 @@ The StudyHub College MVP uses SQLite (via Flask-SQLAlchemy). Below is the schema
 - `details`
 - `ip_address`
 - `created_at`
+
+## 15. CommunityMaterial
+- `id` (PK)
+- `title`
+- `description`
+- `subject_name`
+- `college_tag_id` (FK to College, nullable)
+- `uploaded_by` (FK to User)
+- `material_type` (Enum: `notes`, `assignment`, `pyq`, `other`)
+- `file_path`
+- `external_url`
+- `status` (Enum: `active`, `under_review`, `hidden`, `removed`)
+- `views_count`
+- `likes_count`
+- `reports_count`
+- `ratings_count`
+- `average_rating`
+- `moderation_score`
+- `created_at`
+- `updated_at`
+
+## 16. CommunityMaterialLike
+- `id` (PK)
+- `user_id` (FK to User)
+- `material_id` (FK to CommunityMaterial)
+- `created_at`
+- *Constraint:* Unique(user_id, material_id)
+
+## 17. CommunityMaterialRating
+- `id` (PK)
+- `user_id` (FK to User)
+- `material_id` (FK to CommunityMaterial)
+- `rating`
+- `created_at`
+- `updated_at`
+- *Constraint:* Unique(user_id, material_id)
+
+## 18. CommunityMaterialReport
+- `id` (PK)
+- `user_id` (FK to User)
+- `material_id` (FK to CommunityMaterial)
+- `reason`
+- `created_at`
+- *Constraint:* Unique(user_id, material_id)
+
+> **Note:** Community Library database models added. Routes/UI/interactions/moderation not implemented yet.

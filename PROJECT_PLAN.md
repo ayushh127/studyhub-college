@@ -41,8 +41,19 @@ Build the StudyHub College MVP, a multi-role web platform for college content ma
 - [x] Hook content publisher routes to trigger notifications
 
 ## Status
-- **Current Phase:** Completed MVP release (v1) and Subject-Wise Notifications (Phase 7).
-- **Next Step:** Ready for production deployment and pilot phase.
+- **Current Phase:** Completed MVP release (v1), Subject-Wise Notifications (Phase 7), SaaS UI Redesign (Phase 9), and started Community Library (Phase 10).
+- **Next Step:** Implement Community Library student routes and UI.
+
+### Phase 10: Community Library
+- [x] Step 1: Database models setup (`CommunityMaterial`, `CommunityMaterialLike`, `CommunityMaterialRating`, `CommunityMaterialReport`)
+  - *Note: Community Library database models added. Routes/UI/interactions/moderation not implemented yet.*
+- [ ] Step 2: Student library list/search UI
+- [ ] Step 3: Upload material with PDF/link
+- [ ] Step 4: Material detail/view/download/copy link
+- [ ] Step 5: Likes and ratings
+- [ ] Step 6: Reports + moderation score
+- [ ] Step 7: Platform admin moderation queue
+- [ ] Step 8: QA and deployment update
 
 ## Emergency Stabilization
 - App was stabilized to ensure all routes and templates run without errors.

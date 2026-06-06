@@ -1,45 +1,47 @@
 # UI/UX Guide
 
-## Theme: Classical Minimal Academic
+## Theme: Modern Minimal SaaS
 
 **Feeling:**
-- Minimal, Premium, Calm, Academic
-- Modern Roman library feel
-- Old parchment/study desk inspiration
+- Clean, Minimal, Modern, Professional, Student-Friendly
+- High-contrast, SaaS dashboard feel
+- White background with soft gray sections
 - Clean and mobile-first
 
 ### Colors
 
 ```css
 :root {
-  --background: #FAF7F0; /* warm cream */
-  --surface: #FFFFFF; /* white */
-  --surface-soft: #F3EBDD; /* parchment/ivory */
-  --primary: #8B5E34; /* classical brown/walnut */
-  --primary-dark: #5C3A21;
-  --accent: #FFB340; /* light golden-orange */
-  --text: #1F1A17; /* warm charcoal */
-  --muted: #7A6F64; /* brown-gray */
-  --border: #E5D6C3;
-  --success: #2F855A;
-  --danger: #B42318;
-  --warning: #B7791F;
-  --ai-accent: #6D28D9; /* royal purple, for future use only */
+  --background: #FFFFFF;
+  --surface: #FFFFFF;
+  --surface-soft: #F8FAFC;
+  --text: #0F172A;
+  --muted: #64748B;
+  --border: #E2E8F0;
+  --primary: #2563EB; /* primary blue */
+  --primary-dark: #1D4ED8; /* dark blue */
+  --accent: #3B82F6; /* vibrant blue */
+  --success: #16A34A;
+  --danger: #DC2626;
+  --warning: #F59E0B;
+  --ai-accent: #6D28D9;
 }
 ```
 
 ### Typography
 
 ```css
-body {
-  font-family: 'Inter', system-ui, sans-serif;
+body, h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--text);
+}
+
+body {
   background-color: var(--background);
 }
 
-h1, h2, h3 {
-  font-family: 'Cormorant Garamond', serif;
-  color: var(--primary-dark);
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
 }
 ```
 
@@ -53,9 +55,10 @@ h1, h2, h3 {
    - Stack button groups vertically on screens under 480px wide to provide full-width, easy-to-tap touch targets.
    - Use a sidebar for admin interfaces on desktop (collapsible on mobile).
 2. **Component Aesthetics:**
-   - Use soft, warm borders (`--border`).
-   - Cards should have a white background (`--surface`) with subtle rounded corners and very soft shadows.
-   - Buttons should be touch-friendly (min 44px height on mobile).
+   - Use crisp, clean borders (`--border`).
+   - Cards should have a white background (`--surface`) with subtle rounded corners, clean 1px borders, and extremely soft shadows.
+   - Buttons should be rounded (6px border-radius) and use primary blue, white outline, or borderless styles.
+   - Form fields should be styled with thin borders, clean backgrounds, and a subtle blue glow shadow when focused.
 3. **Impersonation Banner:**
    - Must be prominent at the top of every page during an active impersonation session.
 5. **Information Architecture (Academic Hierarchy):**
@@ -64,14 +67,13 @@ h1, h2, h3 {
    - Unit-level resources are those created with a unit link (`unit_id` is defined). They appear exclusively on the Unit details page.
    - The primary flow for admins and students traces: Dashboard &rarr; Subject Details &rarr; Unit Details.
    - Consistent academic breadcrumbs must be visible at the top of Subject and Unit detail layouts.
-- **Interactive Quiz Attempts**: Student quiz attempt layout renders all questions. A live, client-side toggle switcher allows switching modes at any time. Learning Mode provides check-buttons next to options for checking explanations immediately, using light red and green styling to guide correctness visually without cluttering.
-- **Card Interactivity**: Subject cards on the student dashboard use soft parchment/brown highlights and scale slightly on hover (`.card-clickable`) to make the interface feel alive. They also present quantitative summaries (units, quizzes, resources count) to avoid dead layouts.
-- **Context-Rich Available Items**: All listed items (such as quizzes) must describe their placement in the Subject/Unit structure.
-- **Real-Time Instant Filters**: List structures (subjects directory) are equipped with real-time text input matching name, code, semester, and description with immediate empty-state warnings.
-- **Notifications UI & Subscription States**: The notification bell should display a small numeric badge (`--danger`) when unread items exist. Notification card elements should share the soft borders (`--border`) and clean card shapes of the standard dashboard layout. Subject subscription buttons must change dynamically from "🔔 Subscribe" (outlined) to "🔕 Unsubscribe" (solid brown/filled) to ensure immediate visual feedback of subscription status.
+6. **Interactive Quiz Attempts**: Student quiz attempt layout renders all questions. A live, client-side toggle switcher allows switching modes at any time. Learning Mode provides check-buttons next to options for checking explanations immediately, using light red and green styling to guide correctness visually without cluttering.
+7. **Card Interactivity**: Subject cards on the student dashboard use soft blue highlights and scale slightly on hover (`.card-clickable`) to make the interface feel alive. They also present quantitative summaries (units, quizzes, resources count) to avoid dead layouts.
+8. **Context-Rich Available Items**: All listed items (such as quizzes) must describe their placement in the Subject/Unit structure.
+9. **Real-Time Instant Filters**: List structures (subjects directory) are equipped with real-time text input matching name, code, semester, and description with immediate empty-state warnings.
+10. **Notifications UI & Subscription States**: The notification bell displays a small numeric badge (`--danger`) when unread items exist. Notification card elements share the soft borders (`--border`) and clean card shapes of the standard dashboard layout. Subject subscription buttons change dynamically from "🔔 Subscribe" (outlined blue) to "🔕 Unsubscribe" (solid blue/filled) to ensure immediate visual feedback of subscription status.
 
 ### Avoid:
-- Generic blue SaaS themes.
-- Neon colors.
-- Heavy gradients.
-- Cluttered UIs.
+- Bakery/cafe styling, cream backgrounds, and brown colors.
+- Decorative Roman/serif heading fonts (like Cormorant Garamond).
+- Heavy gradients, neon colors, and cluttered layouts.

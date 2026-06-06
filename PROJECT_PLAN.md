@@ -88,3 +88,9 @@ Build the StudyHub College MVP, a multi-role web platform for college content ma
 - Created `.gitignore` to protect instance database, virtual environment, and upload assets.
 - Added `.env.example` file for configuring production environmental variables.
 - Verified that all credentials and session secrets utilize clean fallback options reading from environment values.
+
+## PythonAnywhere & PWA Support
+- Documented complete step-by-step setup guides for production-ready deployment on PythonAnywhere Free Tier.
+- Configured maximum upload limits (5MB) and custom 413 error templates to manage disk quota consumption safely.
+- Added basic PWA manifest and service worker files to enable home screen mobile installation.
+- Created step-by-step mobile installation guide for students/teachers on iOS Safari and Android Chrome.

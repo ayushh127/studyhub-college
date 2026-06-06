@@ -1,0 +1,23 @@
+{
+  "name": "StudyHub College",
+  "short_name": "StudyHub",
+  "description": "Multi-college study platform for managing materials, PYQs, and quizzes.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FDFBF7",
+  "theme_color": "#3C2A21",
+  "icons": [
+    {
+      "src": "/static/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

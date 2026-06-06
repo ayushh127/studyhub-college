@@ -67,3 +67,8 @@ The application provides a single login interface at `/login`. After entering cr
 - **Student** is redirected to `/student/dashboard`.
 
 If a user tries to access a dashboard outside their permissions, they will be shown a themed **403 Forbidden** page. Custom themed pages are also served for **404 Not Found** and **500 Internal Server Error** status codes.
+
+## Deployment & Mobile Usage
+
+* **PythonAnywhere Free Tier Deployment**: Refer to [DEPLOYMENT_PYTHONANYWHERE_FREE.md](file:///d:/StudyHub/DEPLOYMENT_PYTHONANYWHERE_FREE.md) for step-by-step production hosting instructions.
+* **PWA Mobile Installation**: Learn how to add the portal directly to Android/iOS home screens using the PWA capabilities in [PWA_MOBILE_INSTALL_GUIDE.md](file:///d:/StudyHub/PWA_MOBILE_INSTALL_GUIDE.md).

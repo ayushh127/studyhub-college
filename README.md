@@ -21,6 +21,10 @@ The MVP release is fully completed, featuring a responsive, clean interface tail
 - **Secure File Serving:** Dedicated permission-controlled routes (`/files/...`) with disk file checks and audit logs to prevent directory exposure and IDOR attacks.
 - **Impersonation:** Platform Admin can temporarily view the app as a student or college admin for testing and support.
 - **Audit Logging:** System logging for registrations, logins, impersonation actions, and missing files.
+- **In-App Notifications (Phase 7):** Subject-wise subscription model notifying students when new materials, PYQs, or quizzes are published, complete with unread badge counters.
+- **Progressive Web App (PWA):** Basic mobile installation support allowing users to save the portal directly to their home screens, running in standalone full-screen windows matching the academic theme.
 
 ## Getting Started
-See [SETUP.md](file:///d:/StudyHub/SETUP.md) for local environment configuration, seed data instructions, and setup steps.
+* For local setup and development credentials: See [SETUP.md](file:///d:/StudyHub/SETUP.md).
+* For free hosting setup: See [DEPLOYMENT_PYTHONANYWHERE_FREE.md](file:///d:/StudyHub/DEPLOYMENT_PYTHONANYWHERE_FREE.md).
+* For mobile home screen installation instructions: See [PWA_MOBILE_INSTALL_GUIDE.md](file:///d:/StudyHub/PWA_MOBILE_INSTALL_GUIDE.md).

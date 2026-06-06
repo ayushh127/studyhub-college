@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/static/manifest.json">
 </head>
 <body class="{% if current_user.is_authenticated and current_user.role == 'student' %}student-body{% endif %}">
     {% if session.get('original_admin_id') or session.get('impersonated_user_id') %}
@@ -106,6 +108,21 @@
                 });
             }, 5000);
         });
+    </script>
+    
+    <script>
+        // Register Service Worker for PWA installation
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/static/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registered with scope: ', registration.scope);
+                    })
+                    .catch(function(err) {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
     </script>
     
     {% if current_user.is_authenticated and current_user.role == 'student' %}

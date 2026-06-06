@@ -129,3 +129,11 @@ This document tracks the granular development tasks for the StudyHub College MVP
 - [x] Implement notifications list template (`student/notifications.html`)
 - [x] Integrate trigger dispatch calls in College Admin material, PYQ, and quiz publishing routes
 - [x] Conduct end-to-end verification checks for isolation and read states
+
+## Phase 8: PythonAnywhere & PWA Support
+- [x] Configure file upload size limit (5MB) in `app/config.py` and register custom 413 error handler
+- [x] Create PWA `manifest.json` and minimal service worker `sw.js` in `app/static`
+- [x] Link manifest and register service worker in base template `base.html`
+- [x] Write step-by-step deployment guide `DEPLOYMENT_PYTHONANYWHERE_FREE.md` with git workflows
+- [x] Write PWA installation guide `PWA_MOBILE_INSTALL_GUIDE.md` for iOS/Android
+- [x] Update project documentation (README, SETUP, MVP_RELEASE_NOTES, PROJECT_PLAN, CHANGELOG)

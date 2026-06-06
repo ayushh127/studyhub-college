@@ -4,6 +4,7 @@ All notable changes to the StudyHub College project will be documented in this f
 
 ## [Unreleased]
 ### Added
+- Implemented Phase 8: PythonAnywhere & PWA Support. Configured file upload size limits to 5MB, created custom 413 error templates, added PWA `manifest.json` and `sw.js` registration, generated solid-color placeholder icons, and wrote detailed hosting/installation guides.
 - Implemented and verified Phase 7 Step 5: Notification E2E QA Verification. Validated all 17 target notification flows, resolved database subquery coercion SQL warnings, and documented results in `NOTIFICATION_QA_REPORT.md`.
 - Implemented Phase 7 Step 4: Notification Dispatch Triggers. Added automatic in-app notification creation when college admins publish Study Materials, PYQ Papers, or Quizzes.
 - Removed demo credentials from login page UI.

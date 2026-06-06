@@ -24,6 +24,8 @@ Welcome to the official release documentation for **StudyHub College MVP v1**. T
 6. **Platform Admin Tools**: Approve/reject public requests, manually create colleges (auto-provisioning first college admin), list/activate/deactivate instances.
 7. **Support Impersonation**: Platform admins can temporarily view the system through a Student or College Admin session.
 8. **Secure Admin Provisioning**: Added `create_admin.py` CLI script and `/admin/users/create-platform-admin` dashboard form to securely register administrators using Werkzeug password hashing.
+9. **In-App Notifications (Phase 7)**: Subject-wise subscription model notifying students when new materials, PYQs, or quizzes are published, complete with unread badge counters and read status tracking.
+10. **Progressive Web App (PWA) Support**: Basic mobile installation support allowing users to save the portal directly to their home screens, running in standalone full-screen windows matching the academic theme.
 
 ---
 
@@ -82,25 +84,8 @@ Welcome to the official release documentation for **StudyHub College MVP v1**. T
 - [ ] Commit only sanitized configuration templates.
 - [ ] Execute `python create_admin.py` locally or run commands on target environments for the initial setup.
 
-### 3. PythonAnywhere Deployment Checklist
-1. **Upload Files**: Clone git repository or upload project zip to your PythonAnywhere directory.
-2. **Virtual Environment**:
-   - Open a bash console.
-   - Run `mkvirtualenv --python=python3.10 studyhub-venv`.
-   - Install requirements: `pip install -r requirements.txt`.
-3. **Database Setup**:
-   - Run `python seed.py` to set up initial SQLite structures.
-   - **Crucial Warning**: Change or remove the default seeded accounts immediately, or initialize an empty schema.
-   - Run `python create_admin.py` inside PythonAnywhere console to configure your real production Platform Admin.
-4. **Configure Web Tab**:
-   - Point **Source Code Directory** to `/home/<username>/StudyHub`.
-   - Point **Virtualenv Path** to `/home/<username>/.virtualenvs/studyhub-venv`.
-   - Update **WSGI configuration file** to import the Flask app factory:
-     ```python
-     import sys
-     path = '/home/<username>/StudyHub'
-     if path not in sys.path:
-         sys.path.append(path)
-     from run import app as application
-     ```
-5. **Reload**: Reload the web application and test the endpoints.
+### 3. PythonAnywhere Deployment
+For detailed step-by-step instructions on deploying the application to the PythonAnywhere Free Tier, setting up environment variables, WSGI files, static mapping, and managing live updates, see the dedicated [DEPLOYMENT_PYTHONANYWHERE_FREE.md](file:///d:/StudyHub/DEPLOYMENT_PYTHONANYWHERE_FREE.md) guide.
+
+### 4. PWA Installation
+For details on installing the web app as a Progressive Web App (PWA) on iOS and Android devices, see the [PWA_MOBILE_INSTALL_GUIDE.md](file:///d:/StudyHub/PWA_MOBILE_INSTALL_GUIDE.md).

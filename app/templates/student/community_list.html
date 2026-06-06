@@ -77,7 +77,9 @@
                 </div>
                 
                 <h3 style="margin-top: 0; margin-bottom: 0.25rem; font-size: 1.25rem; font-weight: 600; line-height: 1.3;">
-                    {{ material.title }}
+                    <a href="{{ url_for('student.community_material_details', id=material.id) }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                        {{ material.title }}
+                    </a>
                 </h3>
                 
                 <div style="font-size: 0.8rem; color: var(--primary-dark); font-weight: 600; margin-bottom: 0.75rem;">
@@ -93,7 +95,7 @@
                 <!-- Stats -->
                 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 0.75rem; margin-bottom: 1rem;">
                     <span>👁️ {{ material.views_count }} views</span>
-                    <span>❤️ {{ material.likes_count }} likes</span>
+                    <span id="card-likes-count-{{ material.id }}">❤️ {{ material.likes_count }} likes</span>
                     <span>⭐ {{ '%.1f' | format(material.average_rating) }} ({{ material.ratings_count }})</span>
                 </div>
                 
@@ -102,9 +104,17 @@
                         Shared on {{ material.created_at.strftime('%Y-%m-%d') }}
                     </span>
                     
-                    <a href="{{ url_for('student.community_material_details', id=material.id) }}" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; color: var(--primary); border-color: var(--primary);">
-                        View Info
-                    </a>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <form class="like-form" action="{{ url_for('student.like_community_material', id=material.id) }}" method="POST" style="margin: 0;">
+                            <button type="submit" class="btn-like-toggle {% if material.id in liked_material_ids %}liked{% endif %}" style="background: none; border: none; padding: 0.25rem 0.5rem; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; color: {% if material.id in liked_material_ids %}var(--primary){% else %}var(--muted){% endif %}; transition: color 0.2s;" title="Like/Unlike">
+                                <span class="like-icon">{% if material.id in liked_material_ids %}♥{% else %}♡{% endif %}</span>
+                                <span class="like-count" style="font-size: 0.85rem;">{{ material.likes_count }}</span>
+                            </button>
+                        </form>
+                        <a href="{{ url_for('student.community_material_details', id=material.id) }}" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; color: var(--primary); border-color: var(--primary);">
+                            View Info
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -116,4 +126,78 @@
         {% endfor %}
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const likeForms = document.querySelectorAll('.like-form');
+    
+    likeForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btn = form.querySelector('button');
+            const icon = form.querySelector('.like-icon');
+            const countSpan = form.querySelector('.like-count');
+            
+            const materialId = form.getAttribute('action').split('/').slice(-2)[0];
+            const cardStatsCount = document.getElementById(`card-likes-count-${materialId}`);
+            
+            // Optimistic Update
+            const isLiked = btn.classList.contains('liked');
+            let currentCount = parseInt(countSpan.textContent) || 0;
+            
+            if (isLiked) {
+                btn.classList.remove('liked');
+                btn.style.color = 'var(--muted)';
+                icon.textContent = '♡';
+                currentCount = Math.max(0, currentCount - 1);
+                countSpan.textContent = currentCount;
+                if (cardStatsCount) cardStatsCount.textContent = `❤️ ${currentCount} likes`;
+            } else {
+                btn.classList.add('liked');
+                btn.style.color = 'var(--primary)';
+                icon.textContent = '♥';
+                currentCount = currentCount + 1;
+                countSpan.textContent = currentCount;
+                if (cardStatsCount) cardStatsCount.textContent = `❤️ ${currentCount} likes`;
+            }
+            
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network error');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update to actual server state
+                    countSpan.textContent = data.likes_count;
+                    if (cardStatsCount) cardStatsCount.textContent = `❤️ ${data.likes_count} likes`;
+                    
+                    if (data.liked) {
+                        btn.classList.add('liked');
+                        btn.style.color = 'var(--primary)';
+                        icon.textContent = '♥';
+                    } else {
+                        btn.classList.remove('liked');
+                        btn.style.color = 'var(--muted)';
+                        icon.textContent = '♡';
+                    }
+                } else {
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling like:', error);
+                window.location.reload();
+            });
+        });
+    });
+});
+</script>
 {% endblock %}

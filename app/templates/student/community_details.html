@@ -13,6 +13,12 @@
         <span class="muted">Material Details</span>
     </div>
 
+    {% if material.status != 'active' %}
+    <div style="background-color: #FEF3C7; border: 1px solid #FDE68A; color: #D97706; padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; font-size: 0.95rem;">
+        ⚠️ <strong>Non-Public Material:</strong> This upload is currently <strong>{{ material.status|replace('_', ' ')|title }}</strong>. It is only visible to you (the uploader) and platform administrators.
+    </div>
+    {% endif %}
+
     <!-- Main Content -->
     <div class="card" style="padding: 2rem; margin-bottom: 2rem;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
@@ -58,7 +64,7 @@
             </div>
             <div style="flex: 1 1 min-content; min-width: 150px;">
                 <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Likes</div>
-                <div style="font-weight: 500;">❤️ {{ material.likes_count }}</div>
+                <div id="stats-likes-count" style="font-weight: 500;">❤️ {{ material.likes_count }}</div>
             </div>
             <div style="flex: 1 1 min-content; min-width: 150px;">
                 <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Rating</div>
@@ -80,13 +86,11 @@
             <div style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
                 <div style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: center;">
                     <!-- Like Form -->
-                    <form action="{{ url_for('student.like_community_material', id=material.id) }}" method="POST" style="margin: 0;">
-                        <button type="submit" class="btn {% if user_liked %}btn-primary{% else %}btn-outline{% endif %}" style="display: flex; align-items: center; gap: 0.5rem; min-width: 120px; justify-content: center;">
-                            {% if user_liked %}
-                                ❤️ Liked ({{ material.likes_count }})
-                            {% else %}
-                                🤍 Like ({{ material.likes_count }})
-                            {% endif %}
+                    <form class="like-form" action="{{ url_for('student.like_community_material', id=material.id) }}" method="POST" style="margin: 0;">
+                        <button type="submit" class="btn {% if user_liked %}btn-primary liked{% else %}btn-outline{% endif %}" style="display: flex; align-items: center; gap: 0.5rem; min-width: 120px; justify-content: center; transition: all 0.2s ease; {% if user_liked %}color: white;{% endif %}" id="detail-like-btn">
+                            <span class="like-icon">{% if user_liked %}♥{% else %}♡{% endif %}</span>
+                            <span class="like-text">{% if user_liked %}Liked{% else %}Like{% endif %}</span>
+                            <span>(<span class="like-count">{{ material.likes_count }}</span>)</span>
                         </button>
                     </form>
 
@@ -171,4 +175,87 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const likeForm = document.querySelector('.like-form');
+    if (likeForm) {
+        likeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('detail-like-btn');
+            const icon = btn.querySelector('.like-icon');
+            const textSpan = btn.querySelector('.like-text');
+            const countSpan = btn.querySelector('.like-count');
+            const statsLikes = document.getElementById('stats-likes-count');
+            
+            const isLiked = btn.classList.contains('liked');
+            let currentCount = parseInt(countSpan.textContent) || 0;
+            
+            // Optimistic Update
+            if (isLiked) {
+                btn.classList.remove('liked');
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline');
+                btn.style.color = '';
+                icon.textContent = '♡';
+                if (textSpan) textSpan.textContent = 'Like';
+                currentCount = Math.max(0, currentCount - 1);
+                countSpan.textContent = currentCount;
+                if (statsLikes) statsLikes.textContent = `❤️ ${currentCount}`;
+            } else {
+                btn.classList.add('liked');
+                btn.classList.remove('btn-outline');
+                btn.classList.add('btn-primary');
+                btn.style.color = 'white';
+                icon.textContent = '♥';
+                if (textSpan) textSpan.textContent = 'Liked';
+                currentCount = currentCount + 1;
+                countSpan.textContent = currentCount;
+                if (statsLikes) statsLikes.textContent = `❤️ ${currentCount}`;
+            }
+            
+            fetch(likeForm.action, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network error');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    countSpan.textContent = data.likes_count;
+                    if (statsLikes) statsLikes.textContent = `❤️ ${data.likes_count}`;
+                    
+                    if (data.liked) {
+                        btn.classList.add('liked');
+                        btn.classList.remove('btn-outline');
+                        btn.classList.add('btn-primary');
+                        btn.style.color = 'white';
+                        icon.textContent = '♥';
+                        if (textSpan) textSpan.textContent = 'Liked';
+                    } else {
+                        btn.classList.remove('liked');
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-outline');
+                        btn.style.color = '';
+                        icon.textContent = '♡';
+                        if (textSpan) textSpan.textContent = 'Like';
+                    }
+                } else {
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error toggling like:', error);
+                window.location.reload();
+            });
+        });
+    }
+});
+</script>
 {% endblock %}

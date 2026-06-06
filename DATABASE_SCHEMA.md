@@ -215,4 +215,9 @@ The StudyHub College MVP uses SQLite (via Flask-SQLAlchemy). Below is the schema
 - `created_at`
 - *Constraint:* Unique(user_id, material_id)
 
-> **Note:** Community Library database models added. Routes/UI/interactions/moderation not implemented yet.
+## 19. CommunityMaterialView
+- `id` (PK)
+- `user_id` (FK to User)
+- `material_id` (FK to CommunityMaterial)
+- `viewed_at`
+- *Constraint:* Unique(user_id, material_id)

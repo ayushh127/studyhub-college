@@ -57,6 +57,14 @@ Tracks reports to prevent report-spam abuse.
 * `created_at` (DateTime, default=datetime.utcnow)
 * *Constraint*: UniqueConstraint('user_id', 'material_id')
 
+### `CommunityMaterialView`
+Tracks unique student views per community material.
+* `id` (Integer, Primary Key)
+* `user_id` (Integer, ForeignKey('users.id'), nullable=False)
+* `material_id` (Integer, ForeignKey('community_materials.id'), nullable=False)
+* `viewed_at` (DateTime, default=datetime.utcnow)
+* *Constraint*: UniqueConstraint('user_id', 'material_id')
+
 ---
 
 ## 2. Route Architecture
@@ -148,4 +156,13 @@ Materials flag for review but **are not auto-deleted**. They are queued in the P
   * Implemented `POST /student/community/materials/<id>/report` route.
   * Added `update_community_material_moderation` to `app/utils/community.py` to calculate `risk_score`.
   * Configured escalation thresholds to automatically set highly flagged content to `under_review`.
-* **Step 7: Admin Moderation Console**
+* **Step 7: Admin Moderation Console** (COMPLETED)
+  * Implemented platform admin routes for community moderation (`GET /admin/community`, `GET /admin/community/queue`, etc.).
+  * Added ability for admins to view reports and hide/restore/remove materials.
+  * Added `community_list`, `community_queue`, and `community_reports` admin templates.
+* **Step 8: UX and Counting Refinements** (COMPLETED)
+  * Implemented `CommunityMaterialView` for unique view counting (1 view per logged-in user per material).
+  * Added AJAX JSON response support to `/student/community/materials/<id>/like`.
+  * Redesigned Like button in lists and detail page to use heart icon states (♥/♡) and toggle via asynchronous `fetch` without page reload.
+  * Added uploader preview notice and restricted student access for non-active materials (hidden/under review/removed).
+  * Made titles clickable links on student My Uploads and Explorer list cards.

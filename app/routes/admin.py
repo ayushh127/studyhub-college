@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, flash, request, session
 from flask_login import current_user
 from . import admin_bp
-from ..models import User, College, CollegeRequest, AuditLog, Subject
+from ..models import User, College, CollegeRequest, AuditLog, Subject, CommunityMaterial, CommunityMaterialReport
 from ..extensions import db
 from ..utils.decorators import admin_required
 from ..utils.audit import log_action
@@ -299,3 +299,76 @@ def deactivate_college(id):
 @admin_bp.route('/settings')
 def settings():
     return render_template('admin/settings.html')
+
+@admin_bp.route('/community')
+def community_list():
+    status_filter = request.args.get('status')
+    material_type = request.args.get('material_type')
+    subject_name = request.args.get('subject_name')
+    college_tag_id = request.args.get('college_tag_id', type=int)
+    sort_by = request.args.get('sort', 'latest')
+
+    query = CommunityMaterial.query
+
+    if status_filter:
+        query = query.filter_by(status=status_filter)
+    if material_type:
+        query = query.filter_by(material_type=material_type)
+    if subject_name:
+        query = query.filter(CommunityMaterial.subject_name.ilike(f'%{subject_name}%'))
+    if college_tag_id:
+        query = query.filter_by(college_tag_id=college_tag_id)
+
+    if sort_by == 'reported':
+        query = query.order_by(CommunityMaterial.reports_count.desc())
+    elif sort_by == 'score':
+        query = query.order_by(CommunityMaterial.moderation_score.desc())
+    else:
+        query = query.order_by(CommunityMaterial.created_at.desc())
+
+    materials = query.all()
+    colleges = College.query.all()
+    
+    return render_template('admin/community_list.html', materials=materials, colleges=colleges,
+                           current_status=status_filter, current_type=material_type, 
+                           current_subject=subject_name, current_college=college_tag_id, current_sort=sort_by)
+
+@admin_bp.route('/community/queue')
+def community_queue():
+    materials = CommunityMaterial.query.filter_by(status='under_review').order_by(CommunityMaterial.moderation_score.desc()).all()
+    return render_template('admin/community_queue.html', materials=materials)
+
+@admin_bp.route('/community/reports/<int:id>')
+def community_reports(id):
+    material = CommunityMaterial.query.get_or_404(id)
+    reports = CommunityMaterialReport.query.filter_by(material_id=material.id).order_by(CommunityMaterialReport.created_at.desc()).all()
+    return render_template('admin/community_reports.html', material=material, reports=reports)
+
+@admin_bp.route('/community/materials/<int:id>/hide', methods=['POST'])
+def hide_community_material(id):
+    material = CommunityMaterial.query.get_or_404(id)
+    material.status = 'hidden'
+    db.session.commit()
+    log_action(current_user.id, 'community_material_hidden', 'community_material', material.id, f'Hidden community material {material.title}')
+    flash(f'Material "{material.title}" is now hidden.', 'success')
+    return redirect(request.referrer or url_for('admin.community_queue'))
+
+@admin_bp.route('/community/materials/<int:id>/restore', methods=['POST'])
+def restore_community_material(id):
+    material = CommunityMaterial.query.get_or_404(id)
+    material.status = 'active'
+    # Optional: Reset moderation score so it doesn't immediately get flagged again
+    material.moderation_score = 0.0
+    db.session.commit()
+    log_action(current_user.id, 'community_material_restored', 'community_material', material.id, f'Restored community material {material.title}')
+    flash(f'Material "{material.title}" has been restored to active status.', 'success')
+    return redirect(request.referrer or url_for('admin.community_queue'))
+
+@admin_bp.route('/community/materials/<int:id>/remove', methods=['POST'])
+def remove_community_material(id):
+    material = CommunityMaterial.query.get_or_404(id)
+    material.status = 'removed'
+    db.session.commit()
+    log_action(current_user.id, 'community_material_removed', 'community_material', material.id, f'Removed community material {material.title}')
+    flash(f'Material "{material.title}" has been permanently removed.', 'danger')
+    return redirect(request.referrer or url_for('admin.community_queue'))

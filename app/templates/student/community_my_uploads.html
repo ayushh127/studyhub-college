@@ -56,7 +56,9 @@
                     </div>
                     
                     <h3 style="margin-top: 0; margin-bottom: 0.25rem; font-size: 1.35rem; font-weight: 700; line-height: 1.3;">
-                        {{ material.title }}
+                        <a href="{{ url_for('student.community_material_details', id=material.id) }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                            {{ material.title }}
+                        </a>
                     </h3>
                     
                     <div style="font-size: 0.85rem; color: var(--primary-dark); font-weight: 600; margin-bottom: 0.5rem;">

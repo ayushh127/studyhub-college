@@ -152,8 +152,8 @@ This document tracks the granular development tasks for the StudyHub College MVP
   - *Note: Student browsing and search page created. Upload, file handling, interactions, and moderation are not implemented yet.*
 - [x] Step 3: Upload material with PDF/link
   - *Note: Student material upload form and uploads tracking page implemented under uploads/community.*
-- [ ] Step 4: Material detail/view/download/copy link
-- [ ] Step 5: Likes and ratings
-- [ ] Step 6: Reports + moderation score
-- [ ] Step 7: Platform admin moderation queue
-- [ ] Step 8: QA and deployment update
+- [x] Step 4: Material detail/view/download/copy link
+- [x] Step 5: Likes and ratings
+- [x] Step 6: Reports + moderation score
+- [x] Step 7: Platform admin moderation queue
+- [x] Step 8: UX and counting refinements (Unique views, AJAX toggle liking, security)

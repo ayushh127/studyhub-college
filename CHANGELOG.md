@@ -4,6 +4,7 @@ All notable changes to the StudyHub College project will be documented in this f
 
 ## [Unreleased]
 ### Added
+- Implemented Phase 10 Step 8: Community Library UX and Counting Refinements. Added `CommunityMaterialView` model to track unique student views per material. Updated route `/student/community/materials/<id>` to increment views once per logged-in student. Modified `/student/community/materials/<id>/like` to support AJAX JSON response. Redesigned Like buttons in explorer list cards and details page to support instantaneous AJAX toggling with heart icons (♥/♡) without reloading. Added uploader notice banners and student access restrictions for non-active materials (hidden, under review, removed). Made titles clickable links on student My Uploads and Explorer list cards.
 - Implemented Phase 10 Step 5: Interactions (Likes & Ratings) for Community Library. Added `POST /student/community/materials/<id>/like` and `POST /student/community/materials/<id>/rate` routes to `app/routes/student.py`. Updated `community_details.html` to display interactable rating drop-downs and like buttons. Integrated unique constraints to prevent duplicate entries and re-calculate average rating and counts dynamically.
 - Implemented Phase 10 Step 3: Student Upload Material for Community Library. Added routes `/student/community/upload` and `/student/community/my-uploads` in `app/routes/student.py` and templates `community_upload.html` and `community_my_uploads.html`. Configured secure file saving under `uploads/community/` with Werkzeug's `secure_filename`. Integrated upload constraints (PDF format only, 5MB limit, and dual PDF or link requirement). Added working upload and listing navigation items.
 - Implemented Phase 10 Step 2: Student Browsing & Searching for Community Library. Created student route `/student/community` in `app/routes/student.py` and browsing template `app/templates/student/community_list.html`. Integrated search, filtering by material type and college tags, and sorting options. Added link to student navigation header. Note: Upload, file handling, interactions, and moderation are not implemented yet.
@@ -95,3 +96,9 @@ All notable changes to the StudyHub College project will be documented in this f
 ### Changed
 - Replaced public placeholder pages with real themed templates (index, about, college registration).
 - Finalized auth page themes.
+# # #   P h a s e   1 0 :   S t e p   7   -   P l a t f o r m   A d m i n   M o d e r a t i o n 
+ -   I m p l e m e n t e d   \ G E T   / a d m i n / c o m m u n i t y \   a n d   \ G E T   / a d m i n / c o m m u n i t y / q u e u e \   f o r   m o d e r a t i o n   o v e r v i e w . 
+ -   A d d e d   a d m i n   m a t e r i a l   i n t e r a c t i o n   r o u t e s :   h i d e ,   r e s t o r e ,   a n d   r e m o v e . 
+ -   A d d e d   t e m p l a t e s   f o r   t h e   m o d e r a t i o n   U I   ( \ c o m m u n i t y _ l i s t . h t m l \ ,   \ c o m m u n i t y _ q u e u e . h t m l \ ,   \ c o m m u n i t y _ r e p o r t s . h t m l \ ) . 
+ -   I n c l u d e d   m o d e r a t i o n   a c t i o n s   i n   t h e   A u d i t   L o g .  
+ 

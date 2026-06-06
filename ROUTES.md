@@ -32,6 +32,12 @@ This document lists all the proposed routes for the StudyHub College MVP.
 - `POST /admin/colleges/<id>/admins/create`
 - `POST /admin/colleges/<id>/activate`
 - `POST /admin/colleges/<id>/deactivate`
+- `GET /admin/community` - View all community materials (admin)
+- `GET /admin/community/queue` - Moderation queue for flagged materials
+- `GET /admin/community/reports/<id>` - View reports for a specific material
+- `POST /admin/community/materials/<id>/hide` - Hide a community material
+- `POST /admin/community/materials/<id>/restore` - Restore a community material
+- `POST /admin/community/materials/<id>/remove` - Permanently remove a community material
 - `GET /admin/users`
 - `GET /admin/users/create-platform-admin`
 - `POST /admin/users/create-platform-admin`
@@ -133,7 +139,7 @@ This document lists all the proposed routes for the StudyHub College MVP.
 - `POST /student/community/upload` - Submit community resource
 - `GET /student/community/my-uploads` - List student's own shared resources
 - `GET /student/community/materials/<id>` - View details of a community material
-- `POST /student/community/materials/<id>/like` - Toggle like status for a community material
+- `POST /student/community/materials/<id>/like` - Toggle like status for a community material (supports AJAX JSON responses)
 - `POST /student/community/materials/<id>/rate` - Submit or update rating for a community material
 - `POST /student/community/materials/<id>/report` - Submit a report for a community material
 

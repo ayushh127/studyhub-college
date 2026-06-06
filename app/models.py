@@ -335,6 +335,19 @@ class CommunityMaterialLike(db.Model):
     material = db.relationship('CommunityMaterial', backref='likes_rel')
 
 
+class CommunityMaterialView(db.Model):
+    __tablename__ = 'community_material_views'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    material_id = db.Column(db.Integer, db.ForeignKey('community_materials.id'), nullable=False)
+    viewed_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'material_id', name='_user_community_material_view_uc'),)
+
+    user = db.relationship('User', backref='community_views')
+    material = db.relationship('CommunityMaterial', backref='views_rel')
+
+
 class CommunityMaterialRating(db.Model):
     __tablename__ = 'community_material_ratings'
     id = db.Column(db.Integer, primary_key=True)

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_required, current_user
-from app.models import College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial, CommunityMaterialLike, CommunityMaterialRating, CommunityMaterialReport
+from app.models import College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial, CommunityMaterialLike, CommunityMaterialRating, CommunityMaterialReport, CommunityMaterialView
 from app.extensions import db
 from sqlalchemy import or_
 from datetime import datetime
@@ -377,6 +377,11 @@ def community_library():
     materials = query.all()
     colleges = College.query.filter_by(status='active').all()
 
+    liked_material_ids = set()
+    if current_user.is_authenticated:
+        likes = CommunityMaterialLike.query.filter_by(user_id=current_user.id).all()
+        liked_material_ids = {l.material_id for l in likes}
+
     return render_template(
         'student/community_list.html',
         materials=materials,
@@ -384,7 +389,8 @@ def community_library():
         search_query=search_query,
         selected_material_type=material_type,
         selected_college_tag_id=college_tag_id,
-        sort_by=sort_by
+        sort_by=sort_by,
+        liked_material_ids=liked_material_ids
     )
 
 
@@ -476,9 +482,21 @@ def community_material_details(id):
             flash('This material is currently unavailable.', 'danger')
             return redirect(url_for('student.community_library'))
 
-    # Increment views
-    material.views_count += 1
-    db.session.commit()
+    # Record unique view
+    if current_user.is_authenticated:
+        # Check if already viewed
+        existing_view = CommunityMaterialView.query.filter_by(
+            user_id=current_user.id,
+            material_id=material.id
+        ).first()
+        if not existing_view:
+            new_view = CommunityMaterialView(
+                user_id=current_user.id,
+                material_id=material.id
+            )
+            db.session.add(new_view)
+            material.views_count += 1
+            db.session.commit()
 
     user_liked = False
     user_rating = None
@@ -499,23 +517,41 @@ def community_material_details(id):
 @student_bp.route('/community/materials/<int:id>/like', methods=['POST'])
 @check_college_access
 def like_community_material(id):
+    from flask import jsonify
     material = CommunityMaterial.query.get_or_404(id)
     if material.status != 'active':
+        if request.headers.get('Accept') == 'application/json':
+            return jsonify({'success': False, 'message': 'Cannot like an inactive material.'}), 400
         flash('Cannot like an inactive material.', 'danger')
         return redirect(url_for('student.community_library'))
         
     like = CommunityMaterialLike.query.filter_by(user_id=current_user.id, material_id=material.id).first()
+    liked = False
     if like:
         db.session.delete(like)
         material.likes_count = max(0, material.likes_count - 1)
-        flash('You unliked this material.', 'info')
+        liked = False
     else:
         new_like = CommunityMaterialLike(user_id=current_user.id, material_id=material.id)
         db.session.add(new_like)
         material.likes_count += 1
-        flash('You liked this material.', 'success')
+        liked = True
         
     db.session.commit()
+    
+    # Check if request expects JSON (AJAX)
+    if request.headers.get('Accept') == 'application/json' or request.is_json:
+        return jsonify({
+            'success': True,
+            'liked': liked,
+            'likes_count': material.likes_count
+        })
+        
+    if liked:
+        flash('You liked this material.', 'success')
+    else:
+        flash('You unliked this material.', 'info')
+        
     return redirect(url_for('student.community_material_details', id=material.id))
 
 @student_bp.route('/community/materials/<int:id>/rate', methods=['POST'])

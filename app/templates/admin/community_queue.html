@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Moderation Queue - Admin{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    {% include "components/admin_sidebar.html" %}
+    
+    <div class="main-content">
+        <div style="max-width: 1100px; margin: 0 auto;">
+            <div class="flex-header-responsive" style="margin-bottom: 2rem;">
+                <div>
+                    <h2 style="font-size: 1.8rem; margin: 0;">Moderation Queue</h2>
+                    <p class="muted" style="margin-top: 0.5rem;">Community materials automatically flagged as 'under_review' due to high reports or risk scores.</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('admin.community_list') }}" class="btn btn-outline">View All Materials</a>
+                </div>
+            </div>
+
+            <div class="card" style="padding: 0;">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title / Subject</th>
+                                <th>Uploader</th>
+                                <th>Stats</th>
+                                <th>Score</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for material in materials %}
+                            <tr>
+                                <td>
+                                    <div style="font-weight: 600; color: var(--primary-dark); margin-bottom: 0.25rem;">
+                                        {{ material.title }}
+                                    </div>
+                                    <div class="muted" style="font-size: 0.85rem;">
+                                        {{ material.subject_name }}
+                                        <br>
+                                        <span class="badge" style="background-color: #FEF3C7; color: #D97706; border: none; font-size: 0.7rem; margin-top: 0.25rem;">{{ material.material_type }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>{{ material.uploader.full_name }}</div>
+                                </td>
+                                <td>
+                                    <div style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                                        <span>👁️ {{ material.views_count }} views</span>
+                                        <span>❤️ {{ material.likes_count }} likes</span>
+                                        <span>🚩 {{ material.reports_count }} reports</span>
+                                        <span>⭐ {{ '%.1f' | format(material.average_rating) }} avg</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background-color: #FEE2E2; color: #DC2626; font-size: 0.9rem;">
+                                        {{ '%.1f' | format(material.moderation_score) }}
+                                    </span>
+                                </td>
+                                <td class="muted" style="font-size: 0.85rem;">
+                                    {{ material.created_at.strftime('%Y-%m-%d') }}
+                                </td>
+                                <td>
+                                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                        <a href="{{ url_for('admin.community_reports', id=material.id) }}" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.25rem 0.5rem; text-align: center;">View Reports</a>
+                                        <form action="{{ url_for('admin.hide_community_material', id=material.id) }}" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you want to hide this material?');">
+                                            <button type="submit" class="btn" style="width: 100%; font-size: 0.8rem; padding: 0.25rem 0.5rem; background-color: #FEF3C7; color: #D97706; border: 1px solid #FDE68A;">Hide</button>
+                                        </form>
+                                        <form action="{{ url_for('admin.remove_community_material', id=material.id) }}" method="POST" style="margin: 0;" onsubmit="return confirm('Are you sure you want to permanently remove this material?');">
+                                            <button type="submit" class="btn" style="width: 100%; font-size: 0.8rem; padding: 0.25rem 0.5rem; background-color: #FEE2E2; color: #DC2626; border: 1px solid #FCA5A5;">Remove</button>
+                                        </form>
+                                        <form action="{{ url_for('admin.restore_community_material', id=material.id) }}" method="POST" style="margin: 0;" onsubmit="return confirm('Restore this material to active status?');">
+                                            <button type="submit" class="btn" style="width: 100%; font-size: 0.8rem; padding: 0.25rem 0.5rem; background-color: #DCFCE7; color: #16A34A; border: 1px solid #BBF7D0;">Restore</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 3rem;">
+                                    <h4 class="muted">Queue is empty</h4>
+                                    <p class="muted" style="margin-top: 0.5rem;">No community materials currently require moderation.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

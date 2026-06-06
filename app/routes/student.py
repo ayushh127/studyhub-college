@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_required, current_user
-from app.models import College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial
+from app.models import College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial, CommunityMaterialLike, CommunityMaterialRating
 from app.extensions import db
 from sqlalchemy import or_
 from datetime import datetime
@@ -479,4 +479,72 @@ def community_material_details(id):
     material.views_count += 1
     db.session.commit()
 
-    return render_template('student/community_details.html', material=material)
+    user_liked = False
+    user_rating = None
+    if current_user.is_authenticated:
+        like = CommunityMaterialLike.query.filter_by(user_id=current_user.id, material_id=material.id).first()
+        if like:
+            user_liked = True
+        rating = CommunityMaterialRating.query.filter_by(user_id=current_user.id, material_id=material.id).first()
+        if rating:
+            user_rating = rating.rating
+
+    return render_template('student/community_details.html', material=material, user_liked=user_liked, user_rating=user_rating)
+
+@student_bp.route('/community/materials/<int:id>/like', methods=['POST'])
+@check_college_access
+def like_community_material(id):
+    material = CommunityMaterial.query.get_or_404(id)
+    if material.status != 'active':
+        flash('Cannot like an inactive material.', 'danger')
+        return redirect(url_for('student.community_library'))
+        
+    like = CommunityMaterialLike.query.filter_by(user_id=current_user.id, material_id=material.id).first()
+    if like:
+        db.session.delete(like)
+        material.likes_count = max(0, material.likes_count - 1)
+        flash('You unliked this material.', 'info')
+    else:
+        new_like = CommunityMaterialLike(user_id=current_user.id, material_id=material.id)
+        db.session.add(new_like)
+        material.likes_count += 1
+        flash('You liked this material.', 'success')
+        
+    db.session.commit()
+    return redirect(url_for('student.community_material_details', id=material.id))
+
+@student_bp.route('/community/materials/<int:id>/rate', methods=['POST'])
+@check_college_access
+def rate_community_material(id):
+    material = CommunityMaterial.query.get_or_404(id)
+    if material.status != 'active':
+        flash('Cannot rate an inactive material.', 'danger')
+        return redirect(url_for('student.community_library'))
+        
+    rating_val = request.form.get('rating', type=int)
+    if not rating_val or rating_val < 1 or rating_val > 5:
+        flash('Invalid rating value. Must be between 1 and 5.', 'danger')
+        return redirect(url_for('student.community_material_details', id=material.id))
+        
+    rating = CommunityMaterialRating.query.filter_by(user_id=current_user.id, material_id=material.id).first()
+    if rating:
+        rating.rating = rating_val
+        flash('Your rating was updated.', 'success')
+    else:
+        new_rating = CommunityMaterialRating(user_id=current_user.id, material_id=material.id, rating=rating_val)
+        db.session.add(new_rating)
+        flash('Your rating was submitted.', 'success')
+        
+    db.session.commit()
+    
+    # Recalculate average rating
+    all_ratings = CommunityMaterialRating.query.filter_by(material_id=material.id).all()
+    if all_ratings:
+        material.ratings_count = len(all_ratings)
+        material.average_rating = sum(r.rating for r in all_ratings) / material.ratings_count
+    else:
+        material.ratings_count = 0
+        material.average_rating = 0.0
+        
+    db.session.commit()
+    return redirect(url_for('student.community_material_details', id=material.id))

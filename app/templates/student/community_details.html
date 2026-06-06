@@ -73,6 +73,45 @@
             </p>
         </div>
 
+        {% if material.status == 'active' %}
+        <!-- Interactions Section -->
+        <div style="background-color: var(--surface-soft); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 2rem;">
+            <div style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: center;">
+                <!-- Like Form -->
+                <form action="{{ url_for('student.like_community_material', id=material.id) }}" method="POST" style="margin: 0;">
+                    <button type="submit" class="btn {% if user_liked %}btn-primary{% else %}btn-outline{% endif %}" style="display: flex; align-items: center; gap: 0.5rem; min-width: 120px; justify-content: center;">
+                        {% if user_liked %}
+                            ❤️ Liked ({{ material.likes_count }})
+                        {% else %}
+                            🤍 Like ({{ material.likes_count }})
+                        {% endif %}
+                    </button>
+                </form>
+
+                <!-- Rating Form -->
+                <form action="{{ url_for('student.rate_community_material', id=material.id) }}" method="POST" style="margin: 0; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <label for="rating" style="font-weight: 600; color: var(--text);">Rate this material:</label>
+                        <select name="rating" id="rating" class="form-control" style="width: auto; padding: 0.4rem 0.75rem;" required>
+                            <option value="">Select</option>
+                            <option value="5" {% if user_rating == 5 %}selected{% endif %}>5 ⭐⭐⭐⭐⭐ (Excellent)</option>
+                            <option value="4" {% if user_rating == 4 %}selected{% endif %}>4 ⭐⭐⭐⭐ (Good)</option>
+                            <option value="3" {% if user_rating == 3 %}selected{% endif %}>3 ⭐⭐⭐ (Average)</option>
+                            <option value="2" {% if user_rating == 2 %}selected{% endif %}>2 ⭐⭐ (Poor)</option>
+                            <option value="1" {% if user_rating == 1 %}selected{% endif %}>1 ⭐ (Terrible)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-outline" style="padding: 0.45rem 1rem;">
+                        {% if user_rating %}Update Rating{% else %}Submit Rating{% endif %}
+                    </button>
+                    {% if user_rating %}
+                    <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.8rem;">You rated: {{ user_rating }} ⭐</span>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
         <!-- Access Resources Section -->
         <div style="background-color: var(--surface-soft); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border);">
             <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">Access Material</h3>

@@ -132,7 +132,11 @@ This document lists all the proposed routes for the StudyHub College MVP.
 - `GET /student/community/upload` - Page to share community resources
 - `POST /student/community/upload` - Submit community resource
 - `GET /student/community/my-uploads` - List student's own shared resources
+- `GET /student/community/materials/<id>` - View details of a community material
+- `POST /student/community/materials/<id>/like` - Toggle like status for a community material
+- `POST /student/community/materials/<id>/rate` - Submit or update rating for a community material
 
 ## Secure File Routes
 - `GET /files/materials/<id>`
 - `GET /files/pyqs/<id>`
+- `GET /files/community/<id>` - Secure access to community PDF downloads

@@ -140,8 +140,9 @@ Materials flag for review but **are not auto-deleted**. They are queued in the P
 * **Step 4: Student Interface - Material Detail & Interactions** (COMPLETED)
   * Create `student/community_details.html` template.
   * Implement backend routes for detail views, secure file streaming, external link redirection, and view tracking.
-* **Step 5: Admin Moderation Console**
-  * Create `admin/community_queue.html` and the platform admin review route.
-  * Implement action routes (`hide`, `restore`, `remove`).
+* **Step 5: Interactions (Likes & Ratings)** (COMPLETED)
+  * Implemented `POST /student/community/materials/<id>/like` to toggle like status.
+  * Implemented `POST /student/community/materials/<id>/rate` to add/update user ratings.
+  * Updated detail templates to display interactable UI components.
 * **Step 6: QA Validation & Checks**
   * Build a test suite verifying upload restrictions, file size limits, duplicate prevention, and the moderation scoring formula.

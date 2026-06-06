@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_required, current_user
-from app.models import College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial, CommunityMaterialLike, CommunityMaterialRating
+from app.models import College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial, CommunityMaterialLike, CommunityMaterialRating, CommunityMaterialReport
 from app.extensions import db
 from sqlalchemy import or_
 from datetime import datetime
@@ -9,6 +9,7 @@ import os
 import time
 from werkzeug.utils import secure_filename
 from ..utils.audit import log_action
+from ..utils.community import update_community_material_moderation
 
 from . import student_bp
 
@@ -481,6 +482,7 @@ def community_material_details(id):
 
     user_liked = False
     user_rating = None
+    user_reported = False
     if current_user.is_authenticated:
         like = CommunityMaterialLike.query.filter_by(user_id=current_user.id, material_id=material.id).first()
         if like:
@@ -488,8 +490,11 @@ def community_material_details(id):
         rating = CommunityMaterialRating.query.filter_by(user_id=current_user.id, material_id=material.id).first()
         if rating:
             user_rating = rating.rating
+        report = CommunityMaterialReport.query.filter_by(user_id=current_user.id, material_id=material.id).first()
+        if report:
+            user_reported = True
 
-    return render_template('student/community_details.html', material=material, user_liked=user_liked, user_rating=user_rating)
+    return render_template('student/community_details.html', material=material, user_liked=user_liked, user_rating=user_rating, user_reported=user_reported)
 
 @student_bp.route('/community/materials/<int:id>/like', methods=['POST'])
 @check_college_access
@@ -548,3 +553,46 @@ def rate_community_material(id):
         
     db.session.commit()
     return redirect(url_for('student.community_material_details', id=material.id))
+
+@student_bp.route('/community/materials/<int:id>/report', methods=['POST'])
+@check_college_access
+def report_community_material(id):
+    material = CommunityMaterial.query.get_or_404(id)
+    if material.status != 'active':
+        flash('You cannot report an inactive material.', 'danger')
+        return redirect(url_for('student.community_library'))
+        
+    existing_report = CommunityMaterialReport.query.filter_by(user_id=current_user.id, material_id=material.id).first()
+    if existing_report:
+        flash('You have already reported this material.', 'warning')
+        return redirect(url_for('student.community_material_details', id=material.id))
+        
+    reason = request.form.get('reason', '').strip()
+    details = request.form.get('details', '').strip()
+    
+    if not reason:
+        flash('A reason is required to report.', 'danger')
+        return redirect(url_for('student.community_material_details', id=material.id))
+        
+    if reason == 'Other' and details:
+        reason_text = f"Other: {details}"
+    else:
+        reason_text = reason
+        
+    new_report = CommunityMaterialReport(user_id=current_user.id, material_id=material.id, reason=reason_text)
+    db.session.add(new_report)
+    
+    material.reports_count += 1
+    
+    # Calculate risk score and handle escalations
+    update_community_material_moderation(material)
+    
+    db.session.commit()
+    
+    if material.status == 'under_review':
+        flash('Thank you for your report. The material has been flagged for review by moderators.', 'warning')
+        # If it's under review, it shouldn't show in the normal list, so send them back to the list
+        return redirect(url_for('student.community_library'))
+    else:
+        flash('Thank you for reporting this material.', 'success')
+        return redirect(url_for('student.community_material_details', id=material.id))

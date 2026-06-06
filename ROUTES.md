@@ -135,6 +135,7 @@ This document lists all the proposed routes for the StudyHub College MVP.
 - `GET /student/community/materials/<id>` - View details of a community material
 - `POST /student/community/materials/<id>/like` - Toggle like status for a community material
 - `POST /student/community/materials/<id>/rate` - Submit or update rating for a community material
+- `POST /student/community/materials/<id>/report` - Submit a report for a community material
 
 ## Secure File Routes
 - `GET /files/materials/<id>`

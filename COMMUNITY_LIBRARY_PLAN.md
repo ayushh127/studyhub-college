@@ -144,5 +144,8 @@ Materials flag for review but **are not auto-deleted**. They are queued in the P
   * Implemented `POST /student/community/materials/<id>/like` to toggle like status.
   * Implemented `POST /student/community/materials/<id>/rate` to add/update user ratings.
   * Updated detail templates to display interactable UI components.
-* **Step 6: QA Validation & Checks**
-  * Build a test suite verifying upload restrictions, file size limits, duplicate prevention, and the moderation scoring formula.
+* **Step 6: Reporting and Moderation Queue** (COMPLETED)
+  * Implemented `POST /student/community/materials/<id>/report` route.
+  * Added `update_community_material_moderation` to `app/utils/community.py` to calculate `risk_score`.
+  * Configured escalation thresholds to automatically set highly flagged content to `under_review`.
+* **Step 7: Admin Moderation Console**

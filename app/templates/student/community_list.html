@@ -10,11 +10,13 @@
             <h2 style="font-size: 2rem; margin: 0; font-weight: 800;">Community Library</h2>
             <p class="muted" style="margin: 0.5rem 0 0 0;">An open, student-to-student sharing hub for study materials, assignments, and notes across all colleges.</p>
         </div>
-        <div>
-            <!-- Upload Material placeholder -->
-            <button class="btn btn-primary" style="opacity: 0.6; cursor: not-allowed;" disabled title="Upload feature is coming in a future step!">
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <a href="{{ url_for('student.my_community_uploads') }}" class="btn btn-outline">
+                📁 My Uploads
+            </a>
+            <a href="{{ url_for('student.upload_community_material') }}" class="btn btn-primary">
                 ➕ Share Material
-            </button>
+            </a>
         </div>
     </div>
 

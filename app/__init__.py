@@ -20,5 +20,6 @@ def create_app(config_class=Config):
     # Create upload directories if they don't exist
     os.makedirs(app.config['UPLOAD_FOLDER_MATERIALS'], exist_ok=True)
     os.makedirs(app.config['UPLOAD_FOLDER_PYQS'], exist_ok=True)
+    os.makedirs(app.config['UPLOAD_FOLDER_COMMUNITY'], exist_ok=True)
 
     return app

@@ -133,9 +133,10 @@ Materials flag for review but **are not auto-deleted**. They are queued in the P
 * **Step 2: Student Interface - Browsing & Searching** (COMPLETED)
   * Create templates `student/community_list.html` and the student route `/student/community`.
   * Add filters (search input, type selector, college tag dropdown) and sorting logic (latest, views, likes).
-* **Step 3: Student Interface - Uploads & File Handling**
+* **Step 3: Student Interface - Uploads & File Handling** (COMPLETED)
   * Create `student/community_upload.html` template and forms validation.
   * Integrate secure file storage for uploads under `uploads/community/`.
+  * *Note: Upload routes and templates created. Likes, ratings, details, and moderation are not implemented yet.*
 * **Step 4: Student Interface - Material Detail & Interactions**
   * Create `student/community_details.html` template.
   * Implement backend routes for detail views, secure file streaming, external link redirection, likes, ratings, and reports.

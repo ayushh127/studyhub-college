@@ -150,7 +150,8 @@ This document tracks the granular development tasks for the StudyHub College MVP
   - *Note: Community Library database models added. Routes/UI/interactions/moderation not implemented yet.*
 - [x] Step 2: Student library list/search UI
   - *Note: Student browsing and search page created. Upload, file handling, interactions, and moderation are not implemented yet.*
-- [ ] Step 3: Upload material with PDF/link
+- [x] Step 3: Upload material with PDF/link
+  - *Note: Student material upload form and uploads tracking page implemented under uploads/community.*
 - [ ] Step 4: Material detail/view/download/copy link
 - [ ] Step 5: Likes and ratings
 - [ ] Step 6: Reports + moderation score

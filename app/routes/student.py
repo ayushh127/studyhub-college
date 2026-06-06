@@ -1,10 +1,14 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_required, current_user
 from app.models import College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial
 from app.extensions import db
 from sqlalchemy import or_
 from datetime import datetime
 from functools import wraps
+import os
+import time
+from werkzeug.utils import secure_filename
+from ..utils.audit import log_action
 
 from . import student_bp
 
@@ -381,5 +385,82 @@ def community_library():
         selected_college_tag_id=college_tag_id,
         sort_by=sort_by
     )
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'pdf'
+
+
+@student_bp.route('/community/upload', methods=['GET', 'POST'])
+@check_college_access
+def upload_community_material():
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        description = request.form.get('description', '').strip()
+        subject_name = request.form.get('subject_name', '').strip()
+        college_tag_id = request.form.get('college_tag_id', type=int)
+        material_type = request.form.get('material_type', 'notes').strip()
+        external_url = request.form.get('external_url', '').strip()
+        file = request.files.get('file')
+
+        # Validation checks
+        if not title:
+            flash('Title is required.', 'danger')
+            return redirect(url_for('student.upload_community_material'))
+
+        if not subject_name:
+            flash('Subject name is required.', 'danger')
+            return redirect(url_for('student.upload_community_material'))
+
+        has_file = file and file.filename != ''
+        if not has_file and not external_url:
+            flash('You must either upload a PDF file or provide an external URL.', 'danger')
+            return redirect(url_for('student.upload_community_material'))
+
+        if external_url and not (external_url.startswith('http://') or external_url.startswith('https://')):
+            flash('External URL must start with http:// or https://', 'danger')
+            return redirect(url_for('student.upload_community_material'))
+
+        filename = None
+        if has_file:
+            if not allowed_file(file.filename):
+                flash('Only PDF files are allowed in the Community Library.', 'danger')
+                return redirect(url_for('student.upload_community_material'))
+
+            filename = secure_filename(f"{int(time.time())}_{file.filename}")
+            filepath = os.path.join(current_app.config['UPLOAD_FOLDER_COMMUNITY'], filename)
+            file.save(filepath)
+
+        # Create model instance
+        material = CommunityMaterial(
+            title=title,
+            description=description if description else None,
+            subject_name=subject_name,
+            college_tag_id=college_tag_id if college_tag_id else None,
+            uploaded_by=current_user.id,
+            material_type=material_type,
+            file_path=filename,
+            external_url=external_url if external_url else None,
+            status='active'
+        )
+
+        db.session.add(material)
+        db.session.commit()
+
+        # Audit logging
+        log_action(current_user.id, 'community_material_uploaded', 'community_material', material.id, f"Uploaded: {title}")
+        flash('Material shared with the community successfully!', 'success')
+        return redirect(url_for('student.my_community_uploads'))
+
+    colleges = College.query.filter_by(status='active').all()
+    return render_template('student/community_upload.html', colleges=colleges)
+
+
+@student_bp.route('/community/my-uploads', methods=['GET'])
+@check_college_access
+def my_community_uploads():
+    materials = CommunityMaterial.query.filter_by(uploaded_by=current_user.id).order_by(CommunityMaterial.created_at.desc()).all()
+    return render_template('student/community_my_uploads.html', materials=materials)
+
 
 

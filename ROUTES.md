@@ -129,6 +129,9 @@ This document lists all the proposed routes for the StudyHub College MVP.
 - `GET /student/profile`
 - `POST /student/profile`
 - `GET /student/community` - Community library material explorer (browsing, searching, filtering)
+- `GET /student/community/upload` - Page to share community resources
+- `POST /student/community/upload` - Submit community resource
+- `GET /student/community/my-uploads` - List student's own shared resources
 
 ## Secure File Routes
 - `GET /files/materials/<id>`

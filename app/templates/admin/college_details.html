@@ -20,19 +20,29 @@
             <span style="color: var(--text); font-weight: 500;">{{ college.name }}</span>
         </nav>
 
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
-            <div>
-                <h2 style="margin-bottom: 0.25rem;">{{ college.name }}</h2>
-                <p class="muted" style="margin: 0;">Code: <strong>{{ college.code }}</strong> | Registered on: {{ college.created_at.strftime('%Y-%m-%d') }}</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                {% if college.logo_path %}
+                <img src="{{ url_for('files.serve_college_logo', id=college.id) }}" alt="{{ college.name }} Logo" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; border: 1px solid var(--border); background: white; padding: 4px;">
+                {% else %}
+                <div style="width: 80px; height: 80px; border-radius: 8px; background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.75rem;">
+                    {{ college.code[:3] }}
+                </div>
+                {% endif %}
+                <div>
+                    <h2 style="margin-bottom: 0.25rem;">{{ college.name }}</h2>
+                    <p class="muted" style="margin: 0;">Code: <strong>{{ college.code }}</strong> | Registered on: {{ college.created_at.strftime('%Y-%m-%d') }}</p>
+                </div>
             </div>
             
-            <div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <a href="{{ url_for('admin.edit_college', id=college.id) }}" class="btn" style="border: 1px solid var(--border); background: white;">Edit College</a>
                 {% if college.status == 'active' %}
-                <form method="POST" action="{{ url_for('admin.deactivate_college', id=college.id) }}" style="display: inline-block;">
+                <form method="POST" action="{{ url_for('admin.deactivate_college', id=college.id) }}" style="display: inline-block; margin: 0;">
                     <button type="submit" class="btn" style="border: 1px solid var(--danger); color: var(--danger); background: none;">Deactivate College</button>
                 </form>
                 {% else %}
-                <form method="POST" action="{{ url_for('admin.activate_college', id=college.id) }}" style="display: inline-block;">
+                <form method="POST" action="{{ url_for('admin.activate_college', id=college.id) }}" style="display: inline-block; margin: 0;">
                     <button type="submit" class="btn btn-primary">Activate College</button>
                 </form>
                 {% endif %}
@@ -75,6 +85,30 @@
                             <td style="padding: 0.5rem 0;">{{ college.contact_phone }}</td>
                         </tr>
                     </table>
+                </div>
+
+                <div class="card">
+                    <h3 style="font-size: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1rem;">College Logo</h3>
+                    {% if college.logo_path %}
+                    <div style="text-align: center; margin-bottom: 1.25rem;">
+                        <img src="{{ url_for('files.serve_college_logo', id=college.id) }}" alt="Logo" style="max-width: 100%; max-height: 100px; object-fit: contain; border: 1px solid var(--border); border-radius: 8px; padding: 6px; background: white; box-shadow: var(--shadow-sm);">
+                    </div>
+                    {% else %}
+                    <p class="muted" style="font-size: 0.85rem; margin-bottom: 1.25rem;">No custom logo uploaded yet. The default initials avatar is currently displayed.</p>
+                    {% endif %}
+                    
+                    <form method="POST" action="{{ url_for('admin.upload_college_logo', id=college.id) }}" enctype="multipart/form-data">
+                        <div class="form-group" style="margin-bottom: 0.75rem;">
+                            <input type="file" name="logo" accept=".png,.jpg,.jpeg,.webp" required style="font-size: 0.8rem; width: 100%;">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm btn-full" style="font-weight: 700; border-radius: 6px;">{% if college.logo_path %}Change Logo{% else %}Upload Logo{% endif %}</button>
+                    </form>
+                    
+                    {% if college.logo_path %}
+                    <form method="POST" action="{{ url_for('admin.remove_college_logo', id=college.id) }}" style="margin-top: 0.5rem; display: block;">
+                        <button type="submit" class="btn btn-sm btn-full" style="border: 1px solid var(--danger); color: var(--danger); background: none; font-weight: 600; border-radius: 6px;" onclick="return confirm('Are you sure you want to remove the logo for this college?')">Remove Logo</button>
+                    </form>
+                    {% endif %}
                 </div>
 
                 <div class="card" style="background-color: var(--surface-soft);">

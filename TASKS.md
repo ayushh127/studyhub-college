@@ -228,3 +228,23 @@ This document tracks the granular development tasks for the StudyHub College MVP
   - [x] Custom Error views (403, 404, 413, 500)
   - [x] Platform Admin dashboard (`admin/dashboard.html`) & College Admin dashboard (`college_admin/dashboard.html`)
   - [x] Platform Admin sidebars & College Admin sidebars / layouts
+
+## Phase 15: College Onboarding & Selection Improvements
+- [x] Step 1: Add `logo_path` field to the `College` model in `app/models.py`
+- [x] Step 2: Configure logo uploads folder in `app/config.py` and `app/__init__.py`
+- [x] Step 3: Write and execute migration script `migrate_college_logo.py` to update SQLite schema
+- [x] Step 4: Implement secure endpoints for uploading (`/admin/colleges/<id>/logo`), removing (`/admin/colleges/<id>/logo/remove`), and serving (`/files/college-logos/<id>`) college logos
+- [x] Step 5: Update manual college creation logic in `app/routes/admin.py` to handle optional logo uploads
+- [x] Step 6: Add logo file input to `admin/college_form.html`
+- [x] Step 7: Update Platform Admin views `admin/colleges.html` and `admin/college_details.html` to display logo thumbnails and manage logos
+- [x] Step 8: Update Student select college page `student/select_college.html` to show logos and initials fallback avatars
+- [x] Step 9: Add real-time JS client-side searching and filtering of colleges matching name, code, city, or state
+- [x] Step 10: Implement responsive empty state warning on selection page
+- [x] Step 11: Display selected college logo on the student dashboard welcome card banner
+- [x] Step 12: Add `logo_path` field to `CollegeRequest` model and write/run `migrate_college_request_logo.py`
+- [x] Step 13: Add optional logo upload to public college registration form and backend route
+- [x] Step 14: Transfer request `logo_path` to `College` model on approval of college request
+- [x] Step 15: Add `GET/POST /admin/colleges/<id>/edit` route to allow platform admins to edit all college details and replace logo
+- [x] Step 16: Update Platform Admin views with "Edit College" buttons and links
+- [x] Step 17: Verify local python code compiles cleanly
+- [x] Step 18: Update system documentation (`ROUTES.md`, `UI_UX_GUIDE.md`, `CHANGELOG.md`, `DATABASE_SCHEMA.md`, `DEPLOYMENT_PYTHONANYWHERE_FREE.md`, `TASKS.md`) and walkthrough artifact

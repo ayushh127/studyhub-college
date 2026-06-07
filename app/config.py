@@ -14,4 +14,5 @@ class Config:
     UPLOAD_FOLDER_MATERIALS = os.path.join(UPLOAD_FOLDER_BASE, 'materials')
     UPLOAD_FOLDER_PYQS = os.path.join(UPLOAD_FOLDER_BASE, 'pyqs')
     UPLOAD_FOLDER_COMMUNITY = os.path.join(UPLOAD_FOLDER_BASE, 'community')
+    UPLOAD_FOLDER_LOGOS = os.path.join(UPLOAD_FOLDER_BASE, 'college_logos')
     MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5 MB max upload for free-tier testing

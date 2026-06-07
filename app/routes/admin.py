@@ -38,13 +38,14 @@ def approve_college_request(id):
     # Create College
     college = College(
         name=req.college_name,
-        code=req.college_code,
+        code=req.college_code.upper(),
         city=req.city,
         state=req.state,
         address=req.address,
         contact_email=req.admin_email,
         contact_phone=req.admin_phone,
         status='active',
+        logo_path=req.logo_path,
         created_by_admin_id=current_user.id
     )
     db.session.add(college)
@@ -188,6 +189,28 @@ def create_college():
             flash(f'College code "{code}" already exists. Please choose a unique code.', 'danger')
             return render_template('admin/college_form.html', college=None, form_data=request.form)
             
+        logo = request.files.get('logo')
+        logo_filename = None
+        if logo and logo.filename != '':
+            if not ('.' in logo.filename and logo.filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'webp'}):
+                flash('Invalid logo file type. Allowed formats: PNG, JPG, JPEG, WEBP.', 'danger')
+                return render_template('admin/college_form.html', college=None, form_data=request.form)
+            
+            import os
+            logo.seek(0, os.SEEK_END)
+            size = logo.tell()
+            logo.seek(0)
+            if size > 2 * 1024 * 1024:
+                flash('Logo file size must be less than 2MB.', 'danger')
+                return render_template('admin/college_form.html', college=None, form_data=request.form)
+            
+            from werkzeug.utils import secure_filename
+            from flask import current_app
+            import time
+            ext = logo.filename.rsplit('.', 1)[1].lower()
+            logo_filename = secure_filename(f"logo_{code.upper()}_{int(time.time())}.{ext}")
+            logo.save(os.path.join(current_app.config['UPLOAD_FOLDER_LOGOS'], logo_filename))
+
         college = College(
             name=name,
             code=code.upper(),
@@ -197,6 +220,7 @@ def create_college():
             contact_email=contact_email,
             contact_phone=contact_phone,
             status=status,
+            logo_path=logo_filename,
             created_by_admin_id=current_user.id
         )
         db.session.add(college)
@@ -218,6 +242,154 @@ def create_college():
         return redirect(url_for('admin.college_detail', id=college.id))
         
     return render_template('admin/college_form.html', college=None)
+
+@admin_bp.route('/colleges/<int:id>/edit', methods=['GET', 'POST'])
+def edit_college(id):
+    import os
+    import time
+    from flask import current_app
+    from werkzeug.utils import secure_filename
+    
+    college = College.query.get_or_404(id)
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        code = request.form.get('code')
+        city = request.form.get('city')
+        state = request.form.get('state')
+        address = request.form.get('address')
+        contact_email = request.form.get('contact_email')
+        contact_phone = request.form.get('contact_phone')
+        status = request.form.get('status', 'active')
+        
+        # Validation
+        if not all([name, code, city, state, address, contact_email, contact_phone]):
+            flash('All fields are required.', 'danger')
+            return render_template('admin/college_form.html', college=college)
+            
+        existing = College.query.filter_by(code=code.upper()).first()
+        if existing and existing.id != college.id:
+            flash(f'College code "{code}" already exists. Please choose a unique code.', 'danger')
+            return render_template('admin/college_form.html', college=college)
+            
+        logo = request.files.get('logo')
+        logo_filename = college.logo_path
+        logo_updated = False
+        if logo and logo.filename != '':
+            if not ('.' in logo.filename and logo.filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'webp'}):
+                flash('Invalid logo file type. Allowed formats: PNG, JPG, JPEG, WEBP.', 'danger')
+                return render_template('admin/college_form.html', college=college)
+            
+            logo.seek(0, os.SEEK_END)
+            size = logo.tell()
+            logo.seek(0)
+            if size > 2 * 1024 * 1024:
+                flash('Logo file size must be less than 2MB.', 'danger')
+                return render_template('admin/college_form.html', college=college)
+                
+            # Delete old logo if exists
+            if college.logo_path:
+                old_path = os.path.join(current_app.config['UPLOAD_FOLDER_LOGOS'], college.logo_path)
+                if os.path.exists(old_path):
+                    try:
+                        os.remove(old_path)
+                    except Exception:
+                        pass
+                        
+            ext = logo.filename.rsplit('.', 1)[1].lower()
+            logo_filename = secure_filename(f"logo_{code.upper()}_{int(time.time())}.{ext}")
+            logo.save(os.path.join(current_app.config['UPLOAD_FOLDER_LOGOS'], logo_filename))
+            logo_updated = True
+            
+        # Update details
+        college.name = name
+        college.code = code.upper()
+        college.city = city
+        college.state = state
+        college.address = address
+        college.contact_email = contact_email
+        college.contact_phone = contact_phone
+        college.status = status
+        college.logo_path = logo_filename
+        
+        db.session.commit()
+        
+        log_action(current_user.id, 'college_updated', 'college', college.id, f'Updated details for college {college.name}')
+        if logo_updated:
+            log_action(current_user.id, 'college_logo_updated', 'college', college.id, f'Updated logo for college {college.name}')
+            
+        flash(f'College {college.name} updated successfully.', 'success')
+        return redirect(url_for('admin.college_detail', id=college.id))
+        
+    return render_template('admin/college_form.html', college=college)
+
+@admin_bp.route('/colleges/<int:id>/logo', methods=['POST'])
+def upload_college_logo(id):
+    import os
+    import time
+    from flask import current_app
+    from werkzeug.utils import secure_filename
+    
+    college = College.query.get_or_404(id)
+    logo = request.files.get('logo')
+    
+    if not logo or logo.filename == '':
+        flash('No logo file selected.', 'danger')
+        return redirect(url_for('admin.college_detail', id=college.id))
+        
+    if not ('.' in logo.filename and logo.filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'webp'}):
+        flash('Invalid logo file type. Allowed formats: PNG, JPG, JPEG, WEBP.', 'danger')
+        return redirect(url_for('admin.college_detail', id=college.id))
+        
+    logo.seek(0, os.SEEK_END)
+    size = logo.tell()
+    logo.seek(0)
+    if size > 2 * 1024 * 1024:
+        flash('Logo file size must be less than 2MB.', 'danger')
+        return redirect(url_for('admin.college_detail', id=college.id))
+        
+    # Delete old logo if exists
+    if college.logo_path:
+        old_path = os.path.join(current_app.config['UPLOAD_FOLDER_LOGOS'], college.logo_path)
+        if os.path.exists(old_path):
+            try:
+                os.remove(old_path)
+            except Exception as e:
+                pass
+                
+    ext = logo.filename.rsplit('.', 1)[1].lower()
+    logo_filename = secure_filename(f"logo_{college.code}_{int(time.time())}.{ext}")
+    logo.save(os.path.join(current_app.config['UPLOAD_FOLDER_LOGOS'], logo_filename))
+    
+    college.logo_path = logo_filename
+    db.session.commit()
+    
+    log_action(current_user.id, 'college_logo_updated', 'college', college.id, f"Uploaded logo '{logo_filename}' for college {college.name}")
+    flash('College logo updated successfully.', 'success')
+    return redirect(url_for('admin.college_detail', id=college.id))
+
+@admin_bp.route('/colleges/<int:id>/logo/remove', methods=['POST'])
+def remove_college_logo(id):
+    import os
+    from flask import current_app
+    
+    college = College.query.get_or_404(id)
+    if college.logo_path:
+        old_path = os.path.join(current_app.config['UPLOAD_FOLDER_LOGOS'], college.logo_path)
+        if os.path.exists(old_path):
+            try:
+                os.remove(old_path)
+            except Exception as e:
+                pass
+        
+        college.logo_path = None
+        db.session.commit()
+        log_action(current_user.id, 'college_logo_removed', 'college', college.id, f"Removed logo for college {college.name}")
+        flash('College logo removed successfully.', 'success')
+    else:
+        flash('No logo exists for this college.', 'warning')
+        
+    return redirect(url_for('admin.college_detail', id=college.id))
 
 @admin_bp.route('/colleges/<int:id>')
 def college_detail(id):

@@ -4,6 +4,14 @@ All notable changes to the StudyHub College project will be documented in this f
 
 ## [Unreleased]
 - Implemented comprehensive visual frontend redesign across StudyHub College templates. Visual transformations cover public landing (`index.html`), about page (`about.html`), login (`login.html`), register (`register.html`), college registration/success views, student dashboard (`dashboard.html`), college onboarding selection (`select_college.html`), subjects explorer (`subjects.html`), subject details (`subject_details.html`), unit details (`unit_details.html`), PYQ directory (`pyqs.html`), PYQ details (`pyq_details.html`), community library hub (`community_list.html`), upload form (`community_upload.html`), edit form (`community_edit.html`), My Uploads (`community_my_uploads.html`), public uploader profile (`community_user_profile.html`), quiz start (`quiz_start.html`), quiz attempt portal (`quiz_attempt.html`), quiz result (`quiz_result.html`), review (`quiz_review.html`), notifications center (`notifications.html`), error pages (403, 404, 413, 500), and platform/college admin dashboards. Standardized fonts, spacing, shadows, and button transitions for a premium modern SaaS feel, completely purging Cormorant Garamond / serif typography in favor of the Inter sans-serif stack. Added interactive client-side search and filtering for the student PYQ directory.
+- Implemented College Logo and Onboarding improvements:
+  - Added `logo_path` column to both the `College` and `CollegeRequest` model database schemas.
+  - Added support for optional college logo uploads on the public college registration request form, saving request logos securely in the uploads directory and transferring them to the `College` entity upon request approval.
+  - Implemented manual college logo upload/validation (PNG, JPG, JPEG, WEBP; <= 2MB) inside Platform Admin creation and edit routes.
+  - Added Platform Admin routes `GET /admin/colleges/<id>/edit` and `POST /admin/colleges/<id>/edit` to allow updating college details (name, code, city, state, address, contact email/phone, status, and logo).
+  - Updated Platform Admin college directory and details views to feature Edit actions, thumbnails/initials, and clean UI buttons.
+  - Added real-time client-side JS filter searching on student onboarding selection matching name, code, city, or state with empty-state messages.
+
 ### Fixed
 - Fixed `NameError: name 'User' is not defined` when viewing a student uploader's public profile page by adding the missing import to `app/routes/student.py`.
 

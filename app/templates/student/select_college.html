@@ -4,19 +4,35 @@
 
 {% block content %}
 <div style="max-width: 900px; margin: 3rem auto; padding: 0 1rem; padding-bottom: 4rem;">
-    <div style="text-align: center; margin-bottom: 3rem;">
+    <div style="text-align: center; margin-bottom: 2.5rem;">
         <span style="font-size: 2.5rem; display: block; margin-bottom: 0.75rem;">🎓</span>
         <h2 style="margin: 0; font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Select Your Institution</h2>
         <p class="muted" style="margin-top: 0.5rem; font-size: 1rem; font-weight: 500; max-width: 480px; margin-left: auto; margin-right: auto;">Please choose your college from the active institutes below to access matching course syllabus, papers, and tests.</p>
     </div>
+
+    <!-- Search Input Box -->
+    <div class="card animate-fade-in" style="padding: 1.25rem; border-radius: 12px; margin-bottom: 2rem; border: 1px solid var(--border); background-color: var(--surface);">
+        <div style="position: relative;">
+            <input type="text" id="collegeSearch" placeholder="Search colleges by name, code, city, or state..." class="form-control" style="padding-left: 2.5rem; min-height: 42px; border-radius: 8px;">
+            <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 1rem;">🔍</span>
+        </div>
+    </div>
     
     <form method="POST" action="{{ url_for('student.select_college') }}" id="collegeSelectForm">
-        <div class="grid-responsive" style="gap: 1.5rem; margin-bottom: 2.5rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+        <div class="grid-responsive" id="collegesGrid" style="gap: 1.5rem; margin-bottom: 2.5rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
             {% for college in colleges %}
-            <label class="card card-clickable college-option-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; position: relative; margin-bottom: 0; min-height: 160px; transition: all 0.2s;" id="label-college-{{ college.id }}">
+            <label class="card card-clickable college-option-card animate-fade-in" data-name="{{ college.name|lower }}" data-code="{{ college.code|lower }}" data-city="{{ college.city|lower }}" data-state="{{ college.state|lower }}" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; position: relative; margin-bottom: 0; min-height: 190px; transition: all 0.2s;" id="label-college-{{ college.id }}">
                 <input type="radio" name="college_id" value="{{ college.id }}" style="position: absolute; top: 1.25rem; right: 1.25rem; width: 1.2rem; height: 1.2rem; accent-color: var(--primary);" required onclick="highlightSelected({{ college.id }})">
                 
-                <div style="margin-top: 1rem;">
+                <div>
+                    {% if college.logo_path %}
+                    <img src="{{ url_for('files.serve_college_logo', id=college.id) }}" alt="Logo" style="width: 50px; height: 50px; object-fit: contain; border-radius: 8px; border: 1px solid var(--border); background: white; padding: 2px; margin-bottom: 1rem;">
+                    {% else %}
+                    <div style="width: 50px; height: 50px; border-radius: 8px; background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm);">
+                        {{ college.code[:3] }}
+                    </div>
+                    {% endif %}
+                    
                     <h4 style="margin: 0; margin-bottom: 0.5rem; font-weight: 800; color: var(--primary-dark); font-size: 1.15rem; line-height: 1.3;">{{ college.name }}</h4>
                     <p class="muted" style="font-size: 0.8rem; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Code: {{ college.code }}</p>
                 </div>
@@ -27,8 +43,15 @@
             </label>
             {% endfor %}
         </div>
+
+        <!-- Empty State -->
+        <div id="noCollegesFound" class="empty-state animate-fade-in" style="display: none; padding: 4rem 2rem; margin-bottom: 2.5rem; border-radius: 16px;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🏫</div>
+            <h3 style="font-weight: 700; color: var(--text);">No Colleges Found</h3>
+            <p class="muted" style="margin-bottom: 0;">No active colleges match your search parameters. Try adjusting your keywords.</p>
+        </div>
         
-        <div style="max-width: 320px; margin: 0 auto;">
+        <div id="submitBtnContainer" style="max-width: 320px; margin: 0 auto;">
             <button type="submit" class="btn btn-primary btn-lg btn-full" style="font-weight: 600; font-size: 1rem; border-radius: 8px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15);">Continue to Dashboard</button>
         </div>
     </form>
@@ -47,5 +70,45 @@ function highlightSelected(selectedId) {
         selectedCard.style.backgroundColor = 'var(--surface-soft)';
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('collegeSearch');
+    const cards = document.querySelectorAll('.college-option-card');
+    const noCollegesFound = document.getElementById('noCollegesFound');
+    const submitBtnContainer = document.getElementById('submitBtnContainer');
+
+    function filterColleges() {
+        const query = searchInput.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name');
+            const code = card.getAttribute('data-code');
+            const city = card.getAttribute('data-city');
+            const state = card.getAttribute('data-state');
+
+            const matches = !query || name.includes(query) || code.includes(query) || city.includes(query) || state.includes(query);
+            
+            if (matches) {
+                card.style.display = 'flex';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (visibleCount === 0 && cards.length > 0) {
+            noCollegesFound.style.display = 'block';
+            submitBtnContainer.style.display = 'none';
+        } else {
+            noCollegesFound.style.display = 'none';
+            submitBtnContainer.style.display = 'block';
+        }
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', filterColleges);
+    }
+});
 </script>
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Register New College - Platform Admin{% endblock %}
+{% block title %}{{ 'Edit College - Platform Admin' if college else 'Register New College - Platform Admin' }}{% endblock %}
 
 {% block content %}
 <div style="display: flex; gap: 2rem;">
@@ -12,25 +12,28 @@
     <!-- Main Content -->
     <div style="flex: 1;">
         <div class="card" style="max-width: 700px; margin: 0 auto;">
-            <h2 style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">Register New College</h2>
+            <h2 style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+                {{ 'Edit College Details' if college else 'Register New College' }}
+            </h2>
             
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="name">College Name</label>
-                    <input type="text" id="name" name="name" class="form-control" value="{{ form_data.name if form_data else '' }}" required placeholder="e.g. Global Tech Institute">
+                    <input type="text" id="name" name="name" class="form-control" value="{{ form_data.name if form_data else (college.name if college else '') }}" required placeholder="e.g. Global Tech Institute">
                 </div>
 
                 <div style="display: flex; gap: 1rem;">
                     <div class="form-group" style="flex: 1;">
                         <label for="code">College Code (Unique)</label>
-                        <input type="text" id="code" name="code" class="form-control" value="{{ form_data.code if form_data else '' }}" required placeholder="e.g. GTI" style="text-transform: uppercase;">
+                        <input type="text" id="code" name="code" class="form-control" value="{{ form_data.code if form_data else (college.code if college else '') }}" required placeholder="e.g. GTI" style="text-transform: uppercase;">
                     </div>
                     
                     <div class="form-group" style="flex: 1;">
-                        <label for="status">Initial Status</label>
+                        <label for="status">Status</label>
                         <select id="status" name="status" class="form-control" required>
-                            <option value="active" {{ 'selected' if not form_data or form_data.status == 'active' else '' }}>Active</option>
-                            <option value="inactive" {{ 'selected' if form_data and form_data.status == 'inactive' else '' }}>Inactive</option>
+                            {% set current_status = form_data.status if form_data else (college.status if college else 'active') %}
+                            <option value="active" {{ 'selected' if current_status == 'active' else '' }}>Active</option>
+                            <option value="inactive" {{ 'selected' if current_status == 'inactive' else '' }}>Inactive</option>
                         </select>
                     </div>
                 </div>
@@ -38,35 +41,53 @@
                 <div style="display: flex; gap: 1rem;">
                     <div class="form-group" style="flex: 1;">
                         <label for="city">City</label>
-                        <input type="text" id="city" name="city" class="form-control" value="{{ form_data.city if form_data else '' }}" required placeholder="e.g. Metropolis">
+                        <input type="text" id="city" name="city" class="form-control" value="{{ form_data.city if form_data else (college.city if college else '') }}" required placeholder="e.g. Metropolis">
                     </div>
                     
                     <div class="form-group" style="flex: 1;">
                         <label for="state">State</label>
-                        <input type="text" id="state" name="state" class="form-control" value="{{ form_data.state if form_data else '' }}" required placeholder="e.g. Tech State">
+                        <input type="text" id="state" name="state" class="form-control" value="{{ form_data.state if form_data else (college.state if college else '') }}" required placeholder="e.g. Tech State">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="address">Full Address</label>
-                    <textarea id="address" name="address" class="form-control" rows="3" required placeholder="Street address, building, suite...">{{ form_data.address if form_data else '' }}</textarea>
+                    <textarea id="address" name="address" class="form-control" rows="3" required placeholder="Street address, building, suite...">{{ form_data.address if form_data else (college.address if college else '') }}</textarea>
                 </div>
 
                 <div style="display: flex; gap: 1rem;">
                     <div class="form-group" style="flex: 1;">
                         <label for="contact_email">Contact Email</label>
-                        <input type="email" id="contact_email" name="contact_email" class="form-control" value="{{ form_data.contact_email if form_data else '' }}" required placeholder="e.g. contact@gti.edu">
+                        <input type="email" id="contact_email" name="contact_email" class="form-control" value="{{ form_data.contact_email if form_data else (college.contact_email if college else '') }}" required placeholder="e.g. contact@gti.edu">
                     </div>
                     
                     <div class="form-group" style="flex: 1;">
                         <label for="contact_phone">Contact Phone</label>
-                        <input type="tel" id="contact_phone" name="contact_phone" class="form-control" value="{{ form_data.contact_phone if form_data else '' }}" required placeholder="e.g. +1234567890">
+                        <input type="tel" id="contact_phone" name="contact_phone" class="form-control" value="{{ form_data.contact_phone if form_data else (college.contact_phone if college else '') }}" required placeholder="e.g. +1234567890">
                     </div>
                 </div>
 
+                {% if college and college.logo_path %}
+                <div class="form-group" style="margin-top: 1.5rem; display: flex; align-items: center; gap: 1.5rem; padding: 1rem; border: 1px solid var(--border); border-radius: 8px; background-color: var(--surface-soft);">
+                    <div>
+                        <p style="margin: 0 0 0.5rem 0; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted);">Current Logo</p>
+                        <img src="{{ url_for('files.serve_college_logo', id=college.id) }}" alt="{{ college.name }} Logo" style="max-height: 60px; max-width: 150px; object-fit: contain; border-radius: 4px; border: 1px solid var(--border); background-color: white; padding: 4px;">
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 0.85rem; color: var(--muted);">Updating the logo below will replace the current logo.</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label for="logo" style="font-weight: bold;">{{ 'Replace Logo (Optional)' if college and college.logo_path else 'College Logo (Optional)' }}</label>
+                    <input type="file" id="logo" name="logo" class="form-control" accept=".png,.jpg,.jpeg,.webp" style="padding-top: 0.45rem;">
+                    <small class="muted" style="display: block; margin-top: 0.25rem;">Supported formats: PNG, JPG, JPEG, WEBP. Max size: 2MB.</small>
+                </div>
+
                 <div style="display: flex; gap: 1rem; margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
-                    <button type="submit" class="btn btn-primary">Create College</button>
-                    <a href="{{ url_for('admin.colleges') }}" class="btn" style="border: 1px solid var(--border); background: white;">Cancel</a>
+                    <button type="submit" class="btn btn-primary">{{ 'Save Changes' if college else 'Create College' }}</button>
+                    <a href="{{ url_for('admin.college_detail', id=college.id) if college else url_for('admin.colleges') }}" class="btn" style="border: 1px solid var(--border); background: white;">Cancel</a>
                 </div>
             </form>
         </div>

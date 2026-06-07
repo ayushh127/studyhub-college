@@ -28,6 +28,10 @@ This document lists all the proposed routes for the StudyHub College MVP.
 - `GET /admin/colleges/create`
 - `POST /admin/colleges/create`
 - `GET /admin/colleges/<id>`
+- `GET /admin/colleges/<id>/edit` - Edit college details page
+- `POST /admin/colleges/<id>/edit` - Submit edited college details
+- `POST /admin/colleges/<id>/logo` - Upload/update college logo
+- `POST /admin/colleges/<id>/logo/remove` - Remove college logo
 - `GET /admin/colleges/<id>/admins/create`
 - `POST /admin/colleges/<id>/admins/create`
 - `POST /admin/colleges/<id>/activate`
@@ -155,3 +159,4 @@ This document lists all the proposed routes for the StudyHub College MVP.
 - `GET /files/materials/<id>`
 - `GET /files/pyqs/<id>`
 - `GET /files/community/<id>` - Secure access to community PDF downloads
+- `GET /files/college-logos/<id>` - Serve college logo

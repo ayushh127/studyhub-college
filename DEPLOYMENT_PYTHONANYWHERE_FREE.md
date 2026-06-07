@@ -144,6 +144,8 @@ graph LR
    If models were added or modified, run migrations or apply schema changes:
    ```bash
    python migrate_db.py
+   python migrate_college_logo.py
+   python migrate_college_request_logo.py
    ```
 5. **Reload the App**:
    Go to the PythonAnywhere **Web** tab and click **Reload**.

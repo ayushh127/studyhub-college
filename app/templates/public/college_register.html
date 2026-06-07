@@ -10,7 +10,7 @@
             Submit a request to add your institution to StudyHub College. Our platform admins will review and approve your request.
         </p>
         
-        <form method="POST" action="{{ url_for('public.college_register') }}">
+        <form method="POST" action="{{ url_for('public.college_register') }}" enctype="multipart/form-data">
             <div class="form-group" style="margin-bottom: 1.5rem;">
                 <label for="college_name" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">College Name</label>
                 <input type="text" id="college_name" name="college_name" class="form-control" placeholder="e.g. Oxford University" required style="border-radius: 8px; min-height: 42px;">
@@ -65,6 +65,12 @@
                     <label for="confirm_password" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Confirm Password</label>
                     <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Confirm password" minlength="6" required style="border-radius: 8px; min-height: 42px;">
                 </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="logo" style="display: block; margin-bottom: 0.5rem; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">College Logo <span style="color: var(--muted); font-weight: normal; text-transform: none;">(Optional)</span></label>
+                <input type="file" id="logo" name="logo" class="form-control" accept="image/png, image/jpeg, image/jpg, image/webp" style="border-radius: 8px; min-height: 42px; padding: 0.45rem;">
+                <small style="color: var(--muted); display: block; margin-top: 0.25rem;">Max file size: 2MB. Supported formats: PNG, JPG, JPEG, WEBP.</small>
             </div>
 
             <div class="form-group" style="margin-bottom: 2rem;">

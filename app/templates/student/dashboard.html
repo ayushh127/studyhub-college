@@ -6,15 +6,26 @@
 <div style="max-width: 1100px; margin: 1.5rem auto; padding-bottom: 4rem;">
     <!-- Welcome Header Card -->
     <div style="background: linear-gradient(135deg, #EEF2F6 0%, #E0E7FF 100%); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; box-shadow: var(--shadow-sm);">
-        <div>
-            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
-                <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem;">Active Student</span>
-                {% if current_user.college %}
-                <span class="badge" style="background-color: var(--accent); color: white; border: none; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem;">📍 {{ current_user.college.name }}</span>
+        <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; flex: 1; min-width: 280px;">
+            {% if current_user.college %}
+                {% if current_user.college.logo_path %}
+                <img src="{{ url_for('files.serve_college_logo', id=current_user.college.id) }}" alt="{{ current_user.college.name }} Logo" style="width: 64px; height: 64px; object-fit: contain; border-radius: 8px; border: 1px solid var(--border); background: white; padding: 4px; box-shadow: var(--shadow-sm); flex-shrink: 0;">
+                {% else %}
+                <div style="width: 64px; height: 64px; border-radius: 8px; background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.35rem; flex-shrink: 0; box-shadow: var(--shadow-sm);">
+                    {{ current_user.college.code[:3] }}
+                </div>
                 {% endif %}
+            {% endif %}
+            <div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+                    <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem;">Active Student</span>
+                    {% if current_user.college %}
+                    <span class="badge" style="background-color: var(--accent); color: white; border: none; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem;">📍 {{ current_user.college.name }}</span>
+                    {% endif %}
+                </div>
+                <h2 style="margin: 0; font-size: 1.85rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Hello, {{ current_user.full_name }}!</h2>
+                <p class="muted" style="margin: 0.25rem 0 0 0; font-size: 0.95rem; font-weight: 500;">Welcome to your digital learning workspace. Keep track of your courses and test preparation.</p>
             </div>
-            <h2 style="margin: 0; font-size: 1.85rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Hello, {{ current_user.full_name }}!</h2>
-            <p class="muted" style="margin: 0.25rem 0 0 0; font-size: 0.95rem; font-weight: 500;">Welcome to your digital learning workspace. Keep track of your courses and test preparation.</p>
         </div>
         <div style="display: flex; gap: 0.5rem;">
             <a href="{{ url_for('student.select_college') }}" class="btn btn-outline" style="background-color: var(--surface); border-color: var(--border); font-size: 0.85rem; font-weight: 600; min-height: 38px;">Change College</a>

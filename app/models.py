@@ -49,6 +49,7 @@ class College(db.Model):
     address = db.Column(db.Text, nullable=False)
     contact_email = db.Column(db.String(120), nullable=False)
     contact_phone = db.Column(db.String(20), nullable=False)
+    logo_path = db.Column(db.String(256), nullable=True)
     status = db.Column(db.String(20), default='active') # active, inactive, pending, rejected
     created_by_admin_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -70,6 +71,7 @@ class CollegeRequest(db.Model):
     admin_phone = db.Column(db.String(20), nullable=False)
     admin_password_hash = db.Column(db.String(256), nullable=True)
     message = db.Column(db.Text, nullable=True)
+    logo_path = db.Column(db.String(256), nullable=True)
     status = db.Column(db.String(20), default='pending') # pending, approved, rejected
     reviewed_by_admin_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     reviewed_at = db.Column(db.DateTime, nullable=True)

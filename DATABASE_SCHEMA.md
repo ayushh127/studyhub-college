@@ -22,6 +22,7 @@ The StudyHub College MVP uses SQLite (via Flask-SQLAlchemy). Below is the schema
 - `address`
 - `contact_email`
 - `contact_phone`
+- `logo_path` (String, Nullable)
 - `status` (Enum: `active`, `inactive`, `pending`, `rejected`)
 - `created_by_admin_id` (FK to User)
 - `created_at`
@@ -39,6 +40,7 @@ The StudyHub College MVP uses SQLite (via Flask-SQLAlchemy). Below is the schema
 - `admin_phone`
 - `admin_password_hash`
 - `message`
+- `logo_path` (String, Nullable)
 - `status` (Enum: `pending`, `approved`, `rejected`)
 - `reviewed_by_admin_id` (FK to User)
 - `reviewed_at`

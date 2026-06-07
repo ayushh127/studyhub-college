@@ -77,3 +77,17 @@ def serve_community_material(id):
         abort(404, description="Requested Community Material PDF file was not found on the server.")
 
     return send_from_directory(current_app.config['UPLOAD_FOLDER_COMMUNITY'], material.file_path)
+
+@files_bp.route('/college-logos/<int:id>')
+@login_required
+def serve_college_logo(id):
+    from ..models import College
+    college = College.query.get_or_404(id)
+    if not college.logo_path:
+        abort(404)
+
+    filepath = os.path.join(current_app.config['UPLOAD_FOLDER_LOGOS'], college.logo_path)
+    if not os.path.exists(filepath):
+        abort(404, description="College logo file was not found on the server.")
+
+    return send_from_directory(current_app.config['UPLOAD_FOLDER_LOGOS'], college.logo_path)

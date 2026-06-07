@@ -394,8 +394,85 @@ footer {
     padding-bottom: 80px !important;
   }
   
-  header nav .student-header-link {
-    display: none;
+  /* Hide student header text links on mobile viewports */
+  body.student-body header .student-header-link {
+    display: none !important;
+  }
+  
+  /* Show mobile-only elements on mobile viewports */
+  .mobile-only-inline {
+    display: inline-block !important;
+  }
+  .mobile-only-block {
+    display: block !important;
+  }
+  
+  /* Hide desktop-only elements on mobile viewports */
+  .desktop-only {
+    display: none !important;
+  }
+  
+  /* Collapsed mobile filters */
+  .filter-controls-group {
+    display: none !important;
+  }
+  
+  .filter-controls-group.show {
+    display: flex !important;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  /* Reduce top margin/padding on mobile */
+  main.container {
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Make cards look better on small devices (full width, less padding) */
+  .card {
+    padding: 1.25rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+  
+  /* Stack filter cards and flexible header items */
+  .flex-header-responsive {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 1rem;
+  }
+  
+  .flex-header-responsive > div {
+    width: 100% !important;
+  }
+  
+  .flex-header-responsive .btn {
+    width: 100% !important;
+    text-align: center;
+    margin-left: 0 !important;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Form field stacks on mobile */
+  form.card, form.filter-card-container {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+  
+  form.card > div, form.filter-card-container > div {
+    width: 100% !important;
+    flex: 1 1 auto !important;
+  }
+  
+  form.card .btn, form.card select, form.card input,
+  form.filter-card-container .btn, form.filter-card-container select, form.filter-card-container input {
+    width: 100% !important;
+    box-sizing: border-box;
   }
 }
 
@@ -409,3 +486,219 @@ footer {
     width: 100%;
   }
 }
+
+/* Profile Dropdown Styling */
+.profile-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-dropdown-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.25s ease;
+}
+
+.profile-dropdown-btn:hover {
+  background-color: var(--surface-soft);
+  border-color: var(--primary);
+}
+
+.profile-dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.5rem;
+  background-color: var(--surface);
+  min-width: 220px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.profile-dropdown-content hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+.profile-dropdown-content a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-left: 0 !important;
+  transition: background-color 0.2s;
+  text-align: left;
+}
+
+.profile-dropdown-content a:hover {
+  background-color: var(--surface-soft);
+  color: var(--primary);
+}
+
+.profile-dropdown-content .logout-link {
+  color: var(--danger) !important;
+}
+.profile-dropdown-content .logout-link:hover {
+  background-color: #FEE2E2;
+  color: var(--danger) !important;
+}
+
+.dropdown-header {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  background-color: var(--surface-soft);
+  text-align: left;
+}
+.dropdown-header strong {
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.dropdown-role {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.profile-dropdown:hover .profile-dropdown-content,
+.profile-dropdown.active .profile-dropdown-content {
+  display: block;
+}
+
+/* Badge for bottom navigation */
+.bottom-nav-badge {
+  background-color: var(--danger);
+  color: white;
+  border-radius: 50%;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.7rem;
+  font-weight: bold;
+  position: absolute;
+  top: 4px;
+  right: calc(50% - 20px);
+}
+
+/* Touch-friendly inputs and buttons */
+.btn, .form-control, select, input {
+  min-height: 40px;
+}
+
+/* Responsive Table Wrapper */
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Community Grid Container */
+.community-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Visibility Helper Defaults (Desktop) */
+.mobile-only-inline, .mobile-only-block {
+  display: none !important;
+}
+.desktop-only {
+  display: inline-block;
+}
+
+/* Quick filter chips */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.85rem;
+  background-color: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  background-color: var(--border);
+  color: var(--text);
+}
+
+.chip.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: white !important;
+}
+
+/* Compact Mobile Header for Students */
+@media (max-width: 768px) {
+  body.student-body .header-inner {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+  }
+  body.student-body nav.nav-menu {
+    margin-top: 0 !important;
+    width: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+  body.student-body .profile-dropdown-btn .user-name,
+  body.student-body .profile-dropdown-btn .dropdown-arrow {
+    display: none !important;
+  }
+  body.student-body .profile-dropdown-btn {
+    padding: 0 !important;
+    border-radius: 50% !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  body.student-body .profile-dropdown {
+    margin-left: 0.5rem !important;
+  }
+  body.student-body .header-bell-link {
+    margin-left: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 1.2rem !important;
+    text-decoration: none !important;
+  }
+  body.student-body header {
+    padding: 0.75rem 0 !important;
+  }
+  @media (max-width: 480px) {
+    body.student-body .brand {
+      font-size: 1.15rem !important;
+    }
+  }
+}
+
+
+

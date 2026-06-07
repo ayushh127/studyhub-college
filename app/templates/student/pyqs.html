@@ -5,7 +5,7 @@
 {% block content %}
 <div style="max-width: 1000px; margin: 2rem auto;">
     <div style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
-        <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin: 0;">Previous Year Question Papers (PYQs)</h2>
+        <h2 style="font-size: 2rem; margin: 0; font-weight: 800;">Previous Year Question Papers (PYQs)</h2>
         <p class="muted" style="margin: 0.5rem 0 0 0;">Access mid-sem, end-sem, and practical question papers uploaded for your college subjects.</p>
     </div>
 
@@ -17,7 +17,7 @@
                     <span class="badge" style="background-color: var(--primary); color: white;">Year: {{ pyq.year }}</span>
                     <span class="badge" style="background-color: var(--accent); color: var(--text); font-size: 0.75rem; text-transform: uppercase;">{{ pyq.exam_type.replace('_', ' ') }}</span>
                 </div>
-                <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; color: var(--primary-dark);">{{ pyq.title }}</h3>
+                <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.35rem; color: var(--primary-dark); font-weight: 700;">{{ pyq.title }}</h3>
                 <p class="muted" style="font-size: 0.85rem; margin-bottom: 1rem;">
                     Subject: <strong>{{ pyq.subject.name }} ({{ pyq.subject.code }})</strong>
                 </p>
@@ -29,7 +29,7 @@
         </div>
         {% else %}
         <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
-            <h3 style="color: var(--muted); font-family: 'Cormorant Garamond', serif; font-size: 1.75rem;">No PYQ Papers Available</h3>
+            <h3 style="color: var(--muted); font-size: 1.75rem; font-weight: 700;">No PYQ Papers Available</h3>
             <p>There are no published PYQ papers available for your college at this moment.</p>
         </div>
         {% endfor %}

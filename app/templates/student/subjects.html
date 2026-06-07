@@ -6,7 +6,7 @@
 <div style="max-width: 1000px; margin: 2rem auto;">
     <div class="flex-header-responsive" style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
         <div>
-            <h2 style="font-family: 'Cormorant Garamond', serif; font-size: 2rem; margin: 0;">Subjects & Course Materials</h2>
+            <h2 style="font-size: 2rem; margin: 0; font-weight: 800;">Subjects & Course Materials</h2>
             <p class="muted" style="margin: 0.5rem 0 0 0;">Browse course syllabus, lecture materials, and unit tests available for your college.</p>
         </div>
         <div>
@@ -24,7 +24,7 @@
                     <span class="muted" style="font-size: 0.85rem; font-weight: bold;">Sem {{ subject.semester }}</span>
                     {% endif %}
                 </div>
-                <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--primary-dark);">{{ subject.name }}</h3>
+                <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.5rem; color: var(--primary-dark); font-weight: 700;">{{ subject.name }}</h3>
                 <p class="muted" style="font-size: 0.9rem; line-height: 1.4; margin-bottom: 1rem;">
                     {{ subject.description|truncate(120) if subject.description else 'No description available for this subject.' }}
                 </p>
@@ -34,14 +34,14 @@
         </div>
         {% else %}
         <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
-            <h3 style="color: var(--muted); font-family: 'Cormorant Garamond', serif; font-size: 1.75rem;">No Subjects Available</h3>
+            <h3 style="color: var(--muted); font-size: 1.75rem; font-weight: 700;">No Subjects Available</h3>
             <p>There are no active subjects registered for your college currently.</p>
         </div>
         {% endfor %}
         
         <!-- Empty search results state -->
         <div id="searchEmptyState" class="card" style="display: none; grid-column: 1 / -1; text-align: center; padding: 4rem; margin-bottom: 0;">
-            <h3 style="color: var(--muted); font-family: 'Cormorant Garamond', serif; font-size: 1.75rem;">No subjects match your search.</h3>
+            <h3 style="color: var(--muted); font-size: 1.75rem; font-weight: 700;">No subjects match your search.</h3>
             <p class="muted" style="margin-top: 0.5rem;">Try searching for a different subject name, code, or description.</p>
         </div>
     </div>

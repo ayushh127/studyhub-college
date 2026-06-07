@@ -49,16 +49,19 @@ h1, h2, h3, h4, h5, h6 {
 
 1. **Mobile-First Layout:** 
    - Cards stack vertically on mobile (specifically using grid breakpoint triggers to switch from 2-column or 1.5-column layouts to single-column layouts).
-   - Use bottom navigation for students on mobile with clear icons (📊, 📚, 📝, ❓) and text labels, while automatically hiding redundant top-header navigation links.
+   - Use bottom navigation for students on mobile with clear icons (🏠 Home, 📚 Subjects, 🌐 Community, ❓ Quizzes, 👤 Profile) and text labels.
+   - Hide student text navigation links from the top header on mobile viewports, keeping only App logo, mobile bell icon, and profile dropdown icon.
+   - Collapse Community Library search filters on mobile viewports behind a toggle button while showing quick chips (Latest, Most Liked, Top Rated, PDFs, Links) directly.
    - Pad the body bottom (`padding-bottom: 80px`) to prevent bottom navigation overlaps with footer or content blocks.
    - Offset the fixed quiz submission footer above the bottom navigation bar (`bottom: 60px`) on mobile viewports.
-   - Stack button groups vertically on screens under 480px wide to provide full-width, easy-to-tap touch targets.
+   - Stack button groups, form inputs, search filters, and card containers vertically on screens under 768px wide to provide full-width, easy-to-tap touch targets.
    - Use a sidebar for admin interfaces on desktop (collapsible on mobile).
 2. **Component Aesthetics:**
    - Use crisp, clean borders (`--border`).
    - Cards should have a white background (`--surface`) with subtle rounded corners, clean 1px borders, and extremely soft shadows.
    - Buttons should be rounded (6px border-radius) and use primary blue, white outline, or borderless styles.
-   - Form fields should be styled with thin borders, clean backgrounds, and a subtle blue glow shadow when focused.
+   - Form fields and buttons should have a minimum height of 40px to ensure touch friendliness.
+   - Unified Profile Dropdown provides a compact access point for user details (User Name, role badge) and options (View Profile, My Uploads, Logout), styled with simple borders, soft shadows, and clean hover states.
 3. **Impersonation Banner:**
    - Must be prominent at the top of every page during an active impersonation session.
 5. **Information Architecture (Academic Hierarchy):**

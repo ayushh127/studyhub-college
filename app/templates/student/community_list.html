@@ -21,49 +21,72 @@
     </div>
 
     <!-- Filters and Search Form -->
-    <form method="GET" action="{{ url_for('student.community_library') }}" class="card" style="padding: 1.5rem; margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
-        <div style="flex: 2 1 250px;">
-            <label for="q" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">Search Title, Description or Subject</label>
-            <input type="text" name="q" id="q" value="{{ search_query }}" placeholder="e.g. Physics notes, chemistry lab..." class="form-control" style="padding: 0.5rem 0.75rem;">
+    <form method="GET" action="{{ url_for('student.community_library') }}" class="card filter-card-container" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+        <!-- Search input + Filters Toggle row -->
+        <div class="search-toggle-row" style="display: flex; gap: 0.75rem; width: 100%; align-items: flex-end; margin-bottom: 0;">
+            <div style="flex: 1;">
+                <label for="q" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">Search Title, Description or Subject</label>
+                <input type="text" name="q" id="q" value="{{ search_query }}" placeholder="e.g. Physics notes, chemistry lab..." class="form-control" style="padding: 0.5rem 0.75rem; width: 100%;">
+            </div>
+            <button type="button" id="mobileFilterToggleBtn" class="btn btn-outline mobile-only-inline" style="display: none; padding: 0.5rem 1rem; align-items: center; justify-content: center; gap: 0.25rem; white-space: nowrap; height: 40px;">
+                🔍 Filters
+            </button>
+            <button type="submit" class="btn btn-primary desktop-only" style="padding: 0.5rem 1.5rem; height: 40px;">Search</button>
         </div>
-        <div style="flex: 1 1 150px;">
-            <label for="material_type" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">Material Type</label>
-            <select name="material_type" id="material_type" class="form-control" style="padding: 0.5rem 0.75rem;">
-                <option value="">All Types</option>
-                <option value="notes" {% if selected_material_type == 'notes' %}selected{% endif %}>Notes</option>
-                <option value="assignment" {% if selected_material_type == 'assignment' %}selected{% endif %}>Assignment</option>
-                <option value="pyq" {% if selected_material_type == 'pyq' %}selected{% endif %}>PYQ</option>
-                <option value="other" {% if selected_material_type == 'other' %}selected{% endif %}>Other</option>
-            </select>
-        </div>
-        <div style="flex: 1 1 180px;">
-            <label for="college_tag_id" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">College Tag</label>
-            <select name="college_tag_id" id="college_tag_id" class="form-control" style="padding: 0.5rem 0.75rem;">
-                <option value="">All Colleges</option>
-                {% for college in colleges %}
-                <option value="{{ college.id }}" {% if selected_college_tag_id == college.id %}selected{% endif %}>{{ college.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div style="flex: 1 1 150px;">
-            <label for="sort" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">Sort By</label>
-            <select name="sort" id="sort" class="form-control" style="padding: 0.5rem 0.75rem;">
-                <option value="latest" {% if sort_by == 'latest' %}selected{% endif %}>Latest</option>
-                <option value="views" {% if sort_by == 'views' %}selected{% endif %}>Most Viewed</option>
-                <option value="likes" {% if sort_by == 'likes' %}selected{% endif %}>Most Liked</option>
-                <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Top Rated</option>
-            </select>
-        </div>
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.25rem;">Apply</button>
-            <a href="{{ url_for('student.community_library') }}" class="btn btn-outline" style="padding: 0.55rem 1.25rem;">Reset</a>
+
+        <!-- Hidden input for file_filter -->
+        <input type="hidden" name="file_filter" id="fileFilterInput" value="{{ request.args.get('file_filter', '') }}">
+
+        <!-- Filter Controls Container (collapsible on mobile) -->
+        <div class="filter-controls-group" id="filterControlsGroup" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; width: 100%; margin-top: 1rem;">
+            <div style="flex: 1 1 150px;">
+                <label for="material_type" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">Material Type</label>
+                <select name="material_type" id="material_type" class="form-control" style="padding: 0.5rem 0.75rem; width: 100%;">
+                    <option value="">All Types</option>
+                    <option value="notes" {% if selected_material_type == 'notes' %}selected{% endif %}>Notes</option>
+                    <option value="assignment" {% if selected_material_type == 'assignment' %}selected{% endif %}>Assignment</option>
+                    <option value="pyq" {% if selected_material_type == 'pyq' %}selected{% endif %}>PYQ</option>
+                    <option value="other" {% if selected_material_type == 'other' %}selected{% endif %}>Other</option>
+                </select>
+            </div>
+            <div style="flex: 1 1 180px;">
+                <label for="college_tag_id" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">College Tag</label>
+                <select name="college_tag_id" id="college_tag_id" class="form-control" style="padding: 0.5rem 0.75rem; width: 100%;">
+                    <option value="">All Colleges</option>
+                    {% for college in colleges %}
+                    <option value="{{ college.id }}" {% if selected_college_tag_id == college.id %}selected{% endif %}>{{ college.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="flex: 1 1 150px;">
+                <label for="sort" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">Sort By</label>
+                <select name="sort" id="sort" class="form-control" style="padding: 0.5rem 0.75rem; width: 100%;">
+                    <option value="latest" {% if sort_by == 'latest' %}selected{% endif %}>Latest</option>
+                    <option value="views" {% if sort_by == 'views' %}selected{% endif %}>Most Viewed</option>
+                    <option value="likes" {% if sort_by == 'likes' %}selected{% endif %}>Most Liked</option>
+                    <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Top Rated</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; height: 40px; align-items: flex-end;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.25rem;">Apply</button>
+                <a href="{{ url_for('student.community_library') }}" class="btn btn-outline" style="padding: 0.55rem 1.25rem; text-decoration: none; display: flex; align-items: center; height: 40px; box-sizing: border-box;">Reset</a>
+            </div>
         </div>
     </form>
 
+    <!-- Quick Filter Chips -->
+    <div class="filter-chips-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.25rem;">
+        <a href="{{ url_for('student.community_library', sort='latest', q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id) }}" class="chip {% if sort_by == 'latest' and not request.args.get('file_filter') %}active{% endif %}">🕒 Latest</a>
+        <a href="{{ url_for('student.community_library', sort='likes', q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id) }}" class="chip {% if sort_by == 'likes' %}active{% endif %}">❤️ Most Liked</a>
+        <a href="{{ url_for('student.community_library', sort='rating', q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id) }}" class="chip {% if sort_by == 'rating' %}active{% endif %}">⭐ Top Rated</a>
+        <a href="{{ url_for('student.community_library', sort=sort_by, q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id, file_filter='pdf') }}" class="chip {% if request.args.get('file_filter') == 'pdf' %}active{% endif %}">📄 PDFs Only</a>
+        <a href="{{ url_for('student.community_library', sort=sort_by, q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id, file_filter='link') }}" class="chip {% if request.args.get('file_filter') == 'link' %}active{% endif %}">🔗 Links Only</a>
+    </div>
+
     <!-- Grid of Material Cards -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+    <div class="community-grid-container">
         {% for material in materials %}
-        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0;">
+        <div class="card community-card" data-has-pdf="{% if material.file_path %}true{% else %}false{% endif %}" data-has-link="{% if material.external_url %}true{% else %}false{% endif %}" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0;">
             <div>
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.25rem;">
                     <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">
@@ -194,10 +217,67 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Error toggling like:', error);
-                window.location.reload();
             });
         });
     });
+
+    // Toggle mobile filters
+    const filterToggleBtn = document.getElementById('mobileFilterToggleBtn');
+    const filterGroup = document.getElementById('filterControlsGroup');
+    if (filterToggleBtn && filterGroup) {
+        filterToggleBtn.addEventListener('click', function() {
+            filterGroup.classList.toggle('show');
+        });
+    }
+
+    // Client-side PDF/Link Filtering
+    const urlParams = new URLSearchParams(window.location.search);
+    const fileFilter = urlParams.get('file_filter');
+    if (fileFilter === 'pdf') {
+        let hasPdf = false;
+        document.querySelectorAll('.community-card').forEach(card => {
+            if (card.getAttribute('data-has-pdf') === 'true') {
+                card.style.display = 'flex';
+                hasPdf = true;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        checkEmptyState(hasPdf);
+    } else if (fileFilter === 'link') {
+        let hasLink = false;
+        document.querySelectorAll('.community-card').forEach(card => {
+            if (card.getAttribute('data-has-link') === 'true') {
+                card.style.display = 'flex';
+                hasLink = true;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        checkEmptyState(hasLink);
+    }
+
+    function checkEmptyState(anyVisible) {
+        if (!anyVisible) {
+            const grid = document.querySelector('.community-grid-container');
+            if (grid) {
+                let emptyState = document.getElementById('clientEmptyState');
+                if (!emptyState) {
+                    emptyState = document.createElement('div');
+                    emptyState.id = 'clientEmptyState';
+                    emptyState.className = 'card';
+                    emptyState.style.gridColumn = '1 / -1';
+                    emptyState.style.textAlign = 'center';
+                    emptyState.style.padding = '4rem';
+                    emptyState.innerHTML = `
+                        <h3 style="color: var(--muted); font-size: 1.75rem; font-weight: 700;">No matching materials.</h3>
+                        <p class="muted" style="margin-top: 0.5rem;">There are no active community shared resources matching your filter.</p>
+                    `;
+                    grid.appendChild(emptyState);
+                }
+            }
+        }
+    }
 });
 </script>
 {% endblock %}

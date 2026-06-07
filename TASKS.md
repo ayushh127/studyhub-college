@@ -154,3 +154,27 @@ This document tracks the granular development tasks for the StudyHub College MVP
 - [x] Step 6: Reports + moderation score
 - [x] Step 7: Platform admin moderation queue
 - [x] Step 8: UX and counting refinements (Unique views, AJAX toggle liking, security)
+
+## Phase 11: Navbar Cleanup & Mobile UX Polish
+- [x] Step 1: Navbar cleanup + mobile-first student/community UI polish
+  - [x] Compact top navbar on desktop viewports
+  - [x] Unified hover/click profile dropdown with logout
+  - [x] Student profile route `/student/profile` & template
+  - [x] Mobile bottom-nav update (Home, Subjects, Community, Notifications, Profile)
+  - [x] Responsive layout polishing (stacked filters, full-width forms, touch targets, hide mobile header clutter)
+- [x] Step 2: Mobile student navigation and Community Library mobile usability cleanup
+  - [x] Show notification bell and profile dropdown on mobile headers, hide text links
+  - [x] Swap Alerts with Quizzes in student bottom nav (Home, Subjects, Community, Quizzes, Profile)
+  - [x] Remove Logout button from student dashboard body
+  - [x] Add search row, mobile filters toggle button, and quick chips row to Community Library
+  - [x] Hide secondary filters by default on mobile under toggle button
+  - [x] Add data attributes to community cards and implement client-side PDF/Link filter JS
+- [x] Step 3: Student dashboard subject discovery & mobile nav deduplication
+  - [x] Show only subscribed subjects on student dashboard
+  - [x] Add empty state for unsubscribed subjects and 'Browse All Subjects' button
+  - [x] Remove 'Profile' from mobile bottom navigation
+- [x] Step 4: Compact mobile student header cleanup
+  - [x] Align brand logo on the left and navigation menu on the right on mobile
+  - [x] Place notification bell link with badges on the top-right before profile
+  - [x] Make profile dropdown button circular/compact on mobile, hiding username and arrow
+  - [x] Shrink header height on mobile student views

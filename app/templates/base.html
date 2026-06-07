@@ -24,46 +24,61 @@
     <header>
         <div class="container header-inner">
             <a href="{{ url_for('public.index') }}" class="brand">StudyHub College</a>
-            <nav style="display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <nav class="nav-menu" style="display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
                 {% if current_user.is_authenticated %}
                     {% if current_user.role == 'platform_admin' %}
                         <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
-                        <a href="{{ url_for('admin.college_requests') }}">Requests</a>
-                        <a href="{{ url_for('admin.users') }}">Users</a>
-                        <a href="{{ url_for('admin.audit_logs') }}">Logs</a>
                     {% elif current_user.role == 'college_admin' %}
                         <a href="{{ url_for('college_admin.dashboard') }}">Dashboard</a>
-                        <a href="{{ url_for('college_admin.subjects') }}">Subjects</a>
-                        <a href="{{ url_for('college_admin.materials') }}">Materials</a>
-                        <a href="{{ url_for('college_admin.quizzes') }}">Quizzes</a>
                     {% else %}
                         <a href="{{ url_for('student.dashboard') }}" class="student-header-link">Dashboard</a>
-                        <a href="{{ url_for('student.subjects') }}" class="student-header-link">Subjects</a>
-                        <a href="{{ url_for('student.pyqs') }}" class="student-header-link">PYQs</a>
-                        <a href="{{ url_for('student.quizzes') }}" class="student-header-link">Quizzes</a>
-                        <a href="{{ url_for('student.community_library') }}" class="student-header-link">Community Library</a>
-                        <a href="{{ url_for('student.notifications') }}" class="student-header-link" style="position: relative;">
+                        <a href="{{ url_for('student.community_library') }}" class="student-header-link">Community</a>
+                        <a href="{{ url_for('student.notifications') }}" class="student-header-link" style="position: relative; display: inline-flex; align-items: center;">
                             🔔 Notifications
                             {% set unread_count = current_user.get_unread_notification_count() %}
                             {% if unread_count > 0 %}
-                            <span style="background-color: var(--danger); color: white; border-radius: 50%; padding: 0.1rem 0.35rem; font-size: 0.75rem; font-weight: bold; position: absolute; top: -8px; right: -12px;">{{ unread_count }}</span>
+                            <span class="desktop-badge" style="background-color: var(--danger); color: white; border-radius: 50%; padding: 0.1rem 0.35rem; font-size: 0.75rem; font-weight: bold; margin-left: 0.25rem;">{{ unread_count }}</span>
                             {% endif %}
                         </a>
                     {% endif %}
                     
-                    <span class="user-profile-info" style="margin-left: 1rem; color: var(--muted); font-size: 0.9rem;">
-                        {{ current_user.full_name }}
-                        <span class="badge" style="background-color: var(--accent); color: var(--text); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600; margin-left: 0.25rem;">
-                            {% if current_user.role == 'platform_admin' %}
-                                Platform Admin
-                            {% elif current_user.role == 'college_admin' %}
-                                College Admin
-                            {% else %}
-                                Student
+                    {% if current_user.role == 'student' %}
+                    <a href="{{ url_for('student.notifications') }}" class="mobile-only-inline header-bell-link" style="position: relative; margin-left: 0.5rem; text-decoration: none; font-size: 1.25rem; display: none;">
+                        🔔
+                        {% set unread_count = current_user.get_unread_notification_count() %}
+                        {% if unread_count > 0 %}
+                        <span class="bell-badge" style="background-color: var(--danger); color: white; border-radius: 50%; padding: 0.05rem 0.25rem; font-size: 0.65rem; font-weight: bold; position: absolute; top: -5px; right: -5px;">{{ unread_count }}</span>
+                        {% endif %}
+                    </a>
+                    {% endif %}
+                    
+                    <div class="profile-dropdown" style="margin-left: 1rem;">
+                        <button class="profile-dropdown-btn" type="button">
+                            <span class="user-avatar">👤</span>
+                            <span class="user-name">{{ current_user.full_name|truncate(15) }}</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="profile-dropdown-content">
+                            <div class="dropdown-header">
+                                <strong>{{ current_user.full_name }}</strong>
+                                <span class="dropdown-role">
+                                    {% if current_user.role == 'platform_admin' %}
+                                        Platform Admin
+                                    {% elif current_user.role == 'college_admin' %}
+                                        College Admin
+                                    {% else %}
+                                        Student
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <hr>
+                            {% if current_user.role == 'student' %}
+                                <a href="{{ url_for('student.profile') }}">👤 View Profile</a>
+                                <a href="{{ url_for('student.my_community_uploads') }}">📁 My Uploads</a>
                             {% endif %}
-                        </span>
-                    </span>
-                    <a href="{{ url_for('auth.logout') }}" class="btn-logout" style="margin-left: 1rem; padding: 0.3rem 0.7rem; border: 1px solid var(--border); font-size: 0.9rem; color: var(--danger); background: none; border-radius: 4px; text-decoration: none; display: inline-block;">Logout</a>
+                            <a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a>
+                        </div>
+                    </div>
                 {% else %}
                     <a href="{{ url_for('public.index') }}">Home</a>
                     <a href="{{ url_for('public.about') }}">About</a>
@@ -125,30 +140,41 @@
             });
         }
     </script>
+    <script>
+        // Toggle dropdown on click (for touch devices)
+        document.addEventListener("DOMContentLoaded", function() {
+            var dropdownBtn = document.querySelector(".profile-dropdown-btn");
+            var dropdown = document.querySelector(".profile-dropdown");
+            if (dropdownBtn && dropdown) {
+                dropdownBtn.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    dropdown.classList.toggle("active");
+                });
+                
+                document.addEventListener("click", function(e) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.remove("active");
+                    }
+                });
+            }
+        });
+    </script>
     
     {% if current_user.is_authenticated and current_user.role == 'student' %}
     <div class="student-bottom-nav">
         <a href="{{ url_for('student.dashboard') }}" class="{% if request.path == url_for('student.dashboard') %}active{% endif %}">
-            <span class="nav-icon">📊</span>
-            <span class="nav-label">Dashboard</span>
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Home</span>
         </a>
-        <a href="{{ url_for('student.subjects') }}" class="{% if request.path == url_for('student.subjects') or '/student/subjects/' in request.path %}active{% endif %}">
+        <a href="{{ url_for('student.subjects') }}" class="{% if request.path == url_for('student.subjects') or '/student/subjects/' in request.path or '/student/units/' in request.path %}active{% endif %}">
             <span class="nav-icon">📚</span>
             <span class="nav-label">Subjects</span>
         </a>
-        <a href="{{ url_for('student.notifications') }}" class="{% if request.path == url_for('student.notifications') %}active{% endif %}" style="position: relative;">
-            <span class="nav-icon">🔔</span>
-            <span class="nav-label">Alerts</span>
-            {% set unread_count = current_user.get_unread_notification_count() %}
-            {% if unread_count > 0 %}
-            <span style="background-color: var(--danger); color: white; border-radius: 50%; padding: 0.05rem 0.3rem; font-size: 0.7rem; font-weight: bold; position: absolute; top: 4px; right: 22%;">{{ unread_count }}</span>
-            {% endif %}
+        <a href="{{ url_for('student.community_library') }}" class="{% if request.path == url_for('student.community_library') or '/student/community/' in request.path %}active{% endif %}">
+            <span class="nav-icon">🌐</span>
+            <span class="nav-label">Community</span>
         </a>
-        <a href="{{ url_for('student.pyqs') }}" class="{% if request.path == url_for('student.pyqs') or '/student/pyqs/' in request.path %}active{% endif %}">
-            <span class="nav-icon">📝</span>
-            <span class="nav-label">PYQs</span>
-        </a>
-        <a href="{{ url_for('student.quizzes') }}" class="{% if request.path == url_for('student.quizzes') or '/student/attempts/' in request.path or '/student/quizzes/' in request.path %}active{% endif %}">
+        <a href="{{ url_for('student.quizzes') }}" class="{% if request.path == url_for('student.quizzes') or '/student/quizzes/' in request.path or '/student/attempts/' in request.path %}active{% endif %}">
             <span class="nav-icon">❓</span>
             <span class="nav-label">Quizzes</span>
         </a>

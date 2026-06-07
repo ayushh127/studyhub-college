@@ -55,7 +55,11 @@ def select_college():
 @student_bp.route('/dashboard')
 @check_college_access
 def dashboard():
-    subjects = Subject.query.filter_by(college_id=current_user.college_id, is_active=True).all()
+    subscribed_subject_ids = [sub.subject_id for sub in current_user.subscriptions]
+    if subscribed_subject_ids:
+        subjects = Subject.query.filter(Subject.id.in_(subscribed_subject_ids), Subject.is_active==True, Subject.college_id==current_user.college_id).all()
+    else:
+        subjects = []
     recent_quizzes = Quiz.query.filter_by(college_id=current_user.college_id, is_published=True).order_by(Quiz.created_at.desc()).limit(5).all()
     return render_template('student/dashboard.html', subjects=subjects, recent_quizzes=recent_quizzes)
 
@@ -632,3 +636,14 @@ def report_community_material(id):
     else:
         flash('Thank you for reporting this material.', 'success')
         return redirect(url_for('student.community_material_details', id=material.id))
+
+
+@student_bp.route('/profile')
+@check_college_access
+def profile():
+    uploads_count = CommunityMaterial.query.filter_by(uploaded_by=current_user.id).count()
+    quiz_attempts_count = QuizAttempt.query.filter_by(student_id=current_user.id).count()
+    return render_template('student/profile.html', 
+                           uploads_count=uploads_count, 
+                           quiz_attempts_count=quiz_attempts_count)
+

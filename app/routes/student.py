@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_required, current_user
-from app.models import College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial, CommunityMaterialLike, CommunityMaterialRating, CommunityMaterialReport, CommunityMaterialView
+from app.models import User, College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial, CommunityMaterialLike, CommunityMaterialRating, CommunityMaterialReport, CommunityMaterialView
 from app.extensions import db
 from sqlalchemy import or_
 from datetime import datetime
@@ -596,6 +596,49 @@ def community_material_details(id):
             user_reported = True
 
     return render_template('student/community_details.html', material=material, user_liked=user_liked, user_rating=user_rating, user_reported=user_reported)
+
+
+@student_bp.route('/community/users/<int:user_id>', methods=['GET'])
+@check_college_access
+def community_user_profile(user_id):
+    uploader = User.query.get_or_404(user_id)
+    # Only show active students
+    if not uploader.is_active or uploader.role != 'student':
+        flash('User profile not found or unavailable.', 'danger')
+        return redirect(url_for('student.community_library'))
+
+    # Get active materials by this user
+    materials = CommunityMaterial.query.filter_by(
+        uploaded_by=uploader.id, 
+        status='active'
+    ).order_by(CommunityMaterial.created_at.desc()).all()
+
+    # Calculate stats
+    total_active_uploads = len(materials)
+    total_likes = sum(m.likes_count for m in materials)
+    total_views = sum(m.views_count for m in materials)
+    
+    materials_with_ratings = [m for m in materials if m.ratings_count > 0]
+    avg_rating = 0.0
+    if materials_with_ratings:
+        avg_rating = round(sum(m.average_rating for m in materials_with_ratings) / len(materials_with_ratings), 1)
+
+    liked_material_ids = set()
+    if current_user.is_authenticated:
+        likes = CommunityMaterialLike.query.filter_by(user_id=current_user.id).all()
+        liked_material_ids = {l.material_id for l in likes}
+
+    return render_template(
+        'student/community_user_profile.html',
+        uploader=uploader,
+        materials=materials,
+        total_active_uploads=total_active_uploads,
+        total_likes=total_likes,
+        total_views=total_views,
+        avg_rating=avg_rating,
+        liked_material_ids=liked_material_ids
+    )
+
 
 @student_bp.route('/community/materials/<int:id>/like', methods=['POST'])
 @check_college_access

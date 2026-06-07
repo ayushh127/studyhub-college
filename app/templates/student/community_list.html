@@ -122,10 +122,11 @@
                     <span>⭐ {{ '%.1f' | format(material.average_rating) }} ({{ material.ratings_count }})</span>
                 </div>
                 
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span class="muted" style="font-size: 0.75rem;">
-                        Shared on {{ material.created_at.strftime('%Y-%m-%d') }}
-                    </span>
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                    <div class="muted" style="font-size: 0.75rem; display: flex; flex-direction: column; gap: 0.25rem;">
+                        <span>Shared on {{ material.created_at.strftime('%Y-%m-%d') }}</span>
+                        <span>By: <a href="{{ url_for('student.community_user_profile', user_id=material.uploaded_by) }}" style="color: var(--primary); text-decoration: none; font-weight: 600;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ material.uploader.full_name }}</a></span>
+                    </div>
                     
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
                         <form class="like-form" action="{{ url_for('student.like_community_material', id=material.id) }}" method="POST" style="margin: 0;">

@@ -20,7 +20,10 @@
             <p class="muted" style="margin: 0.5rem 0 0 0;">Manage and view the status of study materials you have shared with the community.</p>
         </div>
         <div>
-            <a href="{{ url_for('student.upload_community_material') }}" class="btn btn-primary">
+            <a href="{{ url_for('student.community_user_profile', user_id=current_user.id) }}" class="btn btn-outline" style="margin-right: 0.5rem; display: inline-flex; align-items: center; gap: 0.25rem;">
+                👤 View My Public Profile
+            </a>
+            <a href="{{ url_for('student.upload_community_material') }}" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.25rem;">
                 ➕ Share Another
             </a>
         </div>

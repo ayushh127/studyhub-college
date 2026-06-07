@@ -52,7 +52,10 @@
         <div style="display: flex; flex-wrap: wrap; gap: 2rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.5rem 0; margin-bottom: 1.5rem;">
             <div style="flex: 1 1 min-content; min-width: 150px;">
                 <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Uploaded By</div>
-                <div style="font-weight: 500;">{{ material.uploader.full_name }}</div>
+                <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 0.5rem; color: var(--primary-dark);">{{ material.uploader.full_name }}</div>
+                <a href="{{ url_for('student.community_user_profile', user_id=material.uploader.id) }}" style="font-size: 0.85rem; font-weight: 600; color: var(--primary); text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem;">
+                    View all uploads by this student →
+                </a>
             </div>
             <div style="flex: 1 1 min-content; min-width: 150px;">
                 <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Upload Date</div>

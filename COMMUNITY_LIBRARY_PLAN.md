@@ -166,3 +166,8 @@ Materials flag for review but **are not auto-deleted**. They are queued in the P
   * Redesigned Like button in lists and detail page to use heart icon states (♥/♡) and toggle via asynchronous `fetch` without page reload.
   * Added uploader preview notice and restricted student access for non-active materials (hidden/under review/removed).
   * Made titles clickable links on student My Uploads and Explorer list cards.
+* **Step 9: Public Uploader Profile** (COMPLETED)
+  * Implemented `GET /student/community/users/<user_id>` route to show a student's public community profile.
+  * Created `community_user_profile.html` template showing user stats (total active uploads, views, likes, average rating) and a list of active materials uploaded by the student.
+  * Added links to the uploader profile on the material details page, community list cards, and the My Uploads page.
+  * Ensured privacy by hiding inactive/hidden materials and non-public user data.

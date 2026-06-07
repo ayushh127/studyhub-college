@@ -154,6 +154,7 @@ This document tracks the granular development tasks for the StudyHub College MVP
 - [x] Step 6: Reports + moderation score
 - [x] Step 7: Platform admin moderation queue
 - [x] Step 8: UX and counting refinements (Unique views, AJAX toggle liking, security)
+- [x] Step 9: Public uploader profile and all uploads by same student
 
 ## Phase 11: Navbar Cleanup & Mobile UX Polish
 - [x] Step 1: Navbar cleanup + mobile-first student/community UI polish

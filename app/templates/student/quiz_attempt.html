@@ -42,12 +42,12 @@
     @media (max-width: 767px) {
         .exam-sidebar {
             width: 100%;
-            position: sticky;
-            top: 56px; /* Below mobile header */
-            z-index: 100;
-            background: var(--background);
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1rem;
+            position: relative;
+            top: auto;
+            z-index: 10;
+            background: transparent;
+            border-bottom: none;
+            padding-bottom: 0.5rem;
             margin-top: 0;
         }
         .palette-drawer {
@@ -58,6 +58,13 @@
         }
         .palette-drawer.open {
             display: grid;
+        }
+        .exam-main-card {
+            padding: 1.25rem !important;
+            min-height: auto !important;
+        }
+        .option-label {
+            padding: 0.75rem 1rem !important;
         }
     }
 

@@ -5,7 +5,7 @@
 {% block content %}
 <div style="max-width: 1100px; margin: 1.5rem auto; padding-bottom: 4rem;">
     <!-- Welcome Header Card -->
-    <div style="background: linear-gradient(135deg, #EEF2F6 0%, #E0E7FF 100%); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; box-shadow: var(--shadow-sm);">
+    <div class="welcome-card" style="background: linear-gradient(135deg, #EEF2F6 0%, #E0E7FF 100%); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; box-shadow: var(--shadow-sm);">
         <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; flex: 1; min-width: 280px;">
             {% if current_user.college %}
                 {% if current_user.college.logo_path %}
@@ -100,6 +100,12 @@
                 </div>
                 {% endfor %}
             </div>
+            
+            {% if subjects %}
+            <div class="mobile-only-block" style="margin-top: 1.25rem; text-align: center; display: none;">
+                <a href="{{ url_for('student.subjects') }}" class="btn btn-outline btn-full" style="font-weight: 600; font-size: 0.9rem; border-radius: 8px; min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 0.5rem; background: var(--surface);">🔍 Browse All Subjects</a>
+            </div>
+            {% endif %}
         </div>
         
         <!-- Quizzes Column -->

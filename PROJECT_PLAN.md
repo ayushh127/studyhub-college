@@ -141,3 +141,11 @@ Build the StudyHub College MVP, a multi-role web platform for college content ma
 - [x] Show logo thumbnails in the platform admin college directory, college details views, student college selection/onboarding portal, and student dashboard welcome headers. Renders initials-based fallback avatars when no logo exists.
 - [x] Added real-time search box on the student college selection page, dynamically filtering matching colleges by name, code, city, or state in the browser using client-side JavaScript.
 - [x] Designed clean empty-state placeholder matching the Modern Minimal SaaS theme when no search results match.
+
+## Phase 16: Mobile UI Usability Fixes
+- [x] Restored compact, horizontal mobile headers (showing brand on left, notifications bell and dropdown on right).
+- [x] Hid secondary public text navigation links on mobile to prevent header wrapping.
+- [x] Overhauled mobile grids (stats widgets, subject list) to stack cleanly in single column layouts.
+- [x] Added a clear, touch-friendly "Browse All Subjects" button below student dashboard subject cards.
+- [x] Improved mobile Community Library filters: made the Search button visible beside the input, added a gears-icon Filters toggle button, and optimized the action buttons row.
+- [x] Refined quiz attempts: made the sidebar non-sticky on mobile, and reduced container and option label padding.

@@ -11,6 +11,13 @@ All notable changes to the StudyHub College project will be documented in this f
   - Added Platform Admin routes `GET /admin/colleges/<id>/edit` and `POST /admin/colleges/<id>/edit` to allow updating college details (name, code, city, state, address, contact email/phone, status, and logo).
   - Updated Platform Admin college directory and details views to feature Edit actions, thumbnails/initials, and clean UI buttons.
   - Added real-time client-side JS filter searching on student onboarding selection matching name, code, city, or state with empty-state messages.
+- Implemented Mobile UI Usability Fixes:
+  - Made the mobile header always row-based and horizontal for a compact layout, showing the brand on the left and the notification bell and profile icon dropdown on the right.
+  - Hid secondary public navigation header links on mobile to prevent clutter and text overflows, displaying only the brand logo and Login button for public viewports.
+  - Fixed mobile student dashboard grids, ensuring stats cards and subjects cards stack cleanly using vertical column layouts.
+  - Added a prominent "Browse All Subjects" button directly below the subscribed subjects on mobile viewports.
+  - Overhauled Community Library search/filter layouts on mobile: made the main "Search" button visible beside the input, added a gears-icon "Filters" toggle button, and optimized the uploads/action buttons container to take full width.
+  - Restored proper mobile quiz attempt layout: changed the sticky desktop-oriented sidebar to be non-sticky/scrollable on mobile viewports to reclaim vertical screen height, and reduced margins/padding for option labels and container cards to optimize readability.
 
 ### Fixed
 - Fixed `NameError: name 'User' is not defined` when viewing a student uploader's public profile page by adding the missing import to `app/routes/student.py`.

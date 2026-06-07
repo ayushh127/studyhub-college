@@ -248,3 +248,13 @@ This document tracks the granular development tasks for the StudyHub College MVP
 - [x] Step 16: Update Platform Admin views with "Edit College" buttons and links
 - [x] Step 17: Verify local python code compiles cleanly
 - [x] Step 18: Update system documentation (`ROUTES.md`, `UI_UX_GUIDE.md`, `CHANGELOG.md`, `DATABASE_SCHEMA.md`, `DEPLOYMENT_PYTHONANYWHERE_FREE.md`, `TASKS.md`) and walkthrough artifact
+
+## Phase 16: Mobile UI Usability Fixes
+- [x] Step 1: Make mobile header always compact and horizontal, showing brand on left and bell/avatar dropdown on right
+- [x] Step 2: Hide secondary public text links from the mobile header, keeping only Brand and Login button
+- [x] Step 3: Stack grid layouts and stats widgets vertically on mobile viewports
+- [x] Step 4: Add a prominent "Browse All Subjects" button directly below subscribed subjects on student dashboard
+- [x] Step 5: Overhaul Community Library search/filter on mobile (Search button visible beside input, gears-icon Filters toggle button, full width uploads button row)
+- [x] Step 6: Make quiz attempt sidebar non-sticky on mobile to save vertical screen space
+- [x] Step 7: Apply compact paddings/margins to quiz options labels and container cards on mobile viewports
+- [x] Step 8: Verify Python files compile cleanly and no desktop styles are broken

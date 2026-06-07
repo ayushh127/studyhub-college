@@ -16,7 +16,7 @@ def before_request():
 @college_admin_bp.route('/dashboard')
 def dashboard():
     stats = {
-        'subjects': Subject.query.filter_by(college_id=current_user.college_id).count(),
+        'subjects': Subject.query.filter_by(college_id=current_user.college_id, is_active=True).count(),
         'materials': StudyMaterial.query.filter_by(college_id=current_user.college_id).count(),
         'quizzes': Quiz.query.filter_by(college_id=current_user.college_id).count(),
         'students': User.query.filter_by(college_id=current_user.college_id, role='student').count()
@@ -32,7 +32,7 @@ def allowed_file(filename):
 
 @college_admin_bp.route('/subjects', methods=['GET'])
 def subjects():
-    subs = Subject.query.filter_by(college_id=current_user.college_id).all()
+    subs = Subject.query.filter_by(college_id=current_user.college_id, is_active=True).all()
     return render_template('college_admin/subjects.html', subjects=subs)
 
 @college_admin_bp.route('/subjects/create', methods=['GET', 'POST'])
@@ -92,10 +92,10 @@ def delete_subject(id):
     if subject.college_id != current_user.college_id:
         abort(403)
         
-    db.session.delete(subject)
+    subject.is_active = False
     db.session.commit()
-    log_action(current_user.id, 'subject_deleted', 'subject', id)
-    flash('Subject deleted successfully.', 'success')
+    log_action(current_user.id, 'subject_deactivated', 'subject', id)
+    flash('Subject deactivated/deleted successfully.', 'success')
     return redirect(url_for('college_admin.subjects'))
 
 # Units CRUD
@@ -158,6 +158,11 @@ def delete_unit(id):
     if unit.subject.college_id != current_user.college_id:
         abort(403)
     subject_id = unit.subject_id
+    
+    # Nullify unit references in materials, PYQs, and quizzes
+    StudyMaterial.query.filter_by(unit_id=unit.id).update({StudyMaterial.unit_id: None})
+    PYQPaper.query.filter_by(unit_id=unit.id).update({PYQPaper.unit_id: None})
+    Quiz.query.filter_by(unit_id=unit.id).update({Quiz.unit_id: None})
     
     db.session.delete(unit)
     db.session.commit()
@@ -287,6 +292,18 @@ def delete_material(id):
     if material.college_id != current_user.college_id:
         abort(403)
         
+    # Nullify references in quizzes
+    Quiz.query.filter_by(study_material_id=material.id).update({Quiz.study_material_id: None})
+    
+    # Delete physical file from disk
+    if material.file_path:
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER_MATERIALS'], material.file_path)
+        if os.path.exists(filepath):
+            try:
+                os.remove(filepath)
+            except Exception:
+                pass
+                
     db.session.delete(material)
     db.session.commit()
     log_action(current_user.id, 'material_deleted', 'study_material', id)
@@ -445,6 +462,18 @@ def delete_pyq(id):
     if pyq.college_id != current_user.college_id:
         abort(403)
         
+    # Nullify references in quizzes
+    Quiz.query.filter_by(pyq_paper_id=pyq.id).update({Quiz.pyq_paper_id: None})
+    
+    # Delete physical file from disk
+    if pyq.file_path:
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER_PYQS'], pyq.file_path)
+        if os.path.exists(filepath):
+            try:
+                os.remove(filepath)
+            except Exception:
+                pass
+                
     db.session.delete(pyq)
     db.session.commit()
     log_action(current_user.id, 'pyq_deleted', 'pyq_paper', id)
@@ -574,8 +603,19 @@ def edit_quiz(id):
 @college_admin_bp.route('/quizzes/<int:id>/delete', methods=['POST'])
 def delete_quiz(id):
     quiz = Quiz.query.filter_by(id=id, college_id=current_user.college_id).first_or_404()
+    
+    from ..models import QuizAttempt
+    has_attempts = QuizAttempt.query.filter_by(quiz_id=quiz.id).first() is not None
+    if has_attempts:
+        quiz.is_published = False
+        db.session.commit()
+        log_action(current_user.id, 'quiz_unpublished_on_delete_attempt', 'quiz', quiz.id, f'Attempted quiz {quiz.title} unpublished instead of deleted.')
+        flash('Quiz cannot be deleted because it has student attempts. It has been unpublished instead.', 'warning')
+        return redirect(url_for('college_admin.quizzes'))
+        
     db.session.delete(quiz)
     db.session.commit()
+    log_action(current_user.id, 'quiz_deleted', 'quiz', id)
     flash('Quiz deleted.', 'success')
     return redirect(url_for('college_admin.quizzes'))
 

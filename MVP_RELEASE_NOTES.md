@@ -27,6 +27,7 @@ Welcome to the official release documentation for **StudyHub College MVP v1**. T
 9. **In-App Notifications (Phase 7)**: Subject-wise subscription model notifying students when new materials, PYQs, or quizzes are published, complete with unread badge counters and read status tracking.
 10. **Progressive Web App (PWA) Support**: Basic mobile installation support allowing users to save the portal directly to their home screens, running in standalone full-screen windows matching the academic theme.
 11. **Community Library**: An open student-to-student sharing hub allowing resource uploading (PDF and/or URL), dynamic keyword search, type filtering, college tag tagging, unique view counting, Instagram-style AJAX liking, star-based ratings, content reporting, programmatic moderation risk scoring, and a platform admin moderation dashboard with hide/restore/remove actions.
+12. **Content Deletion & Permissions Audit (Phase 12)**: Implemented student community library edit/delete forms and checks. Secured college admin deletion flows (cascade nullification, soft-delete subjects, unpublish quizzes with attempts, and physical disk file cleanup). Verified release readiness in `FINAL_QA_REPORT.md`.
 
 ---
 

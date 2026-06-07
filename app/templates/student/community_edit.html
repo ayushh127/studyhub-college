@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Shared Material - StudyHub College{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 2rem auto;">
+    <!-- Breadcrumbs -->
+    <div style="margin-bottom: 1.5rem; font-size: 0.9rem;">
+        <a href="{{ url_for('student.dashboard') }}" style="color: var(--primary); text-decoration: none;">Dashboard</a>
+        <span class="muted" style="margin: 0 0.5rem;">/</span>
+        <a href="{{ url_for('student.community_library') }}" style="color: var(--primary); text-decoration: none;">Community Library</a>
+        <span class="muted" style="margin: 0 0.5rem;">/</span>
+        <a href="{{ url_for('student.my_community_uploads') }}" style="color: var(--primary); text-decoration: none;">My Shared Materials</a>
+        <span class="muted" style="margin: 0 0.5rem;">/</span>
+        <span class="muted">Edit Material</span>
+    </div>
+
+    <!-- Header -->
+    <div style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+        <h2 style="font-size: 1.75rem; margin: 0; font-weight: 800;">Edit Shared Material</h2>
+        <p class="muted" style="margin: 0.5rem 0 0 0;">Update details, upload a new PDF document, or change the external link for your shared community resource.</p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="card" style="padding: 2rem;">
+        <form method="POST" action="{{ url_for('student.edit_community_material', id=material.id) }}" enctype="multipart/form-data">
+            <!-- Title -->
+            <div class="form-group">
+                <label for="title" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Material Title <span style="color: var(--danger);">*</span></label>
+                <input type="text" name="title" id="title" class="form-control" value="{{ material.title }}" required placeholder="e.g. Intro to Mechanics Lecture Notes">
+            </div>
+
+            <!-- Subject Name -->
+            <div class="form-group">
+                <label for="subject_name" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Subject Name <span style="color: var(--danger);">*</span></label>
+                <input type="text" name="subject_name" id="subject_name" class="form-control" value="{{ material.subject_name }}" required placeholder="e.g. Physics I, Discrete Mathematics">
+                <small class="muted" style="display: block; margin-top: 0.25rem;">Type the free-text name of the subject this material covers.</small>
+            </div>
+
+            <div class="grid-2col" style="gap: 1.5rem; margin-bottom: 1.25rem;">
+                <!-- Material Type -->
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="material_type" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Material Type</label>
+                    <select name="material_type" id="material_type" class="form-control">
+                        <option value="notes" {% if material.material_type == 'notes' %}selected{% endif %}>Notes</option>
+                        <option value="assignment" {% if material.material_type == 'assignment' %}selected{% endif %}>Assignment</option>
+                        <option value="pyq" {% if material.material_type == 'pyq' %}selected{% endif %}>PYQ</option>
+                        <option value="question_bank" {% if material.material_type == 'question_bank' %}selected{% endif %}>Question Bank</option>
+                        <option value="other" {% if material.material_type == 'other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+
+                <!-- College Tag (Optional) -->
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="college_tag_id" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">College Tag <span class="muted" style="font-weight: normal;">(Optional)</span></label>
+                    <select name="college_tag_id" id="college_tag_id" class="form-control">
+                        <option value="">No Specific College</option>
+                        {% for college in colleges %}
+                        <option value="{{ college.id }}" {% if material.college_tag_id == college.id %}selected{% endif %}>{{ college.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="muted" style="display: block; margin-top: 0.25rem;">Tag your college to help classmates find it easily.</small>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="description" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Description <span class="muted" style="font-weight: normal;">(Optional)</span></label>
+                <textarea name="description" id="description" class="form-control" rows="3" placeholder="Briefly describe what this document contains...">{{ material.description if material.description else '' }}</textarea>
+            </div>
+
+            <div style="margin: 1.5rem 0; padding: 1rem; background-color: var(--surface-soft); border-radius: 6px; border: 1px dashed var(--border);">
+                <p style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text);">Resource Content <span style="color: var(--danger);">*</span></p>
+                <p class="muted" style="font-size: 0.85rem; margin-bottom: 1rem; line-height: 1.4;">Provide at least one of the following to share your material:</p>
+
+                <!-- PDF File Upload -->
+                <div class="form-group">
+                    <label style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem; display: block;">PDF File</label>
+                    
+                    {% if material.file_path %}
+                    <div style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem;">
+                        <span style="color: var(--success); font-weight: 600;">📄 Current file:</span>
+                        <a href="{{ url_for('files.serve_community_material', id=material.id) }}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 500;">View Current PDF</a>
+                        
+                        {% if material.external_url %}
+                        <label style="font-weight: normal; margin-left: auto; display: inline-flex; align-items: center; gap: 0.25rem; cursor: pointer; font-size: 0.85rem; color: #DC2626;">
+                            <input type="checkbox" name="clear_file" value="true"> Clear/Remove current file
+                        </label>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <label for="file" style="font-size: 0.8rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">
+                        {% if material.file_path %}Upload new PDF file to replace current:{% else %}Upload PDF File:{% endif %}
+                    </label>
+                    <input type="file" name="file" id="file" class="form-control" accept=".pdf">
+                    <small class="muted" style="display: block; margin-top: 0.25rem;">PDF format only. Maximum file size: 5MB.</small>
+                </div>
+
+                <div style="text-align: center; margin: 0.75rem 0; font-weight: bold; color: var(--muted); font-size: 0.85rem;">— OR —</div>
+
+                <!-- External URL -->
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="external_url" style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem; display: block;">External Link (URL)</label>
+                    <input type="url" name="external_url" id="external_url" class="form-control" value="{{ material.external_url if material.external_url else '' }}" placeholder="https://drive.google.com/file/... or https://example.com/notes">
+                    <small class="muted" style7="display: block; margin-top: 0.25rem;">Link to Google Drive, Dropbox, or any external study resource.</small>
+                </div>
+            </div>
+
+            <!-- Submit Buttons -->
+            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
+                <a href="{{ url_for('student.my_community_uploads') }}" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

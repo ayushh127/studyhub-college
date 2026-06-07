@@ -189,3 +189,17 @@ This document tracks the granular development tasks for the StudyHub College MVP
   - [x] Sticky mode selector, timer, and question palette on sidebar
   - [x] Implement collapsible question palette drawer on mobile
   - [x] Isolate question rendering using JS for single-question views with next/previous buttons
+
+## Phase 12: Edit & Delete Permissions Audit & Stabilization
+- [x] Implement uploader edit community material routes (GET/POST) and validation in `app/routes/student.py`
+- [x] Implement uploader soft-delete community material route (POST) in `app/routes/student.py`
+- [x] Create uploader edit template `student/community_edit.html`
+- [x] Add uploader Edit and Remove buttons on My Shared Materials list page and details view templates
+- [x] Clean up cascading references in College Admin deletions (quizzes referencing study materials/PYQs, materials/PYQs/quizzes referencing units)
+- [x] Implement quiz soft-delete/unpublish logic when student attempt records exist
+- [x] Implement subject soft-delete/deactivation logic and restrict student access to active subjects/units
+- [x] Document new community routes in `ROUTES.md`
+- [x] Update Community Library design plan in `COMMUNITY_LIBRARY_PLAN.md`
+- [x] Update design conventions in `UI_UX_GUIDE.md`
+- [x] Update task list in `TASKS.md`
+- [x] Update changelog in `CHANGELOG.md`

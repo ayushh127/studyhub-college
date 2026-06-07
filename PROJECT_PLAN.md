@@ -119,3 +119,10 @@ Build the StudyHub College MVP, a multi-role web platform for college content ma
 - Configured maximum upload limits (5MB) and custom 413 error templates to manage disk quota consumption safely.
 - Added basic PWA manifest and service worker files to enable home screen mobile installation.
 - Created step-by-step mobile installation guide for students/teachers on iOS Safari and Android Chrome.
+
+## Phase 12: Edit & Delete Permissions Audit & Stabilization
+- Audited and secured edit/delete capabilities for student community library uploads, allowing uploaders to safely modify contents or soft-delete them (status set to `removed_by_uploader`).
+- Resolved college admin cascade deletion issues, nullifying unit and study material references in quizzes to prevent DB constraint exceptions on delete.
+- Implemented soft deletion/deactivation for subjects, preventing direct student URL access to deactivated content.
+- Blocked hard deletion of quizzes with attempts, unpublishing them instead.
+- Conducted full final QA pass, resolving outstanding bugs, and documenting release readiness in `FINAL_QA_REPORT.md`.

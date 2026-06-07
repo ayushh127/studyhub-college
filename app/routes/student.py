@@ -211,6 +211,8 @@ def subject_details(id):
     subject = Subject.query.get_or_404(id)
     if subject.college_id != current_user.college_id:
         abort(403)
+    if not subject.is_active:
+        abort(404)
     # Get published materials, PYQs, and quizzes with no unit_id
     materials = StudyMaterial.query.filter_by(subject_id=subject.id, unit_id=None, is_published=True).all()
     pyqs = PYQPaper.query.filter_by(subject_id=subject.id, unit_id=None, is_published=True).all()
@@ -223,6 +225,8 @@ def unit_details(id):
     unit = Unit.query.get_or_404(id)
     if unit.subject.college_id != current_user.college_id:
         abort(403)
+    if not unit.subject.is_active:
+        abort(404)
     materials = StudyMaterial.query.filter_by(unit_id=unit.id, is_published=True).all()
     pyqs = PYQPaper.query.filter_by(unit_id=unit.id, is_published=True).all()
     quizzes = Quiz.query.filter_by(unit_id=unit.id, is_published=True).all()
@@ -546,10 +550,124 @@ def upload_community_material():
     return render_template('student/community_upload.html', colleges=colleges)
 
 
+@student_bp.route('/community/materials/<int:id>/edit', methods=['GET', 'POST'])
+@check_college_access
+def edit_community_material(id):
+    material = CommunityMaterial.query.get_or_404(id)
+    if material.uploaded_by != current_user.id:
+        abort(403)
+    if material.status != 'active':
+        flash('You can only edit active community materials.', 'danger')
+        return redirect(url_for('student.my_community_uploads'))
+        
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        description = request.form.get('description', '').strip()
+        subject_name = request.form.get('subject_name', '').strip()
+        college_tag_id = request.form.get('college_tag_id', type=int)
+        material_type = request.form.get('material_type', 'notes').strip()
+        external_url = request.form.get('external_url', '').strip()
+        file = request.files.get('file')
+        
+        # Validation checks
+        if not title:
+            flash('Title is required.', 'danger')
+            return redirect(url_for('student.edit_community_material', id=material.id))
+            
+        if not subject_name:
+            flash('Subject name is required.', 'danger')
+            return redirect(url_for('student.edit_community_material', id=material.id))
+            
+        has_new_file = file and file.filename != ''
+        
+        # Check if we have at least one valid resource (either existing or new)
+        has_file = has_new_file or material.file_path
+        has_url = external_url or material.external_url
+        if not has_file and not has_url:
+            flash('You must either upload a PDF file or provide an external URL.', 'danger')
+            return redirect(url_for('student.edit_community_material', id=material.id))
+            
+        if external_url and not (external_url.startswith('http://') or external_url.startswith('https://')):
+            flash('External URL must start with http:// or https://', 'danger')
+            return redirect(url_for('student.edit_community_material', id=material.id))
+            
+        # If new file is uploaded
+        if has_new_file:
+            if not allowed_file(file.filename):
+                flash('Only PDF files are allowed in the Community Library.', 'danger')
+                return redirect(url_for('student.edit_community_material', id=material.id))
+                
+            # Optionally remove the old file if it existed
+            if material.file_path:
+                old_filepath = os.path.join(current_app.config['UPLOAD_FOLDER_COMMUNITY'], material.file_path)
+                if os.path.exists(old_filepath):
+                    try:
+                        os.remove(old_filepath)
+                    except Exception:
+                        pass
+                        
+            filename = secure_filename(f"{int(time.time())}_{file.filename}")
+            filepath = os.path.join(current_app.config['UPLOAD_FOLDER_COMMUNITY'], filename)
+            file.save(filepath)
+            material.file_path = filename
+
+        # If they want to clear the link (but we have a file)
+        if not external_url and material.file_path:
+            material.external_url = None
+        elif external_url:
+            material.external_url = external_url
+            
+        # If they want to clear the file (but we have a link)
+        clear_file = request.form.get('clear_file') == 'true'
+        if clear_file and material.external_url:
+            if material.file_path:
+                old_filepath = os.path.join(current_app.config['UPLOAD_FOLDER_COMMUNITY'], material.file_path)
+                if os.path.exists(old_filepath):
+                    try:
+                        os.remove(old_filepath)
+                    except Exception:
+                        pass
+                material.file_path = None
+                
+        material.title = title
+        material.description = description if description else None
+        material.subject_name = subject_name
+        material.college_tag_id = college_tag_id if college_tag_id else None
+        material.material_type = material_type
+        
+        db.session.commit()
+        log_action(current_user.id, 'community_material_edited', 'community_material', material.id, f"Edited: {title}")
+        flash('Material updated successfully!', 'success')
+        return redirect(url_for('student.community_material_details', id=material.id))
+        
+    colleges = College.query.filter_by(status='active').all()
+    return render_template('student/community_edit.html', colleges=colleges, material=material)
+
+
+@student_bp.route('/community/materials/<int:id>/delete', methods=['POST'])
+@check_college_access
+def delete_community_material(id):
+    material = CommunityMaterial.query.get_or_404(id)
+    if material.uploaded_by != current_user.id:
+        abort(403)
+    if material.status != 'active':
+        flash('You can only remove active community materials.', 'danger')
+        return redirect(url_for('student.my_community_uploads'))
+        
+    material.status = 'removed_by_uploader'
+    db.session.commit()
+    log_action(current_user.id, 'community_material_removed_by_uploader', 'community_material', material.id, f"Removed by uploader: {material.title}")
+    flash('Material removed from the Community Library.', 'success')
+    return redirect(url_for('student.my_community_uploads'))
+
+
 @student_bp.route('/community/my-uploads', methods=['GET'])
 @check_college_access
 def my_community_uploads():
-    materials = CommunityMaterial.query.filter_by(uploaded_by=current_user.id).order_by(CommunityMaterial.created_at.desc()).all()
+    materials = CommunityMaterial.query.filter(
+        CommunityMaterial.uploaded_by == current_user.id,
+        CommunityMaterial.status.notin_(['removed', 'removed_by_uploader'])
+    ).order_by(CommunityMaterial.created_at.desc()).all()
     return render_template('student/community_my_uploads.html', materials=materials)
 
 

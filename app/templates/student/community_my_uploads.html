@@ -97,6 +97,16 @@
                     <a href="{{ url_for('student.community_material_details', id=material.id) }}" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; margin-left: auto;">
                         View Details
                     </a>
+                    {% if material.status == 'active' %}
+                    <a href="{{ url_for('student.edit_community_material', id=material.id) }}" class="btn btn-outline" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; border-color: var(--primary); color: var(--primary);">
+                        Edit
+                    </a>
+                    <form action="{{ url_for('student.delete_community_material', id=material.id) }}" method="POST" style="margin: 0; display: inline;">
+                        <button type="submit" class="btn" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; background-color: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5;" onclick="return confirm('Are you sure you want to remove this community upload? This will hide it from the library.');">
+                            Remove
+                        </button>
+                    </form>
+                    {% endif %}
                 </div>
             </div>
         </div>

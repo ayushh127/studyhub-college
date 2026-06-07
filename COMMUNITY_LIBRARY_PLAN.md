@@ -79,7 +79,9 @@ Tracks unique student views per community material.
 * `POST /student/community/materials/<int:id>/rate`: Submits a rating (creates/updates `CommunityMaterialRating`).
 * `POST /student/community/materials/<int:id>/report`: Submits a report (creates `CommunityMaterialReport`).
 * `GET /student/community/my-uploads`: Renders a list of the logged-in student's uploaded materials.
-* `POST /student/community/materials/<int:id>/delete`: Allows the uploader to delete their active material.
+* `GET /student/community/materials/<int:id>/edit`: Renders the material edit form for the uploader's own active material.
+* `POST /student/community/materials/<int:id>/edit`: Processes the material updates (validates, updates DB, saves new PDF).
+* `POST /student/community/materials/<int:id>/delete`: Allows the uploader to soft-delete their own active material (changes status to `removed_by_uploader`).
 
 ### Platform Admin Routes (`app/routes/admin.py`)
 * `GET /admin/community`: Lists all community materials.

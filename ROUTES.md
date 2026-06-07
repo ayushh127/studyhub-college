@@ -147,6 +147,9 @@ This document lists all the proposed routes for the StudyHub College MVP.
 - `POST /student/community/materials/<id>/like` - Toggle like status for a community material (supports AJAX JSON responses)
 - `POST /student/community/materials/<id>/rate` - Submit or update rating for a community material
 - `POST /student/community/materials/<id>/report` - Submit a report for a community material
+- `GET /student/community/materials/<id>/edit` - Page to edit uploader's own community resource
+- `POST /student/community/materials/<id>/edit` - Submit edited community resource
+- `POST /student/community/materials/<id>/delete` - Soft-delete uploader's own community resource
 
 ## Secure File Routes
 - `GET /files/materials/<id>`

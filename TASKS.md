@@ -258,3 +258,8 @@ This document tracks the granular development tasks for the StudyHub College MVP
 - [x] Step 6: Make quiz attempt sidebar non-sticky on mobile to save vertical screen space
 - [x] Step 7: Apply compact paddings/margins to quiz options labels and container cards on mobile viewports
 - [x] Step 8: Verify Python files compile cleanly and no desktop styles are broken
+
+## Phase 17: Database Migration Improvements
+- [x] Step 1: Update `migrate_db.py` to support safe, idempotent database column alterations (e.g. `logo_path`) in SQLite
+- [x] Step 2: Update `DEPLOYMENT_PYTHONANYWHERE_FREE.md` to document the simplified migration command
+- [x] Step 3: Update `CHANGELOG.md` and `TASKS.md`

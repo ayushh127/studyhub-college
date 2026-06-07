@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Study Material Details: {{ material.title }} - StudyHub College{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 3rem auto;">
+    <div class="card" style="padding: 2.5rem; text-align: center;">
+        <span class="badge" style="background-color: var(--accent); color: var(--text); margin-bottom: 1rem; text-transform: uppercase;">Study Material</span>
+        <h2 style="font-size: 2rem; margin-top: 0; margin-bottom: 0.5rem; color: var(--primary-dark); font-weight: 800;">{{ material.title }}</h2>
+        <p class="muted" style="margin-bottom: 2rem;">Subject: <strong>{{ material.subject.name }} ({{ material.subject.code }})</strong></p>
+        
+        {% if material.description %}
+        <div class="card" style="background-color: var(--surface-soft); padding: 1.5rem; text-align: left; margin-bottom: 2rem;">
+            <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-weight: 600;">Description</h4>
+            <p class="muted" style="margin-bottom: 0; font-size: 0.95rem; line-height: 1.5;">{{ material.description }}</p>
+        </div>
+        {% endif %}
+        
+        <div class="card" style="background-color: var(--surface-soft); padding: 1.5rem; text-align: left; margin-bottom: 2rem;">
+            <p style="margin-top: 0;"><strong>Associated Unit:</strong> {% if material.unit %}Unit {{ material.unit.unit_number }}: {{ material.unit.title }}{% else %}Full Subject / General{% endif %}</p>
+            <p style="margin-bottom: 0;"><strong>Format:</strong> PDF Document</p>
+        </div>
+        
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <a href="{{ url_for('files.serve_material', id=material.id) }}" target="_blank" class="btn btn-primary" style="padding: 0.75rem 1.5rem; font-size: 1.1rem; text-decoration: none;">Download Material PDF</a>
+            {% if material.unit_id %}
+            <a href="{{ url_for('student.unit_details', id=material.unit_id) }}" class="btn" style="border: 1px solid var(--border); padding: 0.75rem 1.5rem; font-size: 1.1rem; text-decoration: none; color: var(--text);">Go to Unit</a>
+            {% else %}
+            <a href="{{ url_for('student.subject_details', id=material.subject_id) }}" class="btn" style="border: 1px solid var(--border); padding: 0.75rem 1.5rem; font-size: 1.1rem; text-decoration: none; color: var(--text);">Go to Subject</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

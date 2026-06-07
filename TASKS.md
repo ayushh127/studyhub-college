@@ -178,3 +178,8 @@ This document tracks the granular development tasks for the StudyHub College MVP
   - [x] Place notification bell link with badges on the top-right before profile
   - [x] Make profile dropdown button circular/compact on mobile, hiding username and arrow
   - [x] Shrink header height on mobile student views
+- [x] Step 5: Notification detail behavior and auto mark-as-read
+  - [x] Create safe official material details view route and page for students
+  - [x] Implement `/student/notifications/<id>/open` route
+  - [x] Auto mark-as-read on notification click
+  - [x] Redirect to detail views (materials, PYQs, community, quiz start) instead of direct downloads

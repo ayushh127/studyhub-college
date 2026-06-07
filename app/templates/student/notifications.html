@@ -42,7 +42,7 @@
             
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
                 {% if n.link %}
-                <a href="{{ n.link }}" class="btn" style="border: 1px solid var(--primary); color: var(--primary); font-size: 0.85rem; text-decoration: none; font-weight: bold; background: none; padding: 0.4rem 1rem;">View Details</a>
+                <a href="{{ url_for('student.open_notification', id=n.id) }}" class="btn" style="border: 1px solid var(--primary); color: var(--primary); font-size: 0.85rem; text-decoration: none; font-weight: bold; background: none; padding: 0.4rem 1rem;">View Details</a>
                 {% endif %}
                 
                 {% if not is_read %}

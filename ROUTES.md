@@ -134,6 +134,10 @@ This document lists all the proposed routes for the StudyHub College MVP.
 - `GET /student/progress`
 - `GET /student/profile`
 - `POST /student/profile`
+- `GET /student/notifications` - View all notifications
+- `POST /student/notifications/<id>/read` - Mark a notification as read
+- `POST /student/notifications/read-all` - Mark all notifications as read
+- `GET /student/notifications/<id>/open` - Auto-mark read and redirect to notification target page
 - `GET /student/community` - Community library material explorer (browsing, searching, filtering)
 - `GET /student/community/upload` - Page to share community resources
 - `POST /student/community/upload` - Submit community resource

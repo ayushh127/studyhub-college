@@ -33,7 +33,7 @@ def notify_material_published(material):
     else:
         message = f"{subject.name}: {material.title} is now available."
         
-    link = url_for('files.serve_material', id=material.id)
+    link = url_for('student.material_details', id=material.id)
     
     return create_notification(
         college_id=material.college_id,
@@ -54,7 +54,7 @@ def notify_pyq_published(pyq):
     
     # E.g., "DBMS 2024 End Sem PYQ is now available."
     message = f"{subject.name} {pyq.title} is now available."
-    link = url_for('files.serve_pyq', id=pyq.id)
+    link = url_for('student.pyq_details', id=pyq.id)
     
     return create_notification(
         college_id=pyq.college_id,

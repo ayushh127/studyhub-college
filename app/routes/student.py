@@ -244,6 +244,85 @@ def pyq_details(id):
         abort(403)
     return render_template('student/pyq_details.html', pyq=pyq)
 
+@student_bp.route('/materials/<int:id>', methods=['GET'])
+@check_college_access
+def material_details(id):
+    material = StudyMaterial.query.get_or_404(id)
+    if material.college_id != current_user.college_id:
+        abort(403)
+    if not material.is_published:
+        abort(403)
+    return render_template('student/material_details.html', material=material)
+
+@student_bp.route('/notifications/<int:id>/open', methods=['GET'])
+@check_college_access
+def open_notification(id):
+    import re
+    notification = Notification.query.get_or_404(id)
+    if notification.college_id != current_user.college_id:
+        abort(403)
+        
+    # Check if subscription exists for that subject
+    sub = SubjectSubscription.query.filter_by(user_id=current_user.id, subject_id=notification.subject_id).first()
+    if not sub:
+        flash('You are not subscribed to this subject.', 'warning')
+        return redirect(url_for('student.notifications'))
+        
+    # Mark as read automatically
+    already_read = NotificationRead.query.filter_by(user_id=current_user.id, notification_id=notification.id).first()
+    if not already_read:
+        read_entry = NotificationRead(user_id=current_user.id, notification_id=notification.id)
+        db.session.add(read_entry)
+        db.session.commit()
+
+    # Determine safe target URL
+    target_url = None
+    if notification.link:
+        material_match = re.search(r'/materials/(\d+)', notification.link)
+        pyq_match = re.search(r'/pyqs/(\d+)', notification.link)
+        quiz_match = re.search(r'/quizzes/(\d+)', notification.link)
+        comm_match = re.search(r'/community/materials/(\d+)', notification.link)
+        
+        if material_match and (notification.notification_type == 'material' or not notification.notification_type):
+            mat_id = int(material_match.group(1))
+            mat = StudyMaterial.query.get(mat_id)
+            if mat and mat.is_published and mat.college_id == current_user.college_id:
+                target_url = url_for('student.material_details', id=mat_id)
+            else:
+                flash('This study material is no longer available.', 'warning')
+                return redirect(url_for('student.notifications'))
+                
+        elif pyq_match and (notification.notification_type == 'pyq' or not notification.notification_type):
+            pq_id = int(pyq_match.group(1))
+            pq = PYQPaper.query.get(pq_id)
+            if pq and pq.is_published and pq.college_id == current_user.college_id:
+                target_url = url_for('student.pyq_details', id=pq_id)
+            else:
+                flash('This PYQ paper is no longer available.', 'warning')
+                return redirect(url_for('student.notifications'))
+                
+        elif quiz_match and (notification.notification_type == 'quiz' or not notification.notification_type):
+            qz_id = int(quiz_match.group(1))
+            qz = Quiz.query.get(qz_id)
+            if qz and qz.is_published and qz.college_id == current_user.college_id:
+                target_url = url_for('student.start_quiz', id=qz_id)
+            else:
+                flash('This quiz is no longer available.', 'warning')
+                return redirect(url_for('student.notifications'))
+                
+        elif comm_match:
+            c_id = int(comm_match.group(1))
+            c_mat = CommunityMaterial.query.get(c_id)
+            if c_mat and c_mat.status == 'active':
+                target_url = url_for('student.community_material_details', id=c_id)
+            else:
+                flash('This community material is no longer available.', 'warning')
+                return redirect(url_for('student.notifications'))
+
+    if not target_url:
+        target_url = notification.link if notification.link else url_for('student.notifications')
+        
+    return redirect(target_url)
 
 @student_bp.route('/notifications', methods=['GET'])
 @check_college_access

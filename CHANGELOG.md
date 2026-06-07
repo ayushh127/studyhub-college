@@ -4,6 +4,7 @@ All notable changes to the StudyHub College project will be documented in this f
 
 ## [Unreleased]
 ### Added
+- Implemented Phase 11 Step 6: Online Exam Style Quiz Attempt Layout. Redesigned `quiz_attempt.html` to feature a two-column layout on desktop and a compact, collapsible palette drawer on mobile. Added a sticky sidebar containing a timer, mode toggle (Learning/Exam), and an interactive question palette for quick navigation. Isolated question rendering using client-side JavaScript to display single questions sequentially with previous/next buttons while preserving full-form submission logic.
 - Implemented auto mark-as-read and detail redirection for notifications. Added the `/student/notifications/<id>/open` endpoint which automatically logs a `NotificationRead` status entry before redirecting the student safely to the corresponding item's details view (study material detail, PYQ details, community details, or quiz start page) instead of initiating direct file downloads.
 - Added a student-specific official study material details page (`/student/materials/<id>`) and template (`student/material_details.html`) showing unit/subject metadata, description, and download controls.
 - Refined mobile student header to align StudyHub College logo on the left and notification bell plus compact circular profile dropdown on the top-right (no text links or redundant dropdown elements).

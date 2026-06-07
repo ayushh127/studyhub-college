@@ -183,3 +183,8 @@ This document tracks the granular development tasks for the StudyHub College MVP
   - [x] Implement `/student/notifications/<id>/open` route
   - [x] Auto mark-as-read on notification click
   - [x] Redirect to detail views (materials, PYQs, community, quiz start) instead of direct downloads
+- [x] Step 6: Online Exam Style Quiz Attempt Layout
+  - [x] Implement two-column CSS layout for quiz attempts on desktop
+  - [x] Sticky mode selector, timer, and question palette on sidebar
+  - [x] Implement collapsible question palette drawer on mobile
+  - [x] Isolate question rendering using JS for single-question views with next/previous buttons

@@ -3,23 +3,32 @@
 {% block title %}PYQ Paper Details: {{ pyq.title }} - StudyHub College{% endblock %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 3rem auto;">
-    <div class="card" style="padding: 2.5rem; text-align: center;">
-        <span class="badge" style="background-color: var(--accent); color: var(--text); margin-bottom: 1rem; text-transform: uppercase;">{{ pyq.exam_type.replace('_', ' ') }} Paper</span>
-        <h2 style="font-size: 2rem; margin-top: 0; margin-bottom: 0.5rem; color: var(--primary-dark); font-weight: 800;">{{ pyq.title }}</h2>
-        <p class="muted" style="margin-bottom: 2rem;">Subject: <strong>{{ pyq.subject.name }} ({{ pyq.subject.code }})</strong> | Academic Year: {{ pyq.year }}</p>
+<div style="max-width: 650px; margin: 3rem auto; padding: 0 1rem; padding-bottom: 4rem;">
+    <!-- Breadcrumbs -->
+    <nav style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 500;">
+        <a href="{{ url_for('student.dashboard') }}" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--muted)'">Dashboard</a>
+        <span style="color: var(--border);">&rarr;</span>
+        <a href="{{ url_for('student.subject_details', id=pyq.subject_id) }}" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--muted)'">{{ pyq.subject.name }}</a>
+        <span style="color: var(--border);">&rarr;</span>
+        <span style="color: var(--text); font-weight: 600;">PYQ Details</span>
+    </nav>
+
+    <div class="card" style="padding: 3rem 2rem; text-align: center; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-lg); background-color: var(--surface);">
+        <span class="badge" style="background-color: #FAF5FF; color: var(--accent); border: 1px solid rgba(109,40,217,0.15); font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 4px; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">{{ pyq.exam_type.replace('_', ' ') }} Paper</span>
+        <h2 style="font-size: 1.85rem; margin-top: 0; margin-bottom: 0.5rem; color: var(--text); font-weight: 800; letter-spacing: -0.02em; line-height: 1.3;">{{ pyq.title }}</h2>
+        <p class="muted" style="margin-bottom: 2.5rem; font-size: 0.95rem; font-weight: 500;">Subject: <strong style="color: var(--text);">{{ pyq.subject.name }} ({{ pyq.subject.code }})</strong> | Year: <strong style="color: var(--text);">{{ pyq.year }}</strong></p>
         
-        <div class="card" style="background-color: var(--surface-soft); padding: 1.5rem; text-align: left; margin-bottom: 2rem;">
-            <p style="margin-top: 0;"><strong>Associated Unit:</strong> {% if pyq.unit %}Unit {{ pyq.unit.unit_number }}: {{ pyq.unit.title }}{% else %}Full Subject / General{% endif %}</p>
-            <p style="margin-bottom: 0;"><strong>Format:</strong> PDF Document</p>
+        <div class="card" style="background-color: var(--surface-soft); padding: 1.25rem 1.5rem; text-align: left; margin-bottom: 2.5rem; border-radius: 10px; border: 1px solid var(--border); font-size: 0.9rem; font-weight: 600;">
+            <p style="margin-top: 0; margin-bottom: 0.5rem; color: var(--text);"><strong>Associated Unit:</strong> {% if pyq.unit %}Unit {{ pyq.unit.unit_number }}: {{ pyq.unit.title }}{% else %}Full Subject / General{% endif %}</p>
+            <p style="margin-bottom: 0; color: var(--text);"><strong>Format:</strong> 📄 PDF Document</p>
         </div>
         
-        <div style="display: flex; gap: 1rem; justify-content: center;">
-            <a href="{{ url_for('files.serve_pyq', id=pyq.id) }}" target="_blank" class="btn btn-primary" style="padding: 0.75rem 1.5rem; font-size: 1.1rem; text-decoration: none;">Download Question Paper PDF</a>
-            {% if pyq.unit %}
-            <a href="{{ url_for('student.unit_details', id=pyq.unit_id) }}" class="btn" style="border: 1px solid var(--border); padding: 0.75rem 1.5rem; font-size: 1.1rem; text-decoration: none; color: var(--text);">Go to Unit</a>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="{{ url_for('files.serve_pyq', id=pyq.id) }}" target="_blank" class="btn btn-primary" style="padding: 0.6rem 2rem; font-size: 0.95rem; text-decoration: none; border-radius: 8px; font-weight: 700; box-shadow: 0 4px 10px rgba(37,99,235,0.15);">Download Paper PDF</a>
+            {% if pyq.unit_id %}
+            <a href="{{ url_for('student.unit_details', id=pyq.unit_id) }}" class="btn btn-outline" style="padding: 0.6rem 2rem; font-size: 0.95rem; text-decoration: none; border-radius: 8px; font-weight: 600;">Go to Unit</a>
             {% else %}
-            <a href="{{ url_for('student.subject_details', id=pyq.subject_id) }}" class="btn" style="border: 1px solid var(--border); padding: 0.75rem 1.5rem; font-size: 1.1rem; text-decoration: none; color: var(--text);">Go to Subject</a>
+            <a href="{{ url_for('student.subject_details', id=pyq.subject_id) }}" class="btn btn-outline" style="padding: 0.6rem 2rem; font-size: 0.95rem; text-decoration: none; border-radius: 8px; font-weight: 600;">Go to Subject</a>
             {% endif %}
         </div>
     </div>

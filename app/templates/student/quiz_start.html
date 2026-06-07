@@ -3,49 +3,83 @@
 {% block title %}Start Quiz: {{ quiz.title }}{% endblock %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 3rem auto;">
-    <div class="card" style="text-align: center; padding: 2rem;">
-        <h2 style="margin-top: 0;">{{ quiz.title }}</h2>
-        <p style="color: var(--primary); font-weight: bold;">{{ quiz.subject.name }}</p>
+<div style="max-width: 650px; margin: 3rem auto; padding: 0 1rem; padding-bottom: 4rem;">
+    <!-- Breadcrumbs -->
+    <nav style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 500;">
+        <a href="{{ url_for('student.dashboard') }}" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--muted)'">Dashboard</a>
+        <span style="color: var(--border);">&rarr;</span>
+        <a href="{{ url_for('student.quizzes') }}" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--muted)'">Quizzes</a>
+        <span style="color: var(--border);">&rarr;</span>
+        <span style="color: var(--text); font-weight: 600;">Quiz Setup</span>
+    </nav>
+
+    <div class="card" style="padding: 3rem 2.5rem; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-lg); background-color: var(--surface);">
+        <span style="font-size: 3rem; display: block; margin-bottom: 0.75rem; text-align: center;">⏱️</span>
+        <h2 style="margin-top: 0; margin-bottom: 0.35rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); text-align: center; font-size: 1.75rem;">{{ quiz.title }}</h2>
+        <p style="color: var(--primary-dark); font-weight: 700; text-align: center; margin-bottom: 2rem; font-size: 0.95rem;">Subject: {{ quiz.subject.name }}</p>
         
-        <div style="display: flex; justify-content: center; gap: 2rem; margin: 2rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.5rem 0;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 2rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.5rem 0; text-align: center;">
             <div>
-                <strong style="display: block; font-size: 1.5rem;">{{ quiz.questions|length }}</strong>
-                <span class="muted">Questions</span>
+                <strong style="display: block; font-size: 1.6rem; color: var(--text); font-weight: 800;">{{ quiz.questions|length }}</strong>
+                <span class="muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--muted); letter-spacing: 0.5px;">Questions</span>
             </div>
             <div>
-                <strong style="display: block; font-size: 1.5rem; text-transform: capitalize;">{{ quiz.difficulty }}</strong>
-                <span class="muted">Difficulty</span>
+                <strong style="display: block; font-size: 1.6rem; text-transform: capitalize; color: var(--primary); font-weight: 800;">{{ quiz.difficulty }}</strong>
+                <span class="muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--muted); letter-spacing: 0.5px;">Difficulty</span>
             </div>
             <div>
-                <strong style="display: block; font-size: 1.5rem;">{{ quiz.time_limit_minutes if quiz.time_limit_minutes else 'None' }}</strong>
-                <span class="muted">Time Limit (mins)</span>
+                <strong style="display: block; font-size: 1.6rem; color: var(--text); font-weight: 800;">{{ quiz.time_limit_minutes if quiz.time_limit_minutes else '∞' }}</strong>
+                <span class="muted" style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--muted); letter-spacing: 0.5px;">Time (Mins)</span>
             </div>
         </div>
         
-        <form method="POST" action="{{ url_for('student.start_quiz', id=quiz.id) }}">
+        <form method="POST" action="{{ url_for('student.start_quiz', id=quiz.id) }}" style="margin: 0;">
             <div class="form-group" style="text-align: left; margin-bottom: 2rem;">
-                <label><strong>Select Mode:</strong></label>
-                <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem;">
-                    <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer; padding: 1rem; border: 1px solid var(--border); border-radius: 4px;">
-                        <input type="radio" name="mode" value="learning" checked style="margin-top: 0.25rem;">
-                        <div>
-                            <strong>Learning Mode</strong>
-                            <p class="muted" style="margin: 0; font-size: 0.9rem;">See correct answers and explanations immediately after answering each question. Best for practice.</p>
+                <label style="font-weight: 800; font-size: 0.8rem; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 0.75rem;">Select Attempt Mode</label>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Learning Mode option -->
+                    <label class="onboarding-card" style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; padding: 1.25rem; border-radius: 10px; position: relative;" id="label-mode-learning">
+                        <input type="radio" name="mode" value="learning" checked style="margin-top: 0.3rem; accent-color: var(--primary);" onclick="highlightMode('learning')">
+                        <div style="margin-left: 0.25rem;">
+                            <strong style="font-size: 0.95rem; color: var(--text); font-weight: 700;">Learning Mode</strong>
+                            <p class="muted" style="margin: 0.25rem 0 0 0; font-size: 0.85rem; line-height: 1.4; color: var(--muted); font-weight: 500;">See correct answers and detailed explanations immediately after submitting each choice. Ideal for practice.</p>
                         </div>
                     </label>
-                    <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer; padding: 1rem; border: 1px solid var(--border); border-radius: 4px;">
-                        <input type="radio" name="mode" value="exam" style="margin-top: 0.25rem;">
-                        <div>
-                            <strong>Exam Mode</strong>
-                            <p class="muted" style="margin: 0; font-size: 0.9rem;">Simulate a real test. All questions shown at once, score revealed only at the end.</p>
+                    
+                    <!-- Exam Mode option -->
+                    <label class="onboarding-card" style="display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; padding: 1.25rem; border-radius: 10px; position: relative;" id="label-mode-exam">
+                        <input type="radio" name="mode" value="exam" style="margin-top: 0.3rem; accent-color: var(--primary);" onclick="highlightMode('exam')">
+                        <div style="margin-left: 0.25rem;">
+                            <strong style="font-size: 0.95rem; color: var(--text); font-weight: 700;">Exam Mode</strong>
+                            <p class="muted" style="margin: 0.25rem 0 0 0; font-size: 0.85rem; line-height: 1.4; color: var(--muted); font-weight: 500;">Simulates a real exam setup. Interactive timers are active, and score details are revealed only at the end.</p>
                         </div>
                     </label>
                 </div>
             </div>
             
-            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 0.75rem;">Start Quiz</button>
+            <button type="submit" class="btn btn-primary btn-lg btn-full" style="font-weight: 600; font-size: 1rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(37,99,235,0.15);">Start Quiz Attempt &rarr;</button>
         </form>
     </div>
 </div>
+
+<script>
+function highlightMode(selectedMode) {
+    const learningCard = document.getElementById('label-mode-learning');
+    const examCard = document.getElementById('label-mode-exam');
+    
+    if (selectedMode === 'learning') {
+        learningCard.style.borderColor = 'var(--primary)';
+        learningCard.style.backgroundColor = 'var(--surface-soft)';
+        examCard.style.borderColor = 'var(--border)';
+        examCard.style.backgroundColor = 'var(--surface)';
+    } else {
+        examCard.style.borderColor = 'var(--primary)';
+        examCard.style.backgroundColor = 'var(--surface-soft)';
+        learningCard.style.borderColor = 'var(--border)';
+        learningCard.style.backgroundColor = 'var(--surface)';
+    }
+}
+// Run init highlight
+highlightMode('learning');
+</script>
 {% endblock %}

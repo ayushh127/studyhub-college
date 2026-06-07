@@ -3,67 +3,94 @@
 {% block title %}StudyHub College - Your Academic Companion{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<div style="text-align: center; padding: 4rem 1rem; margin-bottom: 2rem;">
-    <h1 style="font-size: 3.5rem; margin-bottom: 1rem; font-family: 'Cormorant Garamond', serif;">StudyHub College</h1>
-    <p style="font-size: 1.25rem; color: var(--muted); max-width: 600px; margin: 0 auto 2rem;">
-        A multi-college study platform for managing materials, previous year questions (PYQs), and interactive quizzes tailored to your college curriculum.
-    </p>
-    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-        <a href="{{ url_for('auth.login') }}" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 1.1rem;">Login</a>
-        <a href="{{ url_for('auth.register') }}" class="btn" style="border: 2px solid var(--primary); color: var(--primary); padding: 0.75rem 2rem; font-size: 1.1rem; background: transparent;">Register as Student</a>
-    </div>
-</div>
-
-<!-- Features Section -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 4rem;">
-    
-    <!-- For Students Card -->
-    <div class="card" style="padding: 2.5rem;">
-        <h2 style="margin-top: 0;">For Students</h2>
-        <p style="color: var(--muted); line-height: 1.6;">
-            Access curated study materials and past papers specifically aligned with your college's syllabus. Prepare effectively with structured content.
-        </p>
-        <ul style="color: var(--text); padding-left: 1.5rem; line-height: 1.8;">
-            <li>Browse college-specific subjects</li>
-            <li>Download unit-wise PDFs</li>
-            <li>Track your academic progress</li>
-        </ul>
-    </div>
-
-    <!-- For Colleges Card -->
-    <div class="card" style="padding: 2.5rem;">
-        <h2 style="margin-top: 0;">For Colleges</h2>
-        <p style="color: var(--muted); line-height: 1.6;">
-            A centralized dashboard to manage academic resources, publish official materials, and evaluate students effectively.
-        </p>
-        <ul style="color: var(--text); padding-left: 1.5rem; line-height: 1.8;">
-            <li>Organize subjects and units</li>
-            <li>Upload official PYQs and notes</li>
-            <li>Analyze student performance</li>
-        </ul>
-        <div style="margin-top: 2rem;">
-            <a href="{{ url_for('public.college_register') }}" class="btn btn-primary" style="width: 100%; text-align: center;">Register College</a>
+<div class="landing-page" style="padding-bottom: 4rem;">
+    <!-- Hero Section -->
+    <div style="text-align: center; padding: 5rem 1.5rem 4rem 1.5rem; margin-bottom: 3rem; background: linear-gradient(135deg, #EEF2F6 0%, #E0E7FF 50%, #FAF5FF 100%); border-radius: 24px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); position: relative; overflow: hidden;">
+        <!-- Accent decorative blob (simulated glassmorphism background glow) -->
+        <div style="position: absolute; top: -10%; left: 30%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%); z-index: 1;"></div>
+        
+        <div style="position: relative; z-index: 2;">
+            <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.8rem; padding: 0.35rem 0.85rem; border-radius: 20px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1.5rem;">StudyHub College v1.0 MVP</span>
+            <h1 style="font-size: 3.25rem; margin-bottom: 1.25rem; font-weight: 800; letter-spacing: -0.04em; color: var(--text); line-height: 1.15;">
+                Your College Curriculum, <br><span style="color: var(--primary);">Simpler and Smarter</span>
+            </h1>
+            <p style="font-size: 1.15rem; color: var(--muted); max-width: 650px; margin: 0 auto 2.5rem; line-height: 1.6; font-weight: 500;">
+                A centralized hub for college study materials, PYQ archives, interactive quizzes, and collaborative community notes, customized specifically for your institute.
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg" style="padding: 0.75rem 2.5rem; font-weight: 600; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);">Get Started</a>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-outline btn-lg" style="padding: 0.75rem 2.5rem; font-weight: 600; border-width: 2px;">Student Register</a>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Core Capabilities Section -->
-<div style="text-align: center; margin-bottom: 4rem; padding: 3rem 1rem; background-color: var(--surface-soft); border-radius: 8px; border: 1px solid var(--border);">
-    <h2 style="font-size: 2.5rem; margin-bottom: 2rem;">Interactive Learning</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; text-align: left; max-width: 900px; margin: 0 auto;">
-        <div class="card" style="background: var(--surface);">
-            <h3>PYQ Archive</h3>
-            <p class="muted">Access years of Previous Year Questions categorized by subject and year for focused exam preparation.</p>
+    <!-- Value Showcase Section -->
+    <div style="margin-bottom: 4rem;">
+        <h2 style="font-size: 1.85rem; text-align: center; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 2.5rem;">Designed for Modern Academic Workspaces</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem;">
+            <!-- Official Content -->
+            <div class="card card-clickable" style="padding: 2rem; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <span style="font-size: 2.5rem; display: block; margin-bottom: 1rem;">📚</span>
+                    <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.25rem;">Official Materials</h3>
+                    <p style="color: var(--muted); line-height: 1.5; font-size: 0.95rem; margin-bottom: 1.5rem;">
+                        Access lecture slides, lab manuals, and syllabus details published directly by your college administration. No more searching through chaotic chat groups.
+                    </p>
+                </div>
+                <div style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">Syllabus-aligned content &rarr;</div>
+            </div>
+
+            <!-- PYQ Archive -->
+            <div class="card card-clickable" style="padding: 2rem; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <span style="font-size: 2.5rem; display: block; margin-bottom: 1rem;">📂</span>
+                    <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.25rem;">PYQ Archive</h3>
+                    <p style="color: var(--muted); line-height: 1.5; font-size: 0.95rem; margin-bottom: 1.5rem;">
+                        Prepare effectively with structured Previous Year Questions, categorized by subjects, units, and exams (Mid-Sem, End-Sem, Internals).
+                    </p>
+                </div>
+                <div style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">Full exam repository &rarr;</div>
+            </div>
+
+            <!-- Quiz Engine -->
+            <div class="card card-clickable" style="padding: 2rem; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <span style="font-size: 2.5rem; display: block; margin-bottom: 1rem;">❓</span>
+                    <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.25rem;">Interactive Quizzes</h3>
+                    <p style="color: var(--muted); line-height: 1.5; font-size: 0.95rem; margin-bottom: 1.5rem;">
+                        Test your knowledge using Practise/Learning Mode with instant explanations, or simulated Exam Mode with strict countdown timers.
+                    </p>
+                </div>
+                <div style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">Adaptive review portals &rarr;</div>
+            </div>
+
+            <!-- Community Sharing -->
+            <div class="card card-clickable" style="padding: 2rem; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <span style="font-size: 2.5rem; display: block; margin-bottom: 1rem;">🌐</span>
+                    <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-weight: 700; font-size: 1.25rem;">Community Library</h3>
+                    <p style="color: var(--muted); line-height: 1.5; font-size: 0.95rem; margin-bottom: 1.5rem;">
+                        An open digital workspace where students upload, share, rate, and discuss study materials, links, and PDF documents.
+                    </p>
+                </div>
+                <div style="font-size: 0.85rem; color: var(--primary); font-weight: 600;">Student sharing network &rarr;</div>
+            </div>
         </div>
-        <div class="card" style="background: var(--surface);">
-            <h3>Quiz Engine</h3>
-            <p class="muted">Test your knowledge with Learning Mode (instant feedback) or Exam Mode (timed assessment).</p>
-        </div>
-        <div class="card" style="background: var(--surface); position: relative; overflow: hidden;">
-            <div style="position: absolute; top: 10px; right: 10px; background-color: var(--accent); color: var(--text); font-size: 0.75rem; font-weight: bold; padding: 0.25rem 0.5rem; border-radius: 12px;">Coming Soon</div>
-            <h3 style="color: var(--muted);">AI Tutor</h3>
-            <p class="muted" style="font-size: 0.9rem;">Future AI features for automated explanations and dynamic study guides.</p>
+    </div>
+
+    <!-- Call to Actions for Colleges -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: 2rem; margin-bottom: 4rem;">
+        <div class="card" style="padding: 3rem; background: linear-gradient(135deg, var(--surface) 0%, var(--surface-soft) 100%); border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; md-flex-direction: row; justify-content: space-between; align-items: center; gap: 2rem;">
+            <div style="max-width: 600px; text-align: left;">
+                <h3 style="font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.5rem; color: var(--primary-dark);">Register Your Institute</h3>
+                <p class="muted" style="line-height: 1.5; font-size: 0.95rem; margin-bottom: 0;">
+                    Are you a college administrator? Register your institution to manage college-specific subjects, upload official study materials, configure student accounts, and publish practice quizzes.
+                </p>
+            </div>
+            <div style="flex-shrink: 0; width: 100%; max-width: 250px;">
+                <a href="{{ url_for('public.college_register') }}" class="btn btn-primary btn-lg" style="width: 100%; text-align: center; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);">Register College</a>
+            </div>
         </div>
     </div>
 </div>

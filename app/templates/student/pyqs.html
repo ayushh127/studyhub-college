@@ -3,36 +3,131 @@
 {% block title %}Previous Year Question Papers - StudyHub College{% endblock %}
 
 {% block content %}
-<div style="max-width: 1000px; margin: 2rem auto;">
-    <div style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
-        <h2 style="font-size: 2rem; margin: 0; font-weight: 800;">Previous Year Question Papers (PYQs)</h2>
-        <p class="muted" style="margin: 0.5rem 0 0 0;">Access mid-sem, end-sem, and practical question papers uploaded for your college subjects.</p>
+<div style="max-width: 1000px; margin: 2rem auto; padding: 0 1rem; padding-bottom: 4rem;">
+    <!-- Breadcrumbs -->
+    <nav style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 500;">
+        <a href="{{ url_for('student.dashboard') }}" style="color: var(--muted); text-decoration: none; transition: color 0.15s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--muted)'">Dashboard</a>
+        <span style="color: var(--border);">&rarr;</span>
+        <span style="color: var(--text); font-weight: 600;">PYQs</span>
+    </nav>
+
+    <div class="card card-gradient animate-fade-in" style="padding: 2.25rem 2rem; border-radius: 16px; margin-bottom: 2rem; border: none; box-shadow: var(--shadow-md);">
+        <h2 style="font-size: 1.85rem; margin: 0 0 0.5rem 0; font-weight: 800; color: var(--text); letter-spacing: -0.03em;">Previous Year Question Papers (PYQs)</h2>
+        <p class="muted" style="margin: 0; font-size: 0.95rem; font-weight: 500; color: var(--muted);">Access official mid-sem, end-sem, and practical question papers uploaded for your college subjects.</p>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+    <!-- Search & Filter Panel -->
+    <div class="card animate-fade-in" style="padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--border); background-color: var(--surface);">
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+            <div style="flex: 1; min-width: 280px; position: relative;">
+                <input type="text" id="pyqSearch" placeholder="Search PYQs by title, code or subject..." class="form-control" style="padding-left: 2.5rem; min-height: 42px; border-radius: 8px;">
+                <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 1rem;">🔍</span>
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; width: auto;">
+                <select id="examTypeFilter" class="form-control" style="min-width: 160px; min-height: 42px; border-radius: 8px; font-weight: 500;">
+                    <option value="">All Exam Types</option>
+                    <option value="mid_sem">Mid Semester</option>
+                    <option value="end_sem">End Semester</option>
+                    <option value="practical">Practical</option>
+                </select>
+                <select id="yearFilter" class="form-control" style="min-width: 130px; min-height: 42px; border-radius: 8px; font-weight: 500;">
+                    <option value="">All Years</option>
+                    {% set years = [] %}
+                    {% for pyq in pyqs %}
+                        {% if pyq.year not in years %}
+                            {% set _ = years.append(pyq.year) %}
+                        {% endif %}
+                    {% endfor %}
+                    {% for y in years|sort(reverse=True) %}
+                        <option value="{{ y }}">{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-responsive animate-fade-in" id="pyqsGrid">
         {% for pyq in pyqs %}
-        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem;">
+        <div class="card hover-lift pyq-item" data-title="{{ pyq.title|lower }}" data-subject="{{ pyq.subject.name|lower }} {{ pyq.subject.code|lower }}" data-exam="{{ pyq.exam_type }}" data-year="{{ pyq.year }}" style="display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem; border-radius: 12px; background-color: var(--surface); margin-bottom: 0;">
             <div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                    <span class="badge" style="background-color: var(--primary); color: white;">Year: {{ pyq.year }}</span>
-                    <span class="badge" style="background-color: var(--accent); color: var(--text); font-size: 0.75rem; text-transform: uppercase;">{{ pyq.exam_type.replace('_', ' ') }}</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <span class="badge" style="background-color: #EFF6FF; color: var(--primary); border: 1px solid rgba(37,99,235,0.15); font-weight: 700; border-radius: 6px; padding: 0.2rem 0.5rem;">Year: {{ pyq.year }}</span>
+                    <span class="badge" style="background-color: #FAF5FF; color: var(--accent); border: 1px solid rgba(109,40,217,0.15); font-weight: 700; text-transform: uppercase; border-radius: 6px; padding: 0.2rem 0.5rem; font-size: 0.7rem;">{{ pyq.exam_type.replace('_', ' ') }}</span>
                 </div>
-                <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.35rem; color: var(--primary-dark); font-weight: 700;">{{ pyq.title }}</h3>
-                <p class="muted" style="font-size: 0.85rem; margin-bottom: 1rem;">
-                    Subject: <strong>{{ pyq.subject.name }} ({{ pyq.subject.code }})</strong>
+                <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.25rem; color: var(--text); font-weight: 700; line-height: 1.35; letter-spacing: -0.01em;">{{ pyq.title }}</h3>
+                <p class="muted" style="font-size: 0.85rem; margin-bottom: 1.25rem; color: var(--muted);">
+                    Subject: <strong style="color: var(--text);">{{ pyq.subject.name }} ({{ pyq.subject.code }})</strong>
                 </p>
             </div>
             
-            <a href="{{ url_for('files.serve_pyq', id=pyq.id) }}" target="_blank" class="btn btn-primary" style="text-align: center; width: 100%; text-decoration: none; font-size: 0.9rem;">
-                Download PDF Paper
-            </a>
+            <div style="display: flex; gap: 0.5rem; flex-direction: column;">
+                <a href="{{ url_for('student.pyq_details', id=pyq.id) }}" class="btn btn-primary" style="text-align: center; width: 100%; text-decoration: none; font-size: 0.875rem; font-weight: 700; border-radius: 8px; min-height: 38px;">
+                    View Details
+                </a>
+                <a href="{{ url_for('files.serve_pyq', id=pyq.id) }}" target="_blank" class="btn btn-outline" style="text-align: center; width: 100%; text-decoration: none; font-size: 0.875rem; font-weight: 600; border-radius: 8px; min-height: 38px;">
+                    Download PDF
+                </a>
+            </div>
         </div>
         {% else %}
-        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
-            <h3 style="color: var(--muted); font-size: 1.75rem; font-weight: 700;">No PYQ Papers Available</h3>
-            <p>There are no published PYQ papers available for your college at this moment.</p>
+        <div class="empty-state animate-fade-in" style="grid-column: 1 / -1; padding: 4rem 2rem; border-radius: 16px;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
+            <h3 style="font-weight: 700; color: var(--text);">No PYQ Papers Available</h3>
+            <p class="muted" style="margin-bottom: 0;">There are no published PYQ papers available for your college at this moment.</p>
         </div>
         {% endfor %}
+        
+        <!-- Client-side No Results State -->
+        <div id="noResults" class="empty-state animate-fade-in" style="display: none; grid-column: 1 / -1; padding: 4rem 2rem; border-radius: 16px;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+            <h3 style="font-weight: 700; color: var(--text);">No Matching PYQ Papers</h3>
+            <p class="muted" style="margin-bottom: 0;">Try adjusting your search terms or filters.</p>
+        </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('pyqSearch');
+    const examFilter = document.getElementById('examTypeFilter');
+    const yearFilter = document.getElementById('yearFilter');
+    const pyqItems = document.querySelectorAll('.pyq-item');
+    const noResults = document.getElementById('noResults');
+
+    function filterPYQs() {
+        const query = searchInput.value.toLowerCase().trim();
+        const examVal = examFilter.value;
+        const yearVal = yearFilter.value;
+        let visibleCount = 0;
+
+        pyqItems.forEach(item => {
+            const title = item.getAttribute('data-title');
+            const subject = item.getAttribute('data-subject');
+            const exam = item.getAttribute('data-exam');
+            const year = item.getAttribute('data-year');
+
+            const matchesSearch = !query || title.includes(query) || subject.includes(query);
+            const matchesExam = !examVal || exam === examVal;
+            const matchesYear = !yearVal || year === yearVal;
+
+            if (matchesSearch && matchesExam && matchesYear) {
+                item.style.display = 'flex';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        if (visibleCount === 0 && pyqItems.length > 0) {
+            noResults.style.display = 'block';
+        } else {
+            noResults.style.display = 'none';
+        }
+    }
+
+    if (searchInput) searchInput.addEventListener('input', filterPYQs);
+    if (examFilter) examFilter.addEventListener('change', filterPYQs);
+    if (yearFilter) yearFilter.addEventListener('change', filterPYQs);
+});
+</script>
 {% endblock %}

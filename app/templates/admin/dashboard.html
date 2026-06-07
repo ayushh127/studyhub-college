@@ -3,28 +3,36 @@
 {% block title %}Admin Dashboard - StudyHub College{% endblock %}
 
 {% block content %}
-<div style="display: flex; gap: 2rem;">
-    <!-- Sidebar -->
-    <aside style="width: 250px;">
-        {% include "components/admin_sidebar.html" %}
-    </aside>
-    
-    <!-- Main Content -->
-    <div style="flex: 1;">
-        <h2>Dashboard Overview</h2>
+<div style="max-width: 1100px; margin: 2rem auto; padding: 0 1rem; padding-bottom: 4rem;">
+    <div style="display: grid; grid-template-columns: 260px 1fr; gap: 2rem;">
+        <!-- Sidebar -->
+        <aside style="width: 100%;">
+            {% include "components/admin_sidebar.html" %}
+        </aside>
         
-        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-            <div class="card" style="flex: 1; text-align: center;">
-                <h3>{{ stats.users }}</h3>
-                <p class="muted">Total Users</p>
+        <!-- Main Content -->
+        <div style="min-width: 0;">
+            <div style="border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+                <h2 style="font-size: 1.75rem; margin: 0; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Dashboard Overview</h2>
+                <p class="muted" style="margin: 0.25rem 0 0 0; font-size: 0.9rem; font-weight: 500;">General platform analytics and control settings.</p>
             </div>
-            <div class="card" style="flex: 1; text-align: center;">
-                <h3>{{ stats.colleges }}</h3>
-                <p class="muted">Total Colleges</p>
-            </div>
-            <div class="card" style="flex: 1; text-align: center;">
-                <h3>{{ stats.pending_requests }}</h3>
-                <p class="muted">Pending Requests</p>
+            
+            <div class="grid-responsive" style="gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 2rem;">
+                <div class="card" style="text-align: center; padding: 2rem 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 0;">
+                    <span style="font-size: 2.25rem; display: block; margin-bottom: 0.5rem;">👥</span>
+                    <h3 style="margin: 0; font-size: 2rem; font-weight: 800; color: var(--primary);">{{ stats.users }}</h3>
+                    <p class="muted" style="margin: 0.25rem 0 0 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.75rem;">Total Users</p>
+                </div>
+                <div class="card" style="text-align: center; padding: 2rem 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 0;">
+                    <span style="font-size: 2.25rem; display: block; margin-bottom: 0.5rem;">🏛️</span>
+                    <h3 style="margin: 0; font-size: 2rem; font-weight: 800; color: var(--accent);">{{ stats.colleges }}</h3>
+                    <p class="muted" style="margin: 0.25rem 0 0 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.75rem;">Total Colleges</p>
+                </div>
+                <div class="card" style="text-align: center; padding: 2rem 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 0;">
+                    <span style="font-size: 2.25rem; display: block; margin-bottom: 0.5rem;">⏳</span>
+                    <h3 style="margin: 0; font-size: 2rem; font-weight: 800; color: var(--warning);">{{ stats.pending_requests }}</h3>
+                    <p class="muted" style="margin: 0.25rem 0 0 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.75rem;">Pending Requests</p>
+                </div>
             </div>
         </div>
     </div>

@@ -1,20 +1,20 @@
-<div class="card">
-    <div style="border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
-        <strong style="display: block; font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--primary-dark);">{{ current_user.full_name }}</strong>
-        <span class="badge" style="background-color: var(--primary); color: white; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: inline-block; margin-top: 0.25rem;">College Admin</span>
+<div class="card" style="padding: 1.25rem; border-radius: var(--radius); border: 1px solid var(--border);">
+    <div style="border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1rem;">
+        <strong style="display: block; font-size: 1.1rem; color: var(--primary-dark); font-weight: 700;">{{ current_user.full_name }}</strong>
+        <span class="badge" style="background-color: var(--primary); color: white; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; display: inline-block; margin-top: 0.35rem; border: none;">College Admin</span>
         {% if current_user.college %}
-        <span class="muted" style="display: block; font-size: 0.8rem; margin-top: 0.25rem;">{{ current_user.college.name }}</span>
+        <span class="muted" style="display: block; font-size: 0.8rem; margin-top: 0.35rem;">{{ current_user.college.name }}</span>
         {% endif %}
     </div>
-    <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem; font-family: 'Cormorant Garamond', serif;">College Menu</h3>
-    <ul style="list-style: none; line-height: 2;">
-        <li><a href="{{ url_for('college_admin.dashboard') }}" style="text-decoration: none; color: var(--text);">Dashboard</a></li>
-        <li><a href="{{ url_for('college_admin.subjects') }}" style="text-decoration: none; color: var(--text);">Subjects</a></li>
-        <li><a href="{{ url_for('college_admin.materials') }}" style="text-decoration: none; color: var(--text);">Materials</a></li>
-        <li><a href="{{ url_for('college_admin.pyqs') }}" style="text-decoration: none; color: var(--text);">PYQs</a></li>
-        <li><a href="{{ url_for('college_admin.quizzes') }}" style="text-decoration: none; color: var(--text);">Quizzes</a></li>
-        <li style="margin-top: 0.75rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
-            <a href="{{ url_for('auth.logout') }}" style="color: var(--danger); text-decoration: none; font-weight: 500;">Logout</a>
+    <h3 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.75rem; font-weight: 700;">College Menu</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.35rem;">
+        <li><a href="{{ url_for('college_admin.dashboard') }}" style="display: block; padding: 0.5rem 0.75rem; border-radius: 6px; text-decoration: none; color: var(--text); font-size: 0.9rem; font-weight: 500; transition: all 0.15s;" onmouseover="this.style.backgroundColor='var(--surface-soft)'; this.style.color='var(--primary)';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--text)';">Dashboard</a></li>
+        <li><a href="{{ url_for('college_admin.subjects') }}" style="display: block; padding: 0.5rem 0.75rem; border-radius: 6px; text-decoration: none; color: var(--text); font-size: 0.9rem; font-weight: 500; transition: all 0.15s;" onmouseover="this.style.backgroundColor='var(--surface-soft)'; this.style.color='var(--primary)';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--text)';">Subjects</a></li>
+        <li><a href="{{ url_for('college_admin.materials') }}" style="display: block; padding: 0.5rem 0.75rem; border-radius: 6px; text-decoration: none; color: var(--text); font-size: 0.9rem; font-weight: 500; transition: all 0.15s;" onmouseover="this.style.backgroundColor='var(--surface-soft)'; this.style.color='var(--primary)';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--text)';">Materials</a></li>
+        <li><a href="{{ url_for('college_admin.pyqs') }}" style="display: block; padding: 0.5rem 0.75rem; border-radius: 6px; text-decoration: none; color: var(--text); font-size: 0.9rem; font-weight: 500; transition: all 0.15s;" onmouseover="this.style.backgroundColor='var(--surface-soft)'; this.style.color='var(--primary)';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--text)';">PYQs</a></li>
+        <li><a href="{{ url_for('college_admin.quizzes') }}" style="display: block; padding: 0.5rem 0.75rem; border-radius: 6px; text-decoration: none; color: var(--text); font-size: 0.9rem; font-weight: 500; transition: all 0.15s;" onmouseover="this.style.backgroundColor='var(--surface-soft)'; this.style.color='var(--primary)';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='var(--text)';">Quizzes</a></li>
+        <li style="margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 0.75rem;">
+            <a href="{{ url_for('auth.logout') }}" style="display: block; padding: 0.5rem 0.75rem; border-radius: 6px; text-decoration: none; color: var(--danger); font-size: 0.9rem; font-weight: 600; transition: all 0.15s;" onmouseover="this.style.backgroundColor='#FEE2E2';" onmouseout="this.style.backgroundColor='transparent';">Logout</a>
         </li>
     </ul>
 </div>

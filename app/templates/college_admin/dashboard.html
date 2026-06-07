@@ -3,30 +3,41 @@
 {% block title %}College Admin Dashboard{% endblock %}
 
 {% block content %}
-<div style="display: flex; gap: 2rem;">
-    <aside style="width: 250px;">
-        {% include "components/college_admin_sidebar.html" %}
-    </aside>
-    
-    <div style="flex: 1;">
-        <h2>Dashboard Overview</h2>
+<div style="max-width: 1100px; margin: 2rem auto; padding: 0 1rem; padding-bottom: 4rem;">
+    <div style="display: grid; grid-template-columns: 260px 1fr; gap: 2rem;">
+        <!-- Sidebar -->
+        <aside style="width: 100%;">
+            {% include "components/college_admin_sidebar.html" %}
+        </aside>
         
-        <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-            <div class="card" style="flex: 1; text-align: center;">
-                <h3>{{ stats.subjects }}</h3>
-                <p class="muted">Subjects</p>
+        <!-- Main Content -->
+        <div style="min-width: 0;">
+            <div style="border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+                <h2 style="font-size: 1.75rem; margin: 0; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Dashboard Overview</h2>
+                <p class="muted" style="margin: 0.25rem 0 0 0; font-size: 0.9rem; font-weight: 500;">Manage academic courses, study materials, exam quizzes, and students.</p>
             </div>
-            <div class="card" style="flex: 1; text-align: center;">
-                <h3>{{ stats.materials }}</h3>
-                <p class="muted">Materials</p>
-            </div>
-            <div class="card" style="flex: 1; text-align: center;">
-                <h3>{{ stats.quizzes }}</h3>
-                <p class="muted">Quizzes</p>
-            </div>
-            <div class="card" style="flex: 1; text-align: center;">
-                <h3>{{ stats.students }}</h3>
-                <p class="muted">Students</p>
+            
+            <div class="grid-responsive" style="gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 2rem;">
+                <div class="card" style="text-align: center; padding: 2rem 1.25rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 0;">
+                    <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">📚</span>
+                    <h3 style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--primary);">{{ stats.subjects }}</h3>
+                    <p class="muted" style="margin: 0.25rem 0 0 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.72rem; color: var(--muted);">Subjects</p>
+                </div>
+                <div class="card" style="text-align: center; padding: 2rem 1.25rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 0;">
+                    <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">📁</span>
+                    <h3 style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--accent);">{{ stats.materials }}</h3>
+                    <p class="muted" style="margin: 0.25rem 0 0 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.72rem; color: var(--muted);">Materials</p>
+                </div>
+                <div class="card" style="text-align: center; padding: 2rem 1.25rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 0;">
+                    <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">❓</span>
+                    <h3 style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--warning);">{{ stats.quizzes }}</h3>
+                    <p class="muted" style="margin: 0.25rem 0 0 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.72rem; color: var(--muted);">Quizzes</p>
+                </div>
+                <div class="card" style="text-align: center; padding: 2rem 1.25rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 0;">
+                    <span style="font-size: 2rem; display: block; margin-bottom: 0.5rem;">👥</span>
+                    <h3 style="margin: 0; font-size: 1.85rem; font-weight: 800; color: var(--success);">{{ stats.students }}</h3>
+                    <p class="muted" style="margin: 0.25rem 0 0 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.72rem; color: var(--muted);">Students</p>
+                </div>
             </div>
         </div>
     </div>

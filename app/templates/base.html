@@ -23,27 +23,29 @@
 
     <header>
         <div class="container header-inner">
-            <a href="{{ url_for('public.index') }}" class="brand">StudyHub College</a>
-            <nav class="nav-menu" style="display: flex; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <a href="{{ url_for('public.index') }}" class="brand">
+                <span style="font-size: 1.4rem;">🎓</span> StudyHub College
+            </a>
+            <nav class="nav-menu">
                 {% if current_user.is_authenticated %}
                     {% if current_user.role == 'platform_admin' %}
-                        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('admin.dashboard') }}" class="nav-link">Dashboard</a>
                     {% elif current_user.role == 'college_admin' %}
-                        <a href="{{ url_for('college_admin.dashboard') }}">Dashboard</a>
+                        <a href="{{ url_for('college_admin.dashboard') }}" class="nav-link">Dashboard</a>
                     {% else %}
-                        <a href="{{ url_for('student.dashboard') }}" class="student-header-link">Dashboard</a>
-                        <a href="{{ url_for('student.community_library') }}" class="student-header-link">Community</a>
-                        <a href="{{ url_for('student.notifications') }}" class="student-header-link" style="position: relative; display: inline-flex; align-items: center;">
+                        <a href="{{ url_for('student.dashboard') }}" class="student-header-link nav-link">Dashboard</a>
+                        <a href="{{ url_for('student.community_library') }}" class="student-header-link nav-link">Community</a>
+                        <a href="{{ url_for('student.notifications') }}" class="student-header-link nav-link" style="position: relative; display: inline-flex; align-items: center; gap: 0.25rem;">
                             🔔 Notifications
                             {% set unread_count = current_user.get_unread_notification_count() %}
                             {% if unread_count > 0 %}
-                            <span class="desktop-badge" style="background-color: var(--danger); color: white; border-radius: 50%; padding: 0.1rem 0.35rem; font-size: 0.75rem; font-weight: bold; margin-left: 0.25rem;">{{ unread_count }}</span>
+                            <span class="desktop-badge" style="background-color: var(--danger); color: white; border-radius: 99px; padding: 0.1rem 0.4rem; font-size: 0.7rem; font-weight: bold;">{{ unread_count }}</span>
                             {% endif %}
                         </a>
                     {% endif %}
                     
                     {% if current_user.role == 'student' %}
-                    <a href="{{ url_for('student.notifications') }}" class="mobile-only-inline header-bell-link" style="position: relative; margin-left: 0.5rem; text-decoration: none; font-size: 1.25rem; display: none;">
+                    <a href="{{ url_for('student.notifications') }}" class="mobile-only-inline header-bell-link" style="position: relative; text-decoration: none; font-size: 1.2rem; display: none;">
                         🔔
                         {% set unread_count = current_user.get_unread_notification_count() %}
                         {% if unread_count > 0 %}
@@ -52,11 +54,11 @@
                     </a>
                     {% endif %}
                     
-                    <div class="profile-dropdown" style="margin-left: 1rem;">
+                    <div class="profile-dropdown">
                         <button class="profile-dropdown-btn" type="button">
                             <span class="user-avatar">👤</span>
                             <span class="user-name">{{ current_user.full_name|truncate(15) }}</span>
-                            <span class="dropdown-arrow">▼</span>
+                            <span class="dropdown-arrow" style="font-size: 0.65rem; color: var(--muted); margin-left: 0.25rem;">▼</span>
                         </button>
                         <div class="profile-dropdown-content">
                             <div class="dropdown-header">
@@ -80,11 +82,11 @@
                         </div>
                     </div>
                 {% else %}
-                    <a href="{{ url_for('public.index') }}">Home</a>
-                    <a href="{{ url_for('public.about') }}">About</a>
-                    <a href="{{ url_for('auth.login') }}">Login</a>
-                    <a href="{{ url_for('auth.register') }}">Student Register</a>
-                    <a href="{{ url_for('public.college_register') }}">Register College</a>
+                    <a href="{{ url_for('public.index') }}" class="nav-link">Home</a>
+                    <a href="{{ url_for('public.about') }}" class="nav-link">About</a>
+                    <a href="{{ url_for('auth.login') }}" class="nav-link">Login</a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-sm" style="margin-left: 0.5rem;">Student Register</a>
+                    <a href="{{ url_for('public.college_register') }}" class="btn btn-outline btn-sm" style="margin-left: 0.5rem;">Register College</a>
                 {% endif %}
             </nav>
         </div>

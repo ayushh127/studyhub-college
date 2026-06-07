@@ -3,72 +3,72 @@
 {% block title %}My Profile - StudyHub College{% endblock %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 2rem auto; padding: 0 1rem;">
+<div style="max-width: 650px; margin: 2rem auto; padding: 0 1rem; padding-bottom: 4rem;">
     <!-- Breadcrumbs -->
-    <div style="margin-bottom: 1.5rem; font-size: 0.9rem;">
-        <a href="{{ url_for('student.dashboard') }}" style="color: var(--primary); text-decoration: none;">Dashboard</a>
-        <span class="muted" style="margin: 0 0.5rem;">/</span>
-        <span class="muted">My Profile</span>
-    </div>
+    <nav style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 500;">
+        <a href="{{ url_for('student.dashboard') }}" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--muted)'">Dashboard</a>
+        <span style="color: var(--border);">&rarr;</span>
+        <span style="color: var(--text); font-weight: 600;">My Profile</span>
+    </nav>
 
-    <!-- Header -->
-    <div style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
-        <h2 style="font-size: 2rem; margin: 0; font-weight: 800;">My Profile</h2>
-        <p class="muted" style="margin: 0.5rem 0 0 0;">Manage your student profile, subscriptions, and activities.</p>
+    <!-- Header Block -->
+    <div style="border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+        <h2 style="font-size: 1.85rem; margin: 0; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">My Student Profile</h2>
+        <p class="muted" style="margin: 0.35rem 0 0 0; font-size: 0.95rem; font-weight: 500;">View your profile details, platform registrations, and community activity stats.</p>
     </div>
 
     <!-- Profile Info Card -->
-    <div class="card" style="padding: 2rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem;">
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <div style="background-color: var(--primary); color: white; width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: bold; flex-shrink: 0;">
+    <div class="card" style="padding: 2.5rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1.5rem; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); background-color: var(--surface);">
+        <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
+            <div style="background-color: var(--primary); color: white; width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 4px 10px rgba(37,99,235,0.2);">
                 {{ current_user.full_name[0]|upper }}
             </div>
             <div>
-                <h3 style="margin: 0; font-size: 1.5rem; font-weight: 700;">{{ current_user.full_name }}</h3>
-                <span class="badge" style="background-color: var(--surface-soft); color: var(--primary); border: 1px solid var(--border); font-size: 0.8rem; margin-top: 0.25rem; display: inline-block;">Student</span>
+                <h3 style="margin: 0; font-size: 1.4rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em;">{{ current_user.full_name }}</h3>
+                <span class="badge" style="background-color: #EFF6FF; color: var(--primary); border: 1px solid rgba(37,99,235,0.15); font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 6px; margin-top: 0.35rem; display: inline-block;">Platform Student</span>
             </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr; gap: 1.25rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
             <div>
-                <span style="display: block; font-size: 0.8rem; color: var(--muted); font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">Email Address</span>
-                <span style="font-size: 1.05rem; font-weight: 500; word-break: break-all;">{{ current_user.email }}</span>
+                <span style="display: block; font-size: 0.75rem; color: var(--muted); font-weight: 700; text-transform: uppercase; margin-bottom: 0.35rem; letter-spacing: 0.5px;">Email Address</span>
+                <span style="font-size: 1rem; font-weight: 600; color: var(--text); word-break: break-all;">{{ current_user.email }}</span>
             </div>
             <div>
-                <span style="display: block; font-size: 0.8rem; color: var(--muted); font-weight: 600; text-transform: uppercase; margin-bottom: 0.25rem;">College</span>
-                <span style="font-size: 1.05rem; font-weight: 500;">{{ current_user.college.name if current_user.college else 'No College Selected' }}</span>
+                <span style="display: block; font-size: 0.75rem; color: var(--muted); font-weight: 700; text-transform: uppercase; margin-bottom: 0.35rem; letter-spacing: 0.5px;">Linked College</span>
+                <span style="font-size: 1rem; font-weight: 600; color: var(--text);">{{ current_user.college.name if current_user.college else 'No College Selected' }}</span>
             </div>
         </div>
     </div>
 
     <!-- Statistics Grid -->
     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
-        <div class="card" style="padding: 1.25rem; text-align: center; margin-bottom: 0;">
-            <span style="display: block; font-size: 1.75rem; font-weight: 800; color: var(--primary);">{{ current_user.subscriptions|length }}</span>
-            <span style="font-size: 0.8rem; color: var(--muted); font-weight: 500;">Subscriptions</span>
+        <div class="card" style="padding: 1.25rem; text-align: center; margin-bottom: 0; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+            <span style="display: block; font-size: 1.75rem; font-weight: 800; color: var(--primary); line-height: 1.1;">{{ current_user.subscriptions|length }}</span>
+            <span style="font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.35rem; display: block;">Following</span>
         </div>
-        <div class="card" style="padding: 1.25rem; text-align: center; margin-bottom: 0;">
-            <span style="display: block; font-size: 1.75rem; font-weight: 800; color: var(--primary);">{{ uploads_count }}</span>
-            <span style="font-size: 0.8rem; color: var(--muted); font-weight: 500;">My Uploads</span>
+        <div class="card" style="padding: 1.25rem; text-align: center; margin-bottom: 0; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+            <span style="display: block; font-size: 1.75rem; font-weight: 800; color: var(--accent); line-height: 1.1;">{{ uploads_count }}</span>
+            <span style="font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.35rem; display: block;">Uploads</span>
         </div>
-        <div class="card" style="padding: 1.25rem; text-align: center; margin-bottom: 0;">
-            <span style="display: block; font-size: 1.75rem; font-weight: 800; color: var(--primary);">{{ quiz_attempts_count }}</span>
-            <span style="font-size: 0.8rem; color: var(--muted); font-weight: 500;">Quiz Attempts</span>
+        <div class="card" style="padding: 1.25rem; text-align: center; margin-bottom: 0; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);">
+            <span style="display: block; font-size: 1.75rem; font-weight: 800; color: var(--text); line-height: 1.1;">{{ quiz_attempts_count }}</span>
+            <span style="font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 0.35rem; display: block;">Attempts</span>
         </div>
     </div>
 
-    <!-- Actions -->
-    <div style="display: flex; flex-direction: column; gap: 1rem;">
+    <!-- Actions Stack -->
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
         {% if current_user.role == 'student' %}
-        <a href="{{ url_for('student.my_community_uploads') }}" class="btn btn-outline" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; min-height: 44px;">
-            📁 Manage My Community Uploads
+        <a href="{{ url_for('student.my_community_uploads') }}" class="btn btn-outline" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; min-height: 40px; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
+            📁 Manage Shared Uploads
         </a>
         {% endif %}
-        <a href="{{ url_for('student.select_college') }}" class="btn btn-outline" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; min-height: 44px;">
-            🏫 Change Selected College
+        <a href="{{ url_for('student.select_college') }}" class="btn btn-outline" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; min-height: 40px; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
+            🏫 Change College Affiliation
         </a>
-        <a href="{{ url_for('auth.logout') }}" class="btn btn-logout" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; border: 1px solid var(--danger); color: var(--danger); background: none; min-height: 44px;">
-            🚪 Log Out
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-logout" style="text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; border: 1px solid var(--danger); color: var(--danger); background: none; min-height: 40px; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">
+            🚪 Log Out Account
         </a>
     </div>
 </div>

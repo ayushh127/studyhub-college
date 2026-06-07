@@ -3,10 +3,12 @@
 All notable changes to the StudyHub College project will be documented in this file.
 
 ## [Unreleased]
+- Implemented comprehensive visual frontend redesign across StudyHub College templates. Visual transformations cover public landing (`index.html`), about page (`about.html`), login (`login.html`), register (`register.html`), college registration/success views, student dashboard (`dashboard.html`), college onboarding selection (`select_college.html`), subjects explorer (`subjects.html`), subject details (`subject_details.html`), unit details (`unit_details.html`), PYQ directory (`pyqs.html`), PYQ details (`pyq_details.html`), community library hub (`community_list.html`), upload form (`community_upload.html`), edit form (`community_edit.html`), My Uploads (`community_my_uploads.html`), public uploader profile (`community_user_profile.html`), quiz start (`quiz_start.html`), quiz attempt portal (`quiz_attempt.html`), quiz result (`quiz_result.html`), review (`quiz_review.html`), notifications center (`notifications.html`), error pages (403, 404, 413, 500), and platform/college admin dashboards. Standardized fonts, spacing, shadows, and button transitions for a premium modern SaaS feel, completely purging Cormorant Garamond / serif typography in favor of the Inter sans-serif stack. Added interactive client-side search and filtering for the student PYQ directory.
 ### Fixed
 - Fixed `NameError: name 'User' is not defined` when viewing a student uploader's public profile page by adding the missing import to `app/routes/student.py`.
 
 ### Added
+- Implemented Phase 13 Step 1: Global design system CSS. Overhauled `app/static/css/style.css` to introduce the Indigo-Slate `:root` variables, sans-serif typography scales, modern layout helper classes (grid-3col, grid-responsive, empty-state), clean form field states, and upgraded responsive mobile bottom navigation elements.
 - Implemented Phase 12: Edit & Delete Permissions Audit & Stabilization.
   - Added routes `GET /student/community/materials/<id>/edit`, `POST /student/community/materials/<id>/edit`, and `POST /student/community/materials/<id>/delete` for uploader content editing and soft-deleting (status set to `removed_by_uploader`). Enforced strict uploader ownership and active status restrictions.
   - Created `student/community_edit.html` template and added Edit/Remove buttons on the My Shared Materials list page and material details page templates.

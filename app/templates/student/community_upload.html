@@ -3,43 +3,43 @@
 {% block title %}Share Material - StudyHub College{% endblock %}
 
 {% block content %}
-<div style="max-width: 700px; margin: 2rem auto;">
+<div style="max-width: 750px; margin: 2rem auto; padding: 0 1rem; padding-bottom: 4rem;">
     <!-- Breadcrumbs -->
-    <div style="margin-bottom: 1.5rem; font-size: 0.9rem;">
-        <a href="{{ url_for('student.dashboard') }}" style="color: var(--primary); text-decoration: none;">Dashboard</a>
-        <span class="muted" style="margin: 0 0.5rem;">/</span>
-        <a href="{{ url_for('student.community_library') }}" style="color: var(--primary); text-decoration: none;">Community Library</a>
-        <span class="muted" style="margin: 0 0.5rem;">/</span>
-        <span class="muted">Share Material</span>
-    </div>
+    <nav style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 500;">
+        <a href="{{ url_for('student.dashboard') }}" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--muted)'">Dashboard</a>
+        <span style="color: var(--border);">&rarr;</span>
+        <a href="{{ url_for('student.community_library') }}" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--muted)'">Community Library</a>
+        <span style="color: var(--border);">&rarr;</span>
+        <span style="color: var(--text); font-weight: 600;">Share Material</span>
+    </nav>
 
-    <!-- Header -->
-    <div style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
-        <h2 style="font-size: 1.75rem; margin: 0; font-weight: 800;">Share Study Material</h2>
-        <p class="muted" style="margin: 0.5rem 0 0 0;">Upload a document or provide an external link to share valuable academic resources with other students.</p>
+    <!-- Header Block -->
+    <div style="border-bottom: 1px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 2rem;">
+        <h2 style="font-size: 1.85rem; margin: 0; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Share Study Material</h2>
+        <p class="muted" style="margin: 0.35rem 0 0 0; font-size: 0.95rem; font-weight: 500;">Upload notes, exam papers, or share reference links to help other students prepare.</p>
     </div>
 
     <!-- Form Card -->
-    <div class="card" style="padding: 2rem;">
+    <div class="card" style="padding: 2.5rem; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); background-color: var(--surface);">
         <form method="POST" action="{{ url_for('student.upload_community_material') }}" enctype="multipart/form-data">
             <!-- Title -->
-            <div class="form-group">
-                <label for="title" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Material Title <span style="color: var(--danger);">*</span></label>
-                <input type="text" name="title" id="title" class="form-control" placeholder="e.g. Intro to Mechanics Lecture Notes" required>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="title" style="font-weight: 700; font-size: 0.8rem; color: var(--text); display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Material Title <span style="color: var(--danger);">*</span></label>
+                <input type="text" name="title" id="title" class="form-control" placeholder="e.g. Intro to Mechanics Lecture Notes" required style="border-radius: 8px; border: 1px solid var(--border); padding: 0.6rem 0.85rem; font-size: 0.9rem;">
             </div>
 
             <!-- Subject Name -->
-            <div class="form-group">
-                <label for="subject_name" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Subject Name <span style="color: var(--danger);">*</span></label>
-                <input type="text" name="subject_name" id="subject_name" class="form-control" placeholder="e.g. Physics I, Discrete Mathematics" required>
-                <small class="muted" style="display: block; margin-top: 0.25rem;">Type the free-text name of the subject this material covers.</small>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="subject_name" style="font-weight: 700; font-size: 0.8rem; color: var(--text); display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Subject Name <span style="color: var(--danger);">*</span></label>
+                <input type="text" name="subject_name" id="subject_name" class="form-control" placeholder="e.g. Physics I, Discrete Mathematics" required style="border-radius: 8px; border: 1px solid var(--border); padding: 0.6rem 0.85rem; font-size: 0.9rem;">
+                <small class="muted" style="display: block; margin-top: 0.35rem; font-size: 0.8rem;">Type the full text subject name this resource belongs to.</small>
             </div>
 
-            <div class="grid-2col" style="gap: 1.5rem; margin-bottom: 1.25rem;">
+            <div class="grid-2col" style="gap: 1.5rem; margin-bottom: 1.5rem;">
                 <!-- Material Type -->
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label for="material_type" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Material Type</label>
-                    <select name="material_type" id="material_type" class="form-control">
+                    <label for="material_type" style="font-weight: 700; font-size: 0.8rem; color: var(--text); display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Material Type</label>
+                    <select name="material_type" id="material_type" class="form-control" style="border-radius: 8px; border: 1px solid var(--border); padding: 0.5rem 0.75rem; font-size: 0.85rem; height: 38px; min-height: 38px;">
                         <option value="notes">Notes</option>
                         <option value="assignment">Assignment</option>
                         <option value="pyq">PYQ</option>
@@ -50,48 +50,47 @@
 
                 <!-- College Tag (Optional) -->
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label for="college_tag_id" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">College Tag <span class="muted" style="font-weight: normal;">(Optional)</span></label>
-                    <select name="college_tag_id" id="college_tag_id" class="form-control">
+                    <label for="college_tag_id" style="font-weight: 700; font-size: 0.8rem; color: var(--text); display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">College Tag <span class="muted" style="font-weight: normal; text-transform: none;">(Optional)</span></label>
+                    <select name="college_tag_id" id="college_tag_id" class="form-control" style="border-radius: 8px; border: 1px solid var(--border); padding: 0.5rem 0.75rem; font-size: 0.85rem; height: 38px; min-height: 38px;">
                         <option value="">No Specific College</option>
                         {% for college in colleges %}
                         <option value="{{ college.id }}">{{ college.name }}</option>
                         {% endfor %}
                     </select>
-                    <small class="muted" style="display: block; margin-top: 0.25rem;">Tag your college to help classmates find it easily.</small>
                 </div>
             </div>
 
             <!-- Description -->
-            <div class="form-group">
-                <label for="description" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Description <span class="muted" style="font-weight: normal;">(Optional)</span></label>
-                <textarea name="description" id="description" class="form-control" rows="3" placeholder="Briefly describe what this document contains..."></textarea>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="description" style="font-weight: 700; font-size: 0.8rem; color: var(--text); display: block; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px;">Description <span class="muted" style="font-weight: normal; text-transform: none;">(Optional)</span></label>
+                <textarea name="description" id="description" class="form-control" rows="3" placeholder="Briefly describe what this document contains..." style="border-radius: 8px; border: 1px solid var(--border); padding: 0.6rem 0.85rem; font-size: 0.9rem;"></textarea>
             </div>
 
-            <div style="margin: 1.5rem 0; padding: 1rem; background-color: var(--surface-soft); border-radius: 6px; border: 1px dashed var(--border);">
-                <p style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--text);">Resource Content <span style="color: var(--danger);">*</span></p>
-                <p class="muted" style="font-size: 0.85rem; margin-bottom: 1rem; line-height: 1.4;">Provide at least one of the following to share your material:</p>
+            <div style="margin: 2rem 0; padding: 1.5rem; background-color: var(--surface-soft); border-radius: 12px; border: 1px dashed var(--border);">
+                <p style="font-weight: 800; font-size: 0.9rem; margin-bottom: 0.35rem; color: var(--text);">Resource Content <span style="color: var(--danger);">*</span></p>
+                <p class="muted" style="font-size: 0.8rem; margin-bottom: 1.25rem; font-weight: 500;">Provide at least one of the inputs below to submit this resource:</p>
 
                 <!-- PDF File Upload -->
-                <div class="form-group">
-                    <label for="file" style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem; display: block;">Upload PDF File</label>
-                    <input type="file" name="file" id="file" class="form-control" accept=".pdf">
-                    <small class="muted" style="display: block; margin-top: 0.25rem;">PDF format only. Maximum file size: 5MB.</small>
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label for="file" style="font-weight: 700; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.35rem; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Upload PDF Document</label>
+                    <input type="file" name="file" id="file" class="form-control" accept=".pdf" style="border-radius: 8px; border: 1px solid var(--border); background-color: var(--surface); padding: 0.45rem 0.75rem; font-size: 0.85rem; height: auto;">
+                    <small class="muted" style="display: block; margin-top: 0.35rem; font-size: 0.8rem;">PDF format only. Maximum file size: 5MB.</small>
                 </div>
 
-                <div style="text-align: center; margin: 0.75rem 0; font-weight: bold; color: var(--muted); font-size: 0.85rem;">— OR —</div>
+                <div style="text-align: center; margin: 1rem 0; font-weight: 800; color: var(--muted); font-size: 0.8rem; letter-spacing: 0.05em;">— OR —</div>
 
                 <!-- External URL -->
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label for="external_url" style="font-weight: 600; font-size: 0.85rem; margin-bottom: 0.25rem; display: block;">External Link (URL)</label>
-                    <input type="url" name="external_url" id="external_url" class="form-control" placeholder="https://drive.google.com/file/... or https://example.com/notes">
-                    <small class="muted" style="display: block; margin-top: 0.25rem;">Link to Google Drive, Dropbox, or any external study resource.</small>
+                    <label for="external_url" style="font-weight: 700; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.35rem; display: block; text-transform: uppercase; letter-spacing: 0.5px;">External URL (Link)</label>
+                    <input type="url" name="external_url" id="external_url" class="form-control" placeholder="https://drive.google.com/file/... or https://example.com" style="border-radius: 8px; border: 1px solid var(--border); padding: 0.6rem 0.85rem; font-size: 0.9rem;">
+                    <small class="muted" style="display: block; margin-top: 0.35rem; font-size: 0.8rem;">Link to shared cloud drives, articles, or external study sites.</small>
                 </div>
             </div>
 
             <!-- Submit Buttons -->
-            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 1.5rem;">
-                <a href="{{ url_for('student.community_library') }}" class="btn btn-outline">Cancel</a>
-                <button type="submit" class="btn btn-primary">Share Resource</button>
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; align-items: center;">
+                <a href="{{ url_for('student.community_library') }}" class="btn btn-outline" style="border-radius: 8px; font-weight: 600; font-size: 0.85rem; min-height: 38px;">Cancel</a>
+                <button type="submit" class="btn btn-primary" style="border-radius: 8px; font-weight: 600; font-size: 0.85rem; min-height: 38px; box-shadow: 0 4px 10px rgba(37,99,235,0.15);">Share Resource</button>
             </div>
         </form>
     </div>

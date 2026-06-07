@@ -203,3 +203,28 @@ This document tracks the granular development tasks for the StudyHub College MVP
 - [x] Update design conventions in `UI_UX_GUIDE.md`
 - [x] Update task list in `TASKS.md`
 - [x] Update changelog in `CHANGELOG.md`
+
+## Phase 13: UI/UX Redesign Plan
+- [x] Formulate modern digital library/SaaS visual direction and layout conventions
+- [x] Define design system metrics (palette, typography, spacing, inputs, buttons)
+- [x] Plan student dashboard redesign (welcome, subscribed subjects empty states, quick access cards)
+- [x] Plan college selection/onboarding flows and subject discovery redesign
+- [x] Plan community library browsing/upload improvements and quiz attempt layouts
+- [x] Establish lightweight library integration strategy (Alpine.js, HTMX)
+- [x] Document structural implementation order and testing checkpoints in `UI_REDESIGN_PLAN.md`
+- [x] Synchronize design guidelines in `UI_UX_GUIDE.md` and project/task logs
+
+## Phase 14: Modern SaaS UI/UX Visual Transformation
+- [x] Step 1: Global design system CSS (variables, buttons, cards, inputs, navigation, shadows in style.css)
+- [x] Step 2: Redesign and polish HTML templates:
+  - [x] Public landing (`index.html`) & About page (`about.html`)
+  - [x] Login (`login.html`), Register (`register.html`), and College Registration/Success views
+  - [x] Student Dashboard (`dashboard.html`) & Onboarding College selection (`select_college.html`)
+  - [x] Subject explorer list (`subjects.html`), Subject details (`subject_details.html`), and Unit details (`unit_details.html`)
+  - [x] PYQ list (`pyqs.html`), PYQ details (`pyq_details.html`), and Material details (`material_details.html`)
+  - [x] Community Library hub (`community_list.html`), Upload form (`community_upload.html`), Edit form (`community_edit.html`), My Uploads (`community_my_uploads.html`), and Public Profile (`community_user_profile.html`)
+  - [x] Quiz start page (`quiz_start.html`), Quiz Attempt portal (`quiz_attempt.html`), Quiz Result (`quiz_result.html`), and Review (`quiz_review.html`)
+  - [x] Notifications center (`notifications.html`)
+  - [x] Custom Error views (403, 404, 413, 500)
+  - [x] Platform Admin dashboard (`admin/dashboard.html`) & College Admin dashboard (`college_admin/dashboard.html`)
+  - [x] Platform Admin sidebars & College Admin sidebars / layouts

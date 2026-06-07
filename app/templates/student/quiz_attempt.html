@@ -7,9 +7,9 @@
     .exam-container {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
+        gap: 1.75rem;
         max-width: 1200px;
-        margin: 1rem auto;
+        margin: 1.5rem auto;
         padding: 0 1rem;
         padding-bottom: 5rem;
     }
@@ -21,7 +21,7 @@
             align-items: flex-start;
         }
         .exam-sidebar {
-            width: 300px;
+            width: 320px;
             flex-shrink: 0;
             position: sticky;
             top: 5rem;
@@ -31,7 +31,7 @@
             min-width: 0;
         }
         .mobile-palette-toggle {
-            display: none;
+            display: none !important;
         }
         .palette-drawer {
             display: grid !important; /* Always show on desktop */
@@ -43,7 +43,7 @@
         .exam-sidebar {
             width: 100%;
             position: sticky;
-            top: 60px; /* Below mobile header */
+            top: 56px; /* Below mobile header */
             z-index: 100;
             background: var(--background);
             border-bottom: 1px solid var(--border);
@@ -52,7 +52,7 @@
         }
         .palette-drawer {
             display: none; /* Collapsed by default on mobile */
-            margin-top: 1rem;
+            margin-top: 1.25rem;
             max-height: 200px;
             overflow-y: auto;
         }
@@ -64,63 +64,67 @@
     .exam-sidebar-card {
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 8px;
+        border-radius: 12px;
         padding: 1.5rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        box-shadow: var(--shadow-sm);
     }
 
     .exam-main-card {
         background: var(--surface);
         border: 1px solid var(--border);
-        border-radius: 8px;
+        border-radius: 12px;
         padding: 2rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        min-height: 400px;
+        box-shadow: var(--shadow-sm);
+        min-height: 420px;
         display: flex;
         flex-direction: column;
     }
 
     .question-palette {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-        gap: 0.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(36px, 1fr));
+        gap: 0.45rem;
         margin-top: 1rem;
     }
 
     .palette-btn {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
         border: 1px solid var(--border);
         background: var(--surface);
         color: var(--text);
-        font-weight: bold;
+        font-weight: 700;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.2s;
-        font-size: 0.9rem;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.85rem;
     }
 
     .palette-btn:hover {
         background: var(--surface-soft);
+        border-color: var(--muted);
     }
 
     .palette-btn.active {
         border-color: var(--primary);
-        box-shadow: 0 0 0 2px var(--primary);
+        background-color: #EFF6FF;
+        color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
     }
 
     .palette-btn.attempted {
-        background: var(--primary-light, #dbeafe);
-        color: var(--primary-dark);
+        background: #EFF6FF;
+        color: var(--primary);
         border-color: var(--primary);
     }
     
     .palette-btn.attempted.active {
         background: var(--primary);
         color: white;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
     }
 
     .question-block {
@@ -135,7 +139,7 @@
     .exam-nav-buttons {
         display: flex;
         justify-content: space-between;
-        margin-top: 2rem;
+        margin-top: 2.5rem;
         padding-top: 1.5rem;
         border-top: 1px solid var(--border);
     }
@@ -143,10 +147,11 @@
     .mode-toggle-group {
         display: flex;
         background-color: var(--surface-soft);
-        border-radius: 4px;
+        border-radius: 8px;
         border: 1px solid var(--border);
         overflow: hidden;
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
+        padding: 2px;
     }
 
     .mode-toggle-group button {
@@ -154,37 +159,42 @@
         padding: 0.5rem;
         border: none;
         background: none;
-        font-weight: bold;
+        font-weight: 700;
         cursor: pointer;
         font-size: 0.85rem;
-        color: var(--text);
-        transition: all 0.2s;
+        color: var(--muted);
+        transition: all 0.2s ease;
+        border-radius: 6px;
     }
 
     .mobile-palette-toggle {
         width: 100%;
-        padding: 0.5rem;
+        padding: 0.6rem;
         background: var(--surface-soft);
         border: 1px solid var(--border);
-        border-radius: 4px;
+        border-radius: 8px;
         margin-top: 1rem;
         cursor: pointer;
-        font-weight: bold;
+        font-weight: 700;
         color: var(--text);
+        font-size: 0.85rem;
     }
 
     .option-label {
-        padding: 1rem; 
+        padding: 1rem 1.25rem; 
         border: 1px solid var(--border); 
-        border-radius: 4px; 
+        border-radius: 8px; 
         cursor: pointer; 
         display: flex; 
         align-items: center; 
         gap: 0.75rem; 
-        transition: all 0.2s;
+        transition: all 0.15s ease;
+        background-color: var(--surface);
     }
+    
     .option-label:hover {
         background: var(--surface-soft);
+        border-color: var(--primary);
     }
 </style>
 
@@ -192,7 +202,8 @@
     <!-- Left Sidebar -->
     <aside class="exam-sidebar">
         <div class="exam-sidebar-card">
-            <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem; color: var(--primary-dark); line-height: 1.4;">{{ quiz.title }}</h3>
+            <span class="badge" style="background-color: var(--surface-soft); color: var(--text); border: 1px solid var(--border); font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.4rem; border-radius: 4px; margin-bottom: 0.5rem; display: inline-block; text-transform: uppercase;">Exam Panel</span>
+            <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.15rem; color: var(--text); font-weight: 800; line-height: 1.35;">{{ quiz.title }}</h3>
             
             <div class="mode-toggle-group">
                 <button type="button" id="toggleLearning">Learning</button>
@@ -200,7 +211,7 @@
             </div>
             
             {% if quiz.time_limit_minutes %}
-            <div id="examTimer" style="font-weight: bold; font-size: 1.2rem; text-align: center; padding: 0.5rem; background: var(--surface-soft); border-radius: 4px; border: 1px solid var(--border); margin-bottom: 0.5rem;">
+            <div id="examTimer" style="font-weight: 800; font-size: 1.3rem; text-align: center; padding: 0.65rem; background: var(--surface-soft); border-radius: 8px; border: 1px solid var(--border); margin-bottom: 0.5rem; color: var(--text); font-family: monospace;">
                 <span id="timeRemaining">{{ quiz.time_limit_minutes }}:00</span>
             </div>
             {% endif %}
@@ -219,40 +230,40 @@
 
     <!-- Main Content -->
     <main class="exam-main">
-        <div id="modeBanner" style="padding: 1rem; margin-bottom: 1rem; border-radius: 4px; font-size: 0.95rem; border: 1px solid var(--border); background-color: var(--surface); color: var(--text); border-left: 4px solid var(--accent); transition: all 0.2s;">
+        <div id="modeBanner" style="padding: 1rem; margin-bottom: 1.25rem; border-radius: 8px; font-size: 0.9rem; border: 1px solid var(--border); background-color: var(--surface); color: var(--text); border-left: 4px solid var(--primary); transition: all 0.2s; font-weight: 500;">
             <span id="modeDescription"></span>
         </div>
 
-        <form method="POST" action="{{ url_for('student.submit_quiz', attempt_id=attempt.id) }}" id="quizForm">
+        <form method="POST" action="{{ url_for('student.submit_quiz', attempt_id=attempt.id) }}" id="quizForm" style="margin: 0;">
             <input type="hidden" name="final_mode" id="finalMode" value="{{ attempt.mode }}">
             
             <div class="exam-main-card">
                 {% for q in quiz.questions|sort(attribute='order_number') %}
                 <div class="question-block" id="q-block-{{ loop.index }}" data-qid="{{ q.id }}">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
-                        <h3 style="margin: 0; font-size: 1.3rem; color: var(--primary-dark); line-height: 1.4; font-weight: 700;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.75rem; border-bottom: 1px dashed var(--border); padding-bottom: 1rem; gap: 1rem;">
+                        <h3 style="margin: 0; font-size: 1.25rem; color: var(--text); line-height: 1.4; font-weight: 800;">
                             Q{{ loop.index }}. {{ q.question_text }}
                         </h3>
-                        <span class="muted" style="font-size: 0.85rem; white-space: nowrap; font-weight: bold; background-color: var(--background); padding: 0.2rem 0.5rem; border-radius: 4px;">{{ q.marks }} Mark{% if q.marks > 1 %}s{% endif %}</span>
+                        <span class="badge" style="font-size: 0.75rem; white-space: nowrap; font-weight: 700; background-color: var(--surface-soft); color: var(--text); padding: 0.2rem 0.6rem; border-radius: 6px; border: 1px solid var(--border);">{{ q.marks }} Mark{% if q.marks > 1 %}s{% endif %}</span>
                     </div>
 
                     <!-- Question Choices -->
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; flex-direction: column; gap: 0.85rem; margin-bottom: 1.75rem;">
                         {% for opt in q.options|sort(attribute='order_number') %}
                         {% set is_checked = answered_options.get(q.id) == opt.id %}
-                        <label class="option-label q-{{ q.id }}-opt" data-correct="{{ 'true' if opt.is_correct else 'false' }}">
-                            <input type="radio" name="q_{{ q.id }}" value="{{ opt.id }}" style="margin: 0; width: 1.2rem; height: 1.2rem;" {% if is_checked %}checked{% endif %}>
-                            <span style="font-size: 1rem; color: var(--text); line-height: 1.4;">{{ opt.option_text }}</span>
+                        <label class="option-label q-{{ q.id }}-opt" data-correct="{{ 'true' if opt.is_correct else 'false' }}" style="font-weight: 600;">
+                            <input type="radio" name="q_{{ q.id }}" value="{{ opt.id }}" style="margin: 0; width: 1.15rem; height: 1.15rem; accent-color: var(--primary);" {% if is_checked %}checked{% endif %}>
+                            <span style="font-size: 0.95rem; color: var(--text); line-height: 1.4;">{{ opt.option_text }}</span>
                         </label>
                         {% endfor %}
                     </div>
 
                     <!-- Learning Mode Explanations Panel -->
                     <div class="learning-controls" style="display: none; border-top: 1px dashed var(--border); padding-top: 1.25rem; margin-top: 1rem;">
-                        <button type="button" class="btn show-answer-btn" data-question-id="{{ q.id }}" style="padding: 0.4rem 1rem; border: 1px solid var(--primary); background: none; color: var(--primary); font-size: 0.85rem; cursor: pointer; border-radius: 4px; font-weight: bold; transition: all 0.2s;">Show Answer</button>
+                        <button type="button" class="btn show-answer-btn" data-question-id="{{ q.id }}" style="padding: 0.4rem 1rem; border: 1px solid var(--primary); background: none; color: var(--primary); font-size: 0.8rem; cursor: pointer; border-radius: 6px; font-weight: 700; transition: all 0.2s; min-height: 32px;">Show Answer</button>
                         
-                        <div id="explanation-{{ q.id }}" class="explanation-block" style="display: none; margin-top: 1rem; padding: 1.25rem; background-color: var(--surface-soft); border-left: 4px solid var(--accent); border-radius: 0 4px 4px 0; font-size: 0.95rem;">
-                            <p style="margin: 0 0 0.5rem 0; font-weight: bold; color: var(--primary-dark); font-size: 1rem;">
+                        <div id="explanation-{{ q.id }}" class="explanation-block" style="display: none; margin-top: 1rem; padding: 1.25rem; background-color: var(--surface-soft); border-left: 4px solid var(--primary); border-radius: 0 8px 8px 0; font-size: 0.9rem; border: 1px solid var(--border); border-left-width: 4px;">
+                            <p style="margin: 0 0 0.5rem 0; font-weight: 800; color: var(--primary-dark); font-size: 0.95rem;">
                                 Correct Answer: 
                                 {% for opt in q.options %}
                                     {% if opt.is_correct %}
@@ -261,7 +272,7 @@
                                 {% endfor %}
                             </p>
                             <div style="margin: 0; color: var(--text); line-height: 1.5;">
-                                <strong style="color: var(--primary-dark);">Explanation:</strong> 
+                                <strong style="color: var(--primary-dark); font-weight: 800;">Explanation:</strong> 
                                 {% if q.explanation %}
                                     <span>{{ q.explanation }}</span>
                                 {% else %}
@@ -274,11 +285,11 @@
                 {% endfor %}
 
                 <div class="exam-nav-buttons">
-                    <button type="button" id="btnPrev" class="btn" style="padding: 0.6rem 1.5rem; border: 1px solid var(--border); border-radius: 4px; font-weight: bold; cursor: pointer; background: var(--surface-soft);">Previous</button>
+                    <button type="button" id="btnPrev" class="btn btn-outline" style="padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; min-height: 38px;">Previous</button>
                     
-                    <button type="button" id="btnNext" class="btn btn-primary" style="padding: 0.6rem 1.5rem; border-radius: 4px; font-weight: bold; cursor: pointer;">Next</button>
+                    <button type="button" id="btnNext" class="btn btn-primary" style="padding: 0.5rem 1.5rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; min-height: 38px; box-shadow: 0 4px 10px rgba(37,99,235,0.15);">Next</button>
                     
-                    <button type="submit" id="btnSubmit" class="btn" style="background-color: var(--success); color: white; padding: 0.6rem 1.5rem; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; display: none;">Submit Exam</button>
+                    <button type="submit" id="btnSubmit" class="btn" style="background-color: var(--success); color: white; padding: 0.5rem 1.5rem; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: none; font-size: 0.85rem; min-height: 38px; box-shadow: 0 4px 10px rgba(22,163,74,0.15);">Submit Exam</button>
                 </div>
             </div>
         </form>

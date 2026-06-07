@@ -3,45 +3,45 @@
 {% block title %}Community Library - StudyHub College{% endblock %}
 
 {% block content %}
-<div style="max-width: 1100px; margin: 2rem auto;">
+<div style="max-width: 1100px; margin: 2rem auto; padding: 0 1rem; padding-bottom: 5rem;">
     <!-- Header -->
-    <div class="flex-header-responsive" style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+    <div class="flex-header-responsive" style="border-bottom: 1px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 2rem; align-items: center; justify-content: space-between;">
         <div>
-            <h2 style="font-size: 2rem; margin: 0; font-weight: 800;">Community Library</h2>
-            <p class="muted" style="margin: 0.5rem 0 0 0;">An open, student-to-student sharing hub for study materials, assignments, and notes across all colleges.</p>
+            <h2 style="font-size: 1.85rem; margin: 0; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Community Library</h2>
+            <p class="muted" style="margin: 0.35rem 0 0 0; font-size: 0.95rem; font-weight: 500;">Access and share student-curated study files, notes, and references across colleges.</p>
         </div>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <a href="{{ url_for('student.my_community_uploads') }}" class="btn btn-outline">
+            <a href="{{ url_for('student.my_community_uploads') }}" class="btn btn-outline" style="font-weight: 600; font-size: 0.85rem; min-height: 38px; border-radius: 8px;">
                 📁 My Uploads
             </a>
-            <a href="{{ url_for('student.upload_community_material') }}" class="btn btn-primary">
+            <a href="{{ url_for('student.upload_community_material') }}" class="btn btn-primary" style="font-weight: 600; font-size: 0.85rem; min-height: 38px; border-radius: 8px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);">
                 ➕ Share Material
             </a>
         </div>
     </div>
 
     <!-- Filters and Search Form -->
-    <form method="GET" action="{{ url_for('student.community_library') }}" class="card filter-card-container" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+    <form method="GET" action="{{ url_for('student.community_library') }}" class="card filter-card-container" style="padding: 1.5rem; margin-bottom: 1.5rem; border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); background-color: var(--surface);">
         <!-- Search input + Filters Toggle row -->
         <div class="search-toggle-row" style="display: flex; gap: 0.75rem; width: 100%; align-items: flex-end; margin-bottom: 0;">
             <div style="flex: 1;">
-                <label for="q" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">Search Title, Description or Subject</label>
-                <input type="text" name="q" id="q" value="{{ search_query }}" placeholder="e.g. Physics notes, chemistry lab..." class="form-control" style="padding: 0.5rem 0.75rem; width: 100%;">
+                <label for="q" style="font-weight: 700; font-size: 0.8rem; color: var(--text); margin-bottom: 0.4rem; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Search Title or Subject</label>
+                <input type="text" name="q" id="q" value="{{ search_query }}" placeholder="e.g. Physics notes, Chemistry lab..." class="form-control" style="padding: 0.6rem 0.85rem; width: 100%; border-radius: 8px; border: 1px solid var(--border); font-size: 0.9rem;">
             </div>
-            <button type="button" id="mobileFilterToggleBtn" class="btn btn-outline mobile-only-inline" style="display: none; padding: 0.5rem 1rem; align-items: center; justify-content: center; gap: 0.25rem; white-space: nowrap; height: 40px;">
+            <button type="button" id="mobileFilterToggleBtn" class="btn btn-outline mobile-only-inline" style="display: none; padding: 0.5rem 1rem; align-items: center; justify-content: center; gap: 0.25rem; white-space: nowrap; height: 38px; border-radius: 8px; font-weight: 600;">
                 🔍 Filters
             </button>
-            <button type="submit" class="btn btn-primary desktop-only" style="padding: 0.5rem 1.5rem; height: 40px;">Search</button>
+            <button type="submit" class="btn btn-primary desktop-only" style="padding: 0.5rem 1.5rem; height: 38px; border-radius: 8px; font-weight: 600;">Search</button>
         </div>
 
         <!-- Hidden input for file_filter -->
         <input type="hidden" name="file_filter" id="fileFilterInput" value="{{ request.args.get('file_filter', '') }}">
 
         <!-- Filter Controls Container (collapsible on mobile) -->
-        <div class="filter-controls-group" id="filterControlsGroup" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; width: 100%; margin-top: 1rem;">
+        <div class="filter-controls-group" id="filterControlsGroup" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; width: 100%; margin-top: 1.25rem;">
             <div style="flex: 1 1 150px;">
-                <label for="material_type" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">Material Type</label>
-                <select name="material_type" id="material_type" class="form-control" style="padding: 0.5rem 0.75rem; width: 100%;">
+                <label for="material_type" style="font-weight: 700; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Material Type</label>
+                <select name="material_type" id="material_type" class="form-control" style="padding: 0.5rem 0.75rem; width: 100%; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; height: 38px; min-height: 38px;">
                     <option value="">All Types</option>
                     <option value="notes" {% if selected_material_type == 'notes' %}selected{% endif %}>Notes</option>
                     <option value="assignment" {% if selected_material_type == 'assignment' %}selected{% endif %}>Assignment</option>
@@ -50,8 +50,8 @@
                 </select>
             </div>
             <div style="flex: 1 1 180px;">
-                <label for="college_tag_id" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">College Tag</label>
-                <select name="college_tag_id" id="college_tag_id" class="form-control" style="padding: 0.5rem 0.75rem; width: 100%;">
+                <label for="college_tag_id" style="font-weight: 700; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; display: block; text-transform: uppercase; letter-spacing: 0.5px;">College Tag</label>
+                <select name="college_tag_id" id="college_tag_id" class="form-control" style="padding: 0.5rem 0.75rem; width: 100%; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; height: 38px; min-height: 38px;">
                     <option value="">All Colleges</option>
                     {% for college in colleges %}
                     <option value="{{ college.id }}" {% if selected_college_tag_id == college.id %}selected{% endif %}>{{ college.name }}</option>
@@ -59,83 +59,83 @@
                 </select>
             </div>
             <div style="flex: 1 1 150px;">
-                <label for="sort" style="font-weight: 600; font-size: 0.85rem; color: var(--muted); margin-bottom: 0.25rem; display: block;">Sort By</label>
-                <select name="sort" id="sort" class="form-control" style="padding: 0.5rem 0.75rem; width: 100%;">
+                <label for="sort" style="font-weight: 700; font-size: 0.75rem; color: var(--muted); margin-bottom: 0.4rem; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Sort By</label>
+                <select name="sort" id="sort" class="form-control" style="padding: 0.5rem 0.75rem; width: 100%; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; height: 38px; min-height: 38px;">
                     <option value="latest" {% if sort_by == 'latest' %}selected{% endif %}>Latest</option>
                     <option value="views" {% if sort_by == 'views' %}selected{% endif %}>Most Viewed</option>
                     <option value="likes" {% if sort_by == 'likes' %}selected{% endif %}>Most Liked</option>
                     <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>Top Rated</option>
                 </select>
             </div>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; height: 40px; align-items: flex-end;">
-                <button type="submit" class="btn btn-primary" style="padding: 0.55rem 1.25rem;">Apply</button>
-                <a href="{{ url_for('student.community_library') }}" class="btn btn-outline" style="padding: 0.55rem 1.25rem; text-decoration: none; display: flex; align-items: center; height: 40px; box-sizing: border-box;">Reset</a>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; height: 38px; align-items: flex-end;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1.25rem; height: 38px; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">Apply</button>
+                <a href="{{ url_for('student.community_library') }}" class="btn btn-outline" style="padding: 0.5rem 1.25rem; text-decoration: none; display: flex; align-items: center; justify-content: center; height: 38px; box-sizing: border-box; border-radius: 8px; font-weight: 600; font-size: 0.85rem;">Reset</a>
             </div>
         </div>
     </form>
 
     <!-- Quick Filter Chips -->
     <div class="filter-chips-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.25rem;">
-        <a href="{{ url_for('student.community_library', sort='latest', q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id) }}" class="chip {% if sort_by == 'latest' and not request.args.get('file_filter') %}active{% endif %}">🕒 Latest</a>
-        <a href="{{ url_for('student.community_library', sort='likes', q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id) }}" class="chip {% if sort_by == 'likes' %}active{% endif %}">❤️ Most Liked</a>
-        <a href="{{ url_for('student.community_library', sort='rating', q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id) }}" class="chip {% if sort_by == 'rating' %}active{% endif %}">⭐ Top Rated</a>
-        <a href="{{ url_for('student.community_library', sort=sort_by, q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id, file_filter='pdf') }}" class="chip {% if request.args.get('file_filter') == 'pdf' %}active{% endif %}">📄 PDFs Only</a>
-        <a href="{{ url_for('student.community_library', sort=sort_by, q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id, file_filter='link') }}" class="chip {% if request.args.get('file_filter') == 'link' %}active{% endif %}">🔗 Links Only</a>
+        <a href="{{ url_for('student.community_library', sort='latest', q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id) }}" class="chip {% if sort_by == 'latest' and not request.args.get('file_filter') %}active{% endif %}" style="border-radius: 20px;">🕒 Latest</a>
+        <a href="{{ url_for('student.community_library', sort='likes', q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id) }}" class="chip {% if sort_by == 'likes' %}active{% endif %}" style="border-radius: 20px;">❤️ Most Liked</a>
+        <a href="{{ url_for('student.community_library', sort='rating', q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id) }}" class="chip {% if sort_by == 'rating' %}active{% endif %}" style="border-radius: 20px;">⭐ Top Rated</a>
+        <a href="{{ url_for('student.community_library', sort=sort_by, q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id, file_filter='pdf') }}" class="chip {% if request.args.get('file_filter') == 'pdf' %}active{% endif %}" style="border-radius: 20px;">📄 PDFs Only</a>
+        <a href="{{ url_for('student.community_library', sort=sort_by, q=search_query, material_type=selected_material_type, college_tag_id=selected_college_tag_id, file_filter='link') }}" class="chip {% if request.args.get('file_filter') == 'link' %}active{% endif %}" style="border-radius: 20px;">🔗 Links Only</a>
     </div>
 
     <!-- Grid of Material Cards -->
-    <div class="community-grid-container">
+    <div class="community-grid-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
         {% for material in materials %}
-        <div class="card community-card" data-has-pdf="{% if material.file_path %}true{% else %}false{% endif %}" data-has-link="{% if material.external_url %}true{% else %}false{% endif %}" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0;">
+        <div class="card community-card" data-has-pdf="{% if material.file_path %}true{% else %}false{% endif %}" data-has-link="{% if material.external_url %}true{% else %}false{% endif %}" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-md)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)';">
             <div>
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.25rem;">
-                    <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">
-                        {{ material.material_type|title }}
+                    <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 4px;">
+                        {{ material.material_type }}
                     </span>
                     {% if material.college_tag %}
-                    <span class="badge" style="font-size: 0.75rem; font-weight: normal; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ material.college_tag.name }}">
-                        📍 {{ material.college_tag.name }}
+                    <span class="badge" style="font-size: 0.7rem; font-weight: 600; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); border-color: var(--border); background-color: var(--surface-soft);" title="{{ material.college_tag.name }}">
+                        📍 {{ material.college_tag.name|truncate(15) }}
                     </span>
                     {% endif %}
                 </div>
                 
-                <h3 style="margin-top: 0; margin-bottom: 0.25rem; font-size: 1.25rem; font-weight: 600; line-height: 1.3;">
-                    <a href="{{ url_for('student.community_material_details', id=material.id) }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                <h3 style="margin-top: 0; margin-bottom: 0.25rem; font-size: 1.2rem; font-weight: 800; line-height: 1.35; color: var(--text);">
+                    <a href="{{ url_for('student.community_material_details', id=material.id) }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='inherit'">
                         {{ material.title }}
                     </a>
                 </h3>
                 
-                <div style="font-size: 0.8rem; color: var(--primary-dark); font-weight: 600; margin-bottom: 0.75rem;">
+                <div style="font-size: 0.8rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 0.75rem;">
                     Subject: {{ material.subject_name }}
                 </div>
                 
-                <p class="muted" style="font-size: 0.9rem; line-height: 1.4; margin-bottom: 1.25rem;">
+                <p class="muted" style="font-size: 0.875rem; line-height: 1.45; margin-bottom: 1.25rem; color: var(--muted);">
                     {{ material.description|truncate(120) if material.description else 'No description provided.' }}
                 </p>
             </div>
             
             <div>
                 <!-- Stats -->
-                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 0.75rem; margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); padding-top: 0.75rem; margin-bottom: 1rem; font-weight: 500;">
                     <span>👁️ {{ material.views_count }} views</span>
                     <span id="card-likes-count-{{ material.id }}">❤️ {{ material.likes_count }} likes</span>
                     <span>⭐ {{ '%.1f' | format(material.average_rating) }} ({{ material.ratings_count }})</span>
                 </div>
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                    <div class="muted" style="font-size: 0.75rem; display: flex; flex-direction: column; gap: 0.25rem;">
-                        <span>Shared on {{ material.created_at.strftime('%Y-%m-%d') }}</span>
-                        <span>By: <a href="{{ url_for('student.community_user_profile', user_id=material.uploaded_by) }}" style="color: var(--primary); text-decoration: none; font-weight: 600;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ material.uploader.full_name }}</a></span>
+                    <div class="muted" style="font-size: 0.75rem; display: flex; flex-direction: column; gap: 0.15rem; font-weight: 500;">
+                        <span>Shared: {{ material.created_at.strftime('%Y-%m-%d') }}</span>
+                        <span>By: <a href="{{ url_for('student.community_user_profile', user_id=material.uploaded_by) }}" style="color: var(--primary); text-decoration: none; font-weight: 700;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ material.uploader.full_name|truncate(18) }}</a></span>
                     </div>
                     
-                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <div style="display: flex; gap: 0.35rem; align-items: center;">
                         <form class="like-form" action="{{ url_for('student.like_community_material', id=material.id) }}" method="POST" style="margin: 0;">
                             <button type="submit" class="btn-like-toggle {% if material.id in liked_material_ids %}liked{% endif %}" style="background: none; border: none; padding: 0.25rem 0.5rem; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 0.25rem; color: {% if material.id in liked_material_ids %}var(--primary){% else %}var(--muted){% endif %}; transition: color 0.2s;" title="Like/Unlike">
                                 <span class="like-icon">{% if material.id in liked_material_ids %}♥{% else %}♡{% endif %}</span>
-                                <span class="like-count" style="font-size: 0.85rem;">{{ material.likes_count }}</span>
+                                <span class="like-count" style="font-size: 0.85rem; font-weight: 600;">{{ material.likes_count }}</span>
                             </button>
                         </form>
-                        <a href="{{ url_for('student.community_material_details', id=material.id) }}" class="btn btn-outline" style="font-size: 0.8rem; padding: 0.35rem 0.75rem; color: var(--primary); border-color: var(--primary);">
+                        <a href="{{ url_for('student.community_material_details', id=material.id) }}" class="btn btn-outline btn-sm" style="font-size: 0.8rem; font-weight: 600; border-radius: 6px; border-color: var(--primary); color: var(--primary); padding: 0.25rem 0.6rem; min-height: 30px;">
                             View Info
                         </a>
                     </div>
@@ -143,9 +143,10 @@
             </div>
         </div>
         {% else %}
-        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
-            <h3 style="color: var(--muted); font-size: 1.75rem; font-weight: 700;">No materials found.</h3>
-            <p class="muted" style="margin-top: 0.5rem;">There are no active community shared resources matching your filter criteria.</p>
+        <div class="empty-state" style="grid-column: 1 / -1; padding: 5rem 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+            <h3 style="color: var(--text); font-size: 1.5rem; font-weight: 800;">No Materials Found</h3>
+            <p class="muted">There are no active community shared resources matching your filter criteria.</p>
         </div>
         {% endfor %}
     </div>
@@ -266,12 +267,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!emptyState) {
                     emptyState = document.createElement('div');
                     emptyState.id = 'clientEmptyState';
-                    emptyState.className = 'card';
+                    emptyState.className = 'empty-state';
                     emptyState.style.gridColumn = '1 / -1';
                     emptyState.style.textAlign = 'center';
                     emptyState.style.padding = '4rem';
                     emptyState.innerHTML = `
-                        <h3 style="color: var(--muted); font-size: 1.75rem; font-weight: 700;">No matching materials.</h3>
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+                        <h3 style="color: var(--text); font-size: 1.5rem; font-weight: 800;">No Matching Materials</h3>
                         <p class="muted" style="margin-top: 0.5rem;">There are no active community shared resources matching your filter.</p>
                     `;
                     grid.appendChild(emptyState);

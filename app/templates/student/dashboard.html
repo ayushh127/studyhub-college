@@ -3,94 +3,127 @@
 {% block title %}Student Dashboard - StudyHub College{% endblock %}
 
 {% block content %}
-<div style="max-width: 1000px; margin: 2rem auto;">
-    <div class="flex-header-responsive" style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
+<div style="max-width: 1100px; margin: 1.5rem auto; padding-bottom: 4rem;">
+    <!-- Welcome Header Card -->
+    <div style="background: linear-gradient(135deg, #EEF2F6 0%, #E0E7FF 100%); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; box-shadow: var(--shadow-sm);">
         <div>
-            <h2 style="margin: 0; margin-bottom: 0.5rem; font-weight: 800;">Student Dashboard</h2>
-            <span class="muted">Welcome back, {{ current_user.full_name }}</span>
-            {% if current_user.college %}
-            <span class="badge" style="background-color: var(--primary); color: white; margin-left: 0.5rem;">{{ current_user.college.name }}</span>
-            {% endif %}
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+                <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem;">Active Student</span>
+                {% if current_user.college %}
+                <span class="badge" style="background-color: var(--accent); color: white; border: none; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem;">📍 {{ current_user.college.name }}</span>
+                {% endif %}
+            </div>
+            <h2 style="margin: 0; font-size: 1.85rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Hello, {{ current_user.full_name }}!</h2>
+            <p class="muted" style="margin: 0.25rem 0 0 0; font-size: 0.95rem; font-weight: 500;">Welcome to your digital learning workspace. Keep track of your courses and test preparation.</p>
         </div>
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <a href="{{ url_for('student.select_college') }}" class="btn" style="border: 1px solid var(--border); padding: 0.5rem 1rem; font-size: 0.9rem; text-decoration: none; color: var(--text);">Change College</a>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="{{ url_for('student.select_college') }}" class="btn btn-outline" style="background-color: var(--surface); border-color: var(--border); font-size: 0.85rem; font-weight: 600; min-height: 38px;">Change College</a>
         </div>
     </div>
     
+    <!-- Dashboard Stats Widget Grid -->
+    <div class="grid-responsive" style="gap: 1rem; margin-bottom: 2.5rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+        <div class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 0; border-radius: 12px;">
+            <span style="font-size: 2rem; background-color: #EFF6FF; padding: 0.5rem; border-radius: 8px;">📚</span>
+            <div>
+                <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700;">{{ subjects|length }}</h4>
+                <p class="muted" style="margin: 0; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Subscribed Courses</p>
+            </div>
+        </div>
+        <div class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 0; border-radius: 12px;">
+            <span style="font-size: 2rem; background-color: #FAF5FF; padding: 0.5rem; border-radius: 8px;">❓</span>
+            <div>
+                <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700;">{{ recent_quizzes|length }}</h4>
+                <p class="muted" style="margin: 0; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Active Quizzes</p>
+            </div>
+        </div>
+        <div class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 0; border-radius: 12px; cursor: pointer;" onclick="window.location.href='{{ url_for('student.community_library') }}'">
+            <span style="font-size: 2rem; background-color: #ECFDF5; padding: 0.5rem; border-radius: 8px;">🌐</span>
+            <div>
+                <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700;">Library</h4>
+                <p class="muted" style="margin: 0; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Community Library &rarr;</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Two-Column Layout -->
     <div class="grid-2col">
+        <!-- Subjects Column -->
         <div>
-            <h3 style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; font-weight: 700;">Your Subjects</h3>
-            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--text);">Subscribed Subjects</h3>
+                <a href="{{ url_for('student.subjects') }}" style="font-size: 0.85rem; font-weight: 600; color: var(--primary); text-decoration: none;">View All</a>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
                 {% for subject in subjects %}
                 {% set unit_count = subject.units|length %}
                 {% set quiz_count = subject.quizzes|selectattr('is_published')|list|length %}
                 {% set material_count = subject.materials|selectattr('is_published')|list|length %}
                 {% set pyq_count = subject.pyqs|selectattr('is_published')|list|length %}
-                <a href="{{ url_for('student.subject_details', id=subject.id) }}" class="card card-clickable" style="padding: 1.5rem; display: block; color: inherit; text-decoration: none; margin-bottom: 0;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <h4 style="margin: 0; margin-bottom: 0.5rem; font-size: 1.35rem; color: var(--primary-dark); font-weight: 700;">{{ subject.name }}</h4>
-                        <span class="badge" style="background-color: var(--primary); color: white; font-size: 0.8rem; padding: 0.2rem 0.5rem; border-radius: 4px;">{{ subject.code }}</span>
+                <a href="{{ url_for('student.subject_details', id=subject.id) }}" class="card card-clickable" style="padding: 1.5rem; display: block; color: inherit; text-decoration: none; margin-bottom: 0; border-radius: 12px; border-left: 4px solid var(--primary);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+                        <h4 style="margin: 0; margin-bottom: 0.25rem; font-size: 1.2rem; color: var(--primary-dark); font-weight: 700; line-height: 1.3;">{{ subject.name }}</h4>
+                        <span class="badge" style="background-color: var(--surface-soft); color: var(--text); border: 1px solid var(--border); font-size: 0.75rem; padding: 0.15rem 0.5rem; font-weight: 600;">{{ subject.code }}</span>
                     </div>
                     {% if subject.description %}
-                    <p class="muted" style="font-size: 0.9rem; margin: 0.5rem 0 1rem 0; line-height: 1.4;">{{ subject.description|truncate(100) }}</p>
+                    <p class="muted" style="font-size: 0.875rem; margin: 0.5rem 0 1rem 0; line-height: 1.4; color: var(--muted);">{{ subject.description|truncate(90) }}</p>
                     {% else %}
-                    <p class="muted" style="font-size: 0.9rem; margin: 0.5rem 0 1rem 0; line-height: 1.4;">Browse chapters, tests, and study notes for this course.</p>
+                    <p class="muted" style="font-size: 0.875rem; margin: 0.5rem 0 1rem 0; line-height: 1.4; color: var(--muted);">Browse units, interactive test papers, and official study notes.</p>
                     {% endif %}
-                    <div style="display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.85rem; border-top: 1px dashed var(--border); padding-top: 0.75rem;">
-                        <span class="muted"><strong>{{ unit_count }}</strong> Units</span>
-                        <span class="muted">•</span>
-                        <span class="muted"><strong>{{ quiz_count }}</strong> Quizzes</span>
-                        <span class="muted">•</span>
-                        <span class="muted"><strong>{{ material_count + pyq_count }}</strong> Resources</span>
+                    
+                    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; font-size: 0.8rem; border-top: 1px dashed var(--border); padding-top: 0.75rem; color: var(--muted); font-weight: 500;">
+                        <span>📚 <strong>{{ unit_count }}</strong> Units</span>
+                        <span>•</span>
+                        <span>❓ <strong>{{ quiz_count }}</strong> Quizzes</span>
+                        <span>•</span>
+                        <span>📂 <strong>{{ material_count + pyq_count }}</strong> Resources</span>
                     </div>
                 </a>
                 {% else %}
-                <div class="card" style="padding: 1.5rem; text-align: center;">
-                    <span class="muted" style="display: block; margin-bottom: 1rem;">You haven't followed any subjects yet. Subscribe to subjects to see them here.</span>
+                <div class="empty-state" style="padding: 3rem 1.5rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">📚</div>
+                    <h3>No Subscribed Subjects</h3>
+                    <p class="muted" style="margin-bottom: 1.5rem; max-width: 320px; margin-left: auto; margin-right: auto; font-size: 0.9rem;">You haven't followed any subjects yet. Subscribe to subjects to see them here.</p>
+                    <a href="{{ url_for('student.subjects') }}" class="btn btn-primary btn-sm">Explore Subjects</a>
                 </div>
                 {% endfor %}
-            </div>
-            <div style="text-align: center; margin-top: 1rem;">
-                <a href="{{ url_for('student.subjects') }}" class="btn" style="border: 1px solid var(--border); background: none; color: var(--primary); font-weight: bold;">Browse All Subjects</a>
             </div>
         </div>
         
+        <!-- Quizzes Column -->
         <div>
-            <h3 style="border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; font-weight: 700;">Available Quizzes</h3>
-            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--text);">Available Quizzes</h3>
+                <a href="{{ url_for('student.quizzes') }}" style="font-size: 0.85rem; font-weight: 600; color: var(--primary); text-decoration: none;">View All</a>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
                 {% for quiz in recent_quizzes %}
-                <div class="card" style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 0;">
-                     <div>
-                        <h4 style="margin: 0; margin-bottom: 0.5rem; font-size: 1.3rem; font-weight: 700;">{{ quiz.title }}</h4>
-                        <div class="muted" style="font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; line-height: 1.4;">
-                            <span style="font-weight: bold; color: var(--primary-dark);">{{ quiz.subject.name }}</span>
+                <div class="card" style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 0; border-radius: 12px;">
+                     <div style="flex: 1; min-width: 0;">
+                        <h4 style="margin: 0; margin-bottom: 0.35rem; font-size: 1.15rem; font-weight: 700; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; color: var(--text);">{{ quiz.title }}</h4>
+                        <div class="muted" style="font-size: 0.8rem; display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center; line-height: 1.3; font-weight: 500;">
+                            <span style="font-weight: 700; color: var(--primary-dark);">{{ quiz.subject.name }}</span>
                             <span>•</span>
                             {% if quiz.unit %}
-                            <span>Unit {{ quiz.unit.unit_number }}: {{ quiz.unit.title|truncate(20) }}</span>
+                            <span>Unit {{ quiz.unit.unit_number }}</span>
                             {% else %}
-                            <span>Overall Subject Quiz</span>
+                            <span>Overall Subject</span>
                             {% endif %}
                             <span>•</span>
-                            <span class="badge" style="background-color: var(--surface-soft); color: var(--text); border: 1px solid var(--border); font-size: 0.75rem; padding: 0.05rem 0.3rem; font-weight: normal;">{{ quiz.quiz_type|replace('_', ' ')|title }}</span>
-                            {% if quiz.difficulty %}
-                            <span>•</span>
-                            <span class="badge" style="background-color: var(--surface-soft); color: var(--text); border: 1px solid var(--border); font-size: 0.75rem; padding: 0.05rem 0.3rem; font-weight: normal;">{{ quiz.difficulty|title }}</span>
-                            {% endif %}
+                            <span class="badge" style="background-color: var(--surface-soft); color: var(--text); border: 1px solid var(--border); font-size: 0.7rem; padding: 0.05rem 0.3rem; border-radius: 4px;">{{ quiz.quiz_type|replace('_', ' ')|title }}</span>
                         </div>
                     </div>
-                    <a href="{{ url_for('student.start_quiz', id=quiz.id) }}" class="btn btn-primary" style="padding: 0.5rem 1.25rem; font-size: 0.9rem; text-decoration: none; white-space: nowrap;">Start</a>
+                    <a href="{{ url_for('student.start_quiz', id=quiz.id) }}" class="btn btn-primary" style="padding: 0.45rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: 6px; white-space: nowrap; min-height: 36px;">Start</a>
                 </div>
                 {% else %}
-                <div class="card" style="padding: 1.5rem; text-align: center;">
-                    <span class="muted">No quizzes available currently.</span>
+                <div class="empty-state" style="padding: 3rem 1.5rem;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem;">❓</div>
+                    <h3>No Quizzes Available</h3>
+                    <p class="muted" style="margin-bottom: 0; font-size: 0.9rem;">No active quizzes are published for your subscribed courses currently.</p>
                 </div>
                 {% endfor %}
-                
-                {% if recent_quizzes %}
-                <div style="text-align: center; margin-top: 1rem;">
-                    <a href="{{ url_for('student.quizzes') }}" class="btn" style="border: 1px solid var(--border); background: none; color: var(--primary); font-weight: bold;">View All Quizzes</a>
-                </div>
-                {% endif %}
             </div>
         </div>
     </div>

@@ -3,28 +3,39 @@
 {% block title %}Available Quizzes - StudyHub College{% endblock %}
 
 {% block content %}
-<div style="max-width: 1000px; margin: 2rem auto;">
-    <h2>Available Quizzes</h2>
-    <p class="muted">Quizzes available for your selected college.</p>
+<div style="max-width: 1000px; margin: 2rem auto; padding: 0 1rem; padding-bottom: 4rem;">
+    <!-- Explorer Header -->
+    <div style="border-bottom: 1px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 2rem;">
+        <h2 style="font-size: 1.85rem; margin: 0; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Quizzes Portal</h2>
+        <p class="muted" style="margin: 0.35rem 0 0 0; font-size: 0.95rem; font-weight: 500;">Practice concepts and prepare for exams with customized interactive test questions.</p>
+    </div>
     
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
         {% for quiz in quizzes %}
-        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="card hover-lift" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0; border-radius: 12px; padding: 1.5rem; border: 1px solid var(--border); box-shadow: var(--shadow-sm); min-height: 200px;">
             <div>
-                <h3 style="margin-top: 0; margin-bottom: 0.5rem;">{{ quiz.title }}</h3>
-                <p style="color: var(--primary); font-weight: bold; margin-bottom: 0.5rem;">{{ quiz.subject.name }}</p>
-                <div style="display: flex; gap: 1rem; font-size: 0.9rem; color: var(--muted); margin-bottom: 1rem;">
-                    <span><i class="icon">📝</i> {{ quiz.questions|length }} Questions</span>
-                    <span style="text-transform: capitalize;"><i class="icon">📈</i> {{ quiz.difficulty }}</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <span class="badge" style="background-color: #EFF6FF; color: var(--primary); border: 1px solid rgba(37,99,235,0.15); font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 4px;">{{ quiz.quiz_type|replace('_', ' ')|title }}</span>
+                    <span class="badge" style="background-color: var(--surface-soft); color: var(--text); border: 1px solid var(--border); font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 4px; text-transform: capitalize;">{{ quiz.difficulty }}</span>
+                </div>
+                <h3 style="margin-top: 0; margin-bottom: 0.35rem; font-size: 1.2rem; font-weight: 800; line-height: 1.35; color: var(--text);">{{ quiz.title }}</h3>
+                <p style="color: var(--primary-dark); font-weight: 700; font-size: 0.85rem; margin-bottom: 1rem;">Subject: {{ quiz.subject.name }}</p>
+                
+                <div style="display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); margin-bottom: 1.25rem; font-weight: 500;">
+                    <span>📝 {{ quiz.questions|length }} Questions</span>
+                    {% if quiz.time_limit_minutes %}
+                    <span>⏱️ {{ quiz.time_limit_minutes }} Mins</span>
+                    {% endif %}
                 </div>
             </div>
             
-            <a href="{{ url_for('student.start_quiz', id=quiz.id) }}" class="btn btn-primary" style="text-align: center; width: 100%;">View Quiz</a>
+            <a href="{{ url_for('student.start_quiz', id=quiz.id) }}" class="btn btn-primary" style="text-align: center; width: 100%; border-radius: 8px; font-weight: 600; font-size: 0.85rem; min-height: 38px;">View Quiz &rarr;</a>
         </div>
         {% else %}
-        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-            <h3 style="color: var(--muted);">No Quizzes Available</h3>
-            <p>There are no published quizzes for your college yet.</p>
+        <div class="empty-state" style="grid-column: 1 / -1; padding: 5rem 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">❓</div>
+            <h3 style="color: var(--text); font-size: 1.5rem; font-weight: 800;">No Quizzes Available</h3>
+            <p class="muted">There are no published quizzes for your selected college courses currently.</p>
         </div>
         {% endfor %}
     </div>

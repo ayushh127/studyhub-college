@@ -126,3 +126,6 @@ Build the StudyHub College MVP, a multi-role web platform for college content ma
 - Implemented soft deletion/deactivation for subjects, preventing direct student URL access to deactivated content.
 - Blocked hard deletion of quizzes with attempts, unpublishing them instead.
 - Conducted full final QA pass, resolving outstanding bugs, and documenting release readiness in `FINAL_QA_REPORT.md`.
+
+## Phase 13: UI/UX Redesign Plan
+- Created a comprehensive UI/UX Redesign Plan (`UI_REDESIGN_PLAN.md`) outlining a modern digital library/SaaS visual direction, lightweight frontend library strategy (Alpine.js and HTMX), and structured implementation steps to transition StudyHub College into a professional product-level app.

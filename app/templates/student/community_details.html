@@ -3,58 +3,58 @@
 {% block title %}{{ material.title }} - Community Library{% endblock %}
 
 {% block content %}
-<div style="max-width: 900px; margin: 2rem auto;">
+<div style="max-width: 900px; margin: 2rem auto; padding: 0 1rem; padding-bottom: 4rem;">
     <!-- Breadcrumbs -->
-    <div style="margin-bottom: 1.5rem; font-size: 0.9rem;">
-        <a href="{{ url_for('student.dashboard') }}" style="color: var(--primary); text-decoration: none;">Dashboard</a>
-        <span class="muted" style="margin: 0 0.5rem;">/</span>
-        <a href="{{ url_for('student.community_library') }}" style="color: var(--primary); text-decoration: none;">Community Library</a>
-        <span class="muted" style="margin: 0 0.5rem;">/</span>
-        <span class="muted">Material Details</span>
-    </div>
+    <nav style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; font-weight: 500;">
+        <a href="{{ url_for('student.dashboard') }}" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--muted)'">Dashboard</a>
+        <span style="color: var(--border);">&rarr;</span>
+        <a href="{{ url_for('student.community_library') }}" style="color: var(--muted); text-decoration: none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--muted)'">Community Library</a>
+        <span style="color: var(--border);">&rarr;</span>
+        <span style="color: var(--text); font-weight: 600;">Material Details</span>
+    </nav>
 
     {% if material.status != 'active' %}
-    <div style="background-color: #FEF3C7; border: 1px solid #FDE68A; color: #D97706; padding: 1rem; border-radius: var(--radius); margin-bottom: 1.5rem; font-size: 0.95rem;">
-        ⚠️ <strong>Non-Public Material:</strong> This upload is currently <strong>{{ material.status|replace('_', ' ')|title }}</strong>. It is only visible to you (the uploader) and platform administrators.
+    <div style="background-color: #FEF3C7; border: 1px solid #FDE68A; color: #D97706; padding: 1rem 1.25rem; border-radius: var(--radius); margin-bottom: 1.5rem; font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
+        ⚠️ <strong>Non-Public Material:</strong> This upload is currently <strong>{{ material.status|replace('_', ' ')|title }}</strong>. Only visible to you and platform administrators.
     </div>
     {% endif %}
 
-    <!-- Main Content -->
-    <div class="card" style="padding: 2rem; margin-bottom: 2rem;">
+    <!-- Main Content Card -->
+    <div class="card" style="padding: 2.5rem; margin-bottom: 2rem; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); background-color: var(--surface);">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-            <div>
+            <div style="flex: 1; min-width: 280px;">
                 <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.75rem;">
-                    <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">
+                    <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 4px;">
                         {{ material.material_type|title }}
                     </span>
                     
                     {% if material.status != 'active' %}
-                        <span class="badge" style="background-color: #FEF3C7; color: #D97706; border-color: #FDE68A;">
-                            Status: {{ material.status|replace('_', ' ')|title }}
+                        <span class="badge" style="background-color: #FEF3C7; color: #D97706; border-color: #FDE68A; font-size: 0.75rem;">
+                            {{ material.status|replace('_', ' ')|title }}
                         </span>
                     {% endif %}
 
                     {% if material.college_tag %}
-                    <span class="badge" style="font-size: 0.8rem; font-weight: normal;">
+                    <span class="badge" style="font-size: 0.75rem; font-weight: 600; color: var(--text); border-color: var(--border); background-color: var(--surface-soft);">
                         📍 {{ material.college_tag.name }}
                     </span>
                     {% endif %}
                 </div>
-                <h1 style="margin: 0 0 0.5rem 0; font-size: 2rem; font-weight: 800; line-height: 1.2;">
+                <h1 style="margin: 0 0 0.5rem 0; font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); line-height: 1.2;">
                     {{ material.title }}
                 </h1>
-                <div style="font-size: 1rem; color: var(--primary-dark); font-weight: 600;">
+                <div style="font-size: 0.95rem; color: var(--primary-dark); font-weight: 700;">
                     Subject: {{ material.subject_name }}
                 </div>
             </div>
             
             {% if current_user.id == material.uploaded_by and material.status == 'active' %}
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <a href="{{ url_for('student.edit_community_material', id=material.id) }}" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);">
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-shrink: 0;">
+                <a href="{{ url_for('student.edit_community_material', id=material.id) }}" class="btn btn-outline btn-sm" style="border-color: var(--primary); color: var(--primary); font-weight: 600; border-radius: 6px;">
                     Edit Material
                 </a>
                 <form action="{{ url_for('student.delete_community_material', id=material.id) }}" method="POST" style="margin: 0;">
-                    <button type="submit" class="btn" style="background-color: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5;" onclick="return confirm('Are you sure you want to remove this community upload? This will hide it from the library.');">
+                    <button type="submit" class="btn btn-sm" style="background-color: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; font-weight: 600; border-radius: 6px; min-height: 32px;" onclick="return confirm('Are you sure you want to remove this community upload? This will hide it from the library.');">
                         Remove
                     </button>
                 </form>
@@ -62,48 +62,49 @@
             {% endif %}
         </div>
 
-        <div style="display: flex; flex-wrap: wrap; gap: 2rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.5rem 0; margin-bottom: 1.5rem;">
-            <div style="flex: 1 1 min-content; min-width: 150px;">
-                <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Uploaded By</div>
-                <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 0.5rem; color: var(--primary-dark);">{{ material.uploader.full_name }}</div>
-                <a href="{{ url_for('student.community_user_profile', user_id=material.uploader.id) }}" style="font-size: 0.85rem; font-weight: 600; color: var(--primary); text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem;">
-                    View all uploads by this student →
+        <!-- Meta Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1.25rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.5rem 0; margin-bottom: 1.5rem;">
+            <div>
+                <div class="muted" style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Uploaded By</div>
+                <div style="font-weight: 800; font-size: 0.95rem; color: var(--text); margin-bottom: 0.25rem;">{{ material.uploader.full_name }}</div>
+                <a href="{{ url_for('student.community_user_profile', user_id=material.uploader.id) }}" style="font-size: 0.8rem; font-weight: 700; color: var(--primary); text-decoration: none; display: inline-flex; align-items: center;">
+                    View Profile &rarr;
                 </a>
             </div>
-            <div style="flex: 1 1 min-content; min-width: 150px;">
-                <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Upload Date</div>
-                <div style="font-weight: 500;">{{ material.created_at.strftime('%B %d, %Y') }}</div>
+            <div>
+                <div class="muted" style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Upload Date</div>
+                <div style="font-weight: 600; font-size: 0.95rem;">{{ material.created_at.strftime('%B %d, %Y') }}</div>
             </div>
-            <div style="flex: 1 1 min-content; min-width: 150px;">
-                <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Views</div>
-                <div style="font-weight: 500;">👁️ {{ material.views_count }}</div>
+            <div>
+                <div class="muted" style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Views</div>
+                <div style="font-weight: 600; font-size: 0.95rem;">👁️ {{ material.views_count }}</div>
             </div>
-            <div style="flex: 1 1 min-content; min-width: 150px;">
-                <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Likes</div>
-                <div id="stats-likes-count" style="font-weight: 500;">❤️ {{ material.likes_count }}</div>
+            <div>
+                <div class="muted" style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Likes</div>
+                <div id="stats-likes-count" style="font-weight: 600; font-size: 0.95rem;">❤️ {{ material.likes_count }}</div>
             </div>
-            <div style="flex: 1 1 min-content; min-width: 150px;">
-                <div class="muted" style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Rating</div>
-                <div style="font-weight: 500;">⭐ {{ '%.1f' | format(material.average_rating) }} ({{ material.ratings_count }})</div>
+            <div>
+                <div class="muted" style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.35rem;">Rating</div>
+                <div style="font-weight: 600; font-size: 0.95rem;">⭐ {{ '%.1f' | format(material.average_rating) }} ({{ material.ratings_count }})</div>
             </div>
         </div>
 
+        <!-- Description -->
         <div style="margin-bottom: 2rem;">
-            <h3 style="margin-top: 0; margin-bottom: 0.75rem; font-size: 1.2rem;">Description</h3>
-            <p style="line-height: 1.6; color: var(--text);">
-                {{ material.description if material.description else 'No description provided.' }}
+            <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text);">Description</h3>
+            <p style="line-height: 1.6; color: var(--text); font-size: 0.95rem; margin: 0;">
+                {{ material.description if material.description else 'No description provided for this community shared resource.' }}
             </p>
         </div>
 
         {% if material.status == 'active' %}
-        <!-- Interactions Section -->
-        <!-- Interactions Section -->
-        <div style="background-color: var(--surface-soft); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 2rem;">
+        <!-- Interactions Panel -->
+        <div style="background-color: var(--surface-soft); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 2rem;">
             <div style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
-                <div style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: center;">
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;">
                     <!-- Like Form -->
                     <form class="like-form" action="{{ url_for('student.like_community_material', id=material.id) }}" method="POST" style="margin: 0;">
-                        <button type="submit" class="btn {% if user_liked %}btn-primary liked{% else %}btn-outline{% endif %}" style="display: flex; align-items: center; gap: 0.5rem; min-width: 120px; justify-content: center; transition: all 0.2s ease; {% if user_liked %}color: white;{% endif %}" id="detail-like-btn">
+                        <button type="submit" class="btn {% if user_liked %}btn-primary liked{% else %}btn-outline{% endif %}" style="display: inline-flex; align-items: center; gap: 0.5rem; min-width: 110px; justify-content: center; transition: all 0.2s ease; border-radius: 8px; font-weight: 600; min-height: 38px; font-size: 0.85rem;" id="detail-like-btn">
                             <span class="like-icon">{% if user_liked %}♥{% else %}♡{% endif %}</span>
                             <span class="like-text">{% if user_liked %}Liked{% else %}Like{% endif %}</span>
                             <span>(<span class="like-count">{{ material.likes_count }}</span>)</span>
@@ -111,38 +112,38 @@
                     </form>
 
                     <!-- Rating Form -->
-                    <form action="{{ url_for('student.rate_community_material', id=material.id) }}" method="POST" style="margin: 0; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                    <form action="{{ url_for('student.rate_community_material', id=material.id) }}" method="POST" style="margin: 0; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                         <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <label for="rating" style="font-weight: 600; color: var(--text);">Rate this material:</label>
-                            <select name="rating" id="rating" class="form-control" style="width: auto; padding: 0.4rem 0.75rem;" required>
+                            <label for="rating" style="font-weight: 700; font-size: 0.85rem; color: var(--text);">Rate:</label>
+                            <select name="rating" id="rating" class="form-control" style="width: auto; padding: 0.4rem 0.5rem; border-radius: 8px; font-size: 0.85rem; min-height: 38px; height: 38px;" required>
                                 <option value="">Select</option>
-                                <option value="5" {% if user_rating == 5 %}selected{% endif %}>5 ⭐⭐⭐⭐⭐ (Excellent)</option>
-                                <option value="4" {% if user_rating == 4 %}selected{% endif %}>4 ⭐⭐⭐⭐ (Good)</option>
-                                <option value="3" {% if user_rating == 3 %}selected{% endif %}>3 ⭐⭐⭐ (Average)</option>
-                                <option value="2" {% if user_rating == 2 %}selected{% endif %}>2 ⭐⭐ (Poor)</option>
+                                <option value="5" {% if user_rating == 5 %}selected{% endif %}>5 ⭐ (Excellent)</option>
+                                <option value="4" {% if user_rating == 4 %}selected{% endif %}>4 ⭐ (Good)</option>
+                                <option value="3" {% if user_rating == 3 %}selected{% endif %}>3 ⭐ (Average)</option>
+                                <option value="2" {% if user_rating == 2 %}selected{% endif %}>2 ⭐ (Poor)</option>
                                 <option value="1" {% if user_rating == 1 %}selected{% endif %}>1 ⭐ (Terrible)</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-outline" style="padding: 0.45rem 1rem;">
-                            {% if user_rating %}Update Rating{% else %}Submit Rating{% endif %}
+                        <button type="submit" class="btn btn-outline" style="padding: 0.45rem 1rem; font-weight: 600; font-size: 0.85rem; border-radius: 8px; min-height: 38px;">
+                            {% if user_rating %}Update{% else %}Submit{% endif %}
                         </button>
                         {% if user_rating %}
-                        <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.8rem;">You rated: {{ user_rating }} ⭐</span>
+                        <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.6rem; border-radius: 6px;">Your Rate: {{ user_rating }} ⭐</span>
                         {% endif %}
                     </form>
                 </div>
 
                 <!-- Report Section -->
-                <div style="border-left: 1px solid var(--border); padding-left: 2rem; flex: 1; min-width: 300px;">
+                <div style="border-left: 1px solid var(--border); padding-left: 1.5rem; flex: 1; min-width: 260px;">
                     {% if user_reported %}
-                        <span class="badge" style="background-color: #FEF3C7; color: #D97706; border-color: #FDE68A; padding: 0.5rem 1rem;">
-                            🚩 You reported this material
+                        <span class="badge" style="background-color: #FEF3C7; color: #D97706; border-color: #FDE68A; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                            🚩 Reported
                         </span>
                     {% else %}
                         <form action="{{ url_for('student.report_community_material', id=material.id) }}" method="POST" style="margin: 0; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
-                            <label for="reason" style="font-weight: 600; color: var(--text);">Report:</label>
-                            <select name="reason" id="reason" class="form-control" style="width: auto; padding: 0.4rem 0.75rem;" required onchange="document.getElementById('report-details-container').style.display = this.value === 'Other' ? 'block' : 'none';">
-                                <option value="">Select Reason</option>
+                            <label for="reason" style="font-weight: 700; font-size: 0.85rem; color: var(--text);">Report:</label>
+                            <select name="reason" id="reason" class="form-control" style="width: auto; padding: 0.4rem 0.5rem; border-radius: 8px; font-size: 0.85rem; min-height: 38px; height: 38px;" required onchange="document.getElementById('report-details-container').style.display = this.value === 'Other' ? 'block' : 'none';">
+                                <option value="">Reason</option>
                                 <option value="Wrong/inaccurate content">Wrong/inaccurate content</option>
                                 <option value="Spam">Spam</option>
                                 <option value="Duplicate material">Duplicate material</option>
@@ -150,11 +151,11 @@
                                 <option value="Broken/unsafe link">Broken/unsafe link</option>
                                 <option value="Other">Other</option>
                             </select>
-                            <button type="submit" class="btn" style="background-color: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; padding: 0.45rem 1rem; font-weight: 600;">
-                                Submit Report
+                            <button type="submit" class="btn" style="background-color: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; padding: 0.45rem 1rem; font-weight: 600; font-size: 0.85rem; border-radius: 8px; min-height: 38px;">
+                                Submit
                             </button>
                             <div id="report-details-container" style="display: none; width: 100%; margin-top: 0.5rem;">
-                                <input type="text" name="details" placeholder="Please provide details..." class="form-control" style="width: 100%; padding: 0.4rem 0.75rem;">
+                                <input type="text" name="details" placeholder="Please provide details..." class="form-control" style="width: 100%; padding: 0.4rem 0.75rem; border-radius: 8px; font-size: 0.85rem;">
                             </div>
                         </form>
                     {% endif %}
@@ -163,29 +164,29 @@
         </div>
         {% endif %}
 
-        <!-- Access Resources Section -->
-        <div style="background-color: var(--surface-soft); padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border);">
-            <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.1rem;">Access Material</h3>
+        <!-- Access Resources Panel -->
+        <div style="background-color: var(--surface-soft); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border);">
+            <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 0.95rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text);">Access Resource</h3>
             <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                 {% if material.file_path %}
-                <a href="{{ url_for('files.serve_community_material', id=material.id) }}" class="btn btn-primary" target="_blank" rel="noopener noreferrer" style="flex: 1; min-width: 200px; justify-content: center;">
+                <a href="{{ url_for('files.serve_community_material', id=material.id) }}" class="btn btn-primary" target="_blank" rel="noopener noreferrer" style="flex: 1; min-width: 180px; justify-content: center; font-weight: 600; border-radius: 8px; min-height: 40px; box-shadow: 0 4px 10px rgba(37,99,235,0.15);">
                     📄 View/Download PDF
                 </a>
                 {% endif %}
 
                 {% if material.external_url %}
-                <div style="flex: 1; min-width: 200px; display: flex; gap: 0.5rem;">
-                    <a href="{{ material.external_url }}" class="btn btn-outline" target="_blank" rel="noopener noreferrer" style="flex: 1; justify-content: center;">
-                        🔗 Open Link
+                <div style="flex: 1; min-width: 180px; display: flex; gap: 0.5rem;">
+                    <a href="{{ material.external_url }}" class="btn btn-outline" target="_blank" rel="noopener noreferrer" style="flex: 1; justify-content: center; font-weight: 600; border-radius: 8px; min-height: 40px;">
+                        🔗 Open External Link
                     </a>
-                    <button class="btn btn-outline" onclick="navigator.clipboard.writeText('{{ material.external_url }}'); alert('Link copied to clipboard!');" title="Copy Link" style="padding: 0.5rem 1rem;">
+                    <button class="btn btn-outline" onclick="navigator.clipboard.writeText('{{ material.external_url }}'); alert('Link copied to clipboard!');" title="Copy Link" style="padding: 0.5rem 1rem; border-radius: 8px; min-height: 40px;">
                         📋
                     </button>
                 </div>
                 {% endif %}
                 
                 {% if not material.file_path and not material.external_url %}
-                <p class="muted" style="margin: 0; padding: 0.5rem;">No file or link is associated with this material.</p>
+                <p class="muted" style="margin: 0; padding: 0.5rem; font-size: 0.95rem;">No file or link is associated with this material.</p>
                 {% endif %}
             </div>
         </div>

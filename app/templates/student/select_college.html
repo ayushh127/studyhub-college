@@ -3,24 +3,49 @@
 {% block title %}Select College - StudyHub College{% endblock %}
 
 {% block content %}
-<div style="max-width: 500px; margin: 4rem auto;">
-    <div class="card" style="text-align: center; padding: 3rem 2rem;">
-        <h2 style="margin-top: 0; margin-bottom: 1.5rem; font-weight: 800;">Welcome to StudyHub</h2>
-        <p class="muted" style="margin-bottom: 2rem;">Please select your college to view relevant study materials and quizzes.</p>
-        
-        <form method="POST" action="{{ url_for('student.select_college') }}">
-            <div class="form-group" style="text-align: left; margin-bottom: 2rem;">
-                <label for="college_id"><strong>Select College</strong></label>
-                <select name="college_id" id="college_id" class="form-control" required style="width: 100%; padding: 0.75rem; margin-top: 0.5rem; border: 1px solid var(--border); border-radius: 4px;">
-                    <option value="" disabled selected>-- Select a College --</option>
-                    {% for college in colleges %}
-                    <option value="{{ college.id }}">{{ college.name }} ({{ college.code }})</option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 0.75rem;">Continue to Dashboard</button>
-        </form>
+<div style="max-width: 900px; margin: 3rem auto; padding: 0 1rem; padding-bottom: 4rem;">
+    <div style="text-align: center; margin-bottom: 3rem;">
+        <span style="font-size: 2.5rem; display: block; margin-bottom: 0.75rem;">🎓</span>
+        <h2 style="margin: 0; font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Select Your Institution</h2>
+        <p class="muted" style="margin-top: 0.5rem; font-size: 1rem; font-weight: 500; max-width: 480px; margin-left: auto; margin-right: auto;">Please choose your college from the active institutes below to access matching course syllabus, papers, and tests.</p>
     </div>
+    
+    <form method="POST" action="{{ url_for('student.select_college') }}" id="collegeSelectForm">
+        <div class="grid-responsive" style="gap: 1.5rem; margin-bottom: 2.5rem; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));">
+            {% for college in colleges %}
+            <label class="card card-clickable college-option-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--border); border-radius: 12px; cursor: pointer; position: relative; margin-bottom: 0; min-height: 160px; transition: all 0.2s;" id="label-college-{{ college.id }}">
+                <input type="radio" name="college_id" value="{{ college.id }}" style="position: absolute; top: 1.25rem; right: 1.25rem; width: 1.2rem; height: 1.2rem; accent-color: var(--primary);" required onclick="highlightSelected({{ college.id }})">
+                
+                <div style="margin-top: 1rem;">
+                    <h4 style="margin: 0; margin-bottom: 0.5rem; font-weight: 800; color: var(--primary-dark); font-size: 1.15rem; line-height: 1.3;">{{ college.name }}</h4>
+                    <p class="muted" style="font-size: 0.8rem; margin-bottom: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Code: {{ college.code }}</p>
+                </div>
+                
+                <div style="font-size: 0.85rem; color: var(--muted); font-weight: 500; border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.75rem;">
+                    📍 {{ college.city }}, {{ college.state }}
+                </div>
+            </label>
+            {% endfor %}
+        </div>
+        
+        <div style="max-width: 320px; margin: 0 auto;">
+            <button type="submit" class="btn btn-primary btn-lg btn-full" style="font-weight: 600; font-size: 1rem; border-radius: 8px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15);">Continue to Dashboard</button>
+        </div>
+    </form>
 </div>
+
+<script>
+function highlightSelected(selectedId) {
+    const cards = document.querySelectorAll('.college-option-card');
+    cards.forEach(card => {
+        card.style.borderColor = 'var(--border)';
+        card.style.backgroundColor = 'var(--surface)';
+    });
+    const selectedCard = document.getElementById(`label-college-${selectedId}`);
+    if (selectedCard) {
+        selectedCard.style.borderColor = 'var(--primary)';
+        selectedCard.style.backgroundColor = 'var(--surface-soft)';
+    }
+}
+</script>
 {% endblock %}

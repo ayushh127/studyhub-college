@@ -3,45 +3,50 @@
 {% block title %}Browse Subjects - StudyHub College{% endblock %}
 
 {% block content %}
-<div style="max-width: 1000px; margin: 2rem auto;">
-    <div class="flex-header-responsive" style="border-bottom: 2px solid var(--border); padding-bottom: 1rem; margin-bottom: 2rem;">
-        <div>
-            <h2 style="font-size: 2rem; margin: 0; font-weight: 800;">Subjects & Course Materials</h2>
-            <p class="muted" style="margin: 0.5rem 0 0 0;">Browse course syllabus, lecture materials, and unit tests available for your college.</p>
+<div style="max-width: 1000px; margin: 2rem auto; padding: 0 1rem; padding-bottom: 4rem;">
+    <!-- Explorer Header -->
+    <div class="flex-header-responsive" style="border-bottom: 1px solid var(--border); padding-bottom: 1.25rem; margin-bottom: 2rem; align-items: center;">
+        <div style="flex: 1;">
+            <h2 style="font-size: 1.85rem; margin: 0; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Subjects Directory</h2>
+            <p class="muted" style="margin: 0.35rem 0 0 0; font-size: 0.95rem; font-weight: 500;">Access unit chapters, pyq archives, and quizzes published for your current college.</p>
         </div>
-        <div>
-            <input type="text" id="subjectSearch" placeholder="Search subjects..." style="width: 100%; max-width: 320px; padding: 0.6rem 1rem; border: 1px solid var(--border); border-radius: 4px; font-family: inherit; font-size: 0.95rem; background-color: var(--surface);">
+        <div style="position: relative; width: 100%; max-width: 320px;">
+            <span style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); font-size: 1rem; color: var(--muted);">🔍</span>
+            <input type="text" id="subjectSearch" placeholder="Search by name, code or sem..." style="width: 100%; padding: 0.65rem 1rem 0.65rem 2.25rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background-color: var(--surface); box-shadow: var(--shadow-sm); outline: none; transition: border-color 0.15s;" onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'">
         </div>
     </div>
 
+    <!-- Subjects Grid -->
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;" id="subjectsGrid">
         {% for subject in subjects %}
-        <div class="card subject-card" data-name="{{ subject.name|lower }}" data-code="{{ subject.code|lower }}" data-semester="{% if subject.semester %}semester {{ subject.semester }}{% endif %}" data-desc="{{ subject.description|lower if subject.description else '' }}" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0;">
+        <div class="card subject-card" data-name="{{ subject.name|lower }}" data-code="{{ subject.code|lower }}" data-semester="{% if subject.semester %}semester {{ subject.semester }}{% endif %}" data-desc="{{ subject.description|lower if subject.description else '' }}" style="display: flex; flex-direction: column; justify-content: space-between; margin-bottom: 0; border-radius: 12px; transition: transform 0.2s, box-shadow 0.2s; min-height: 220px; border: 1px solid var(--border);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--shadow-md)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)';">
             <div>
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                    <span class="badge" style="background-color: var(--primary); color: white;">{{ subject.code }}</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <span class="badge" style="background-color: #EFF6FF; color: var(--primary); border: 1px solid rgba(37,99,235,0.15); font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 6px;">{{ subject.code }}</span>
                     {% if subject.semester %}
-                    <span class="muted" style="font-size: 0.85rem; font-weight: bold;">Sem {{ subject.semester }}</span>
+                    <span class="badge" style="background-color: var(--surface-soft); color: var(--text); border: 1px solid var(--border); font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.55rem; border-radius: 6px;">Sem {{ subject.semester }}</span>
                     {% endif %}
                 </div>
-                <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.5rem; color: var(--primary-dark); font-weight: 700;">{{ subject.name }}</h3>
-                <p class="muted" style="font-size: 0.9rem; line-height: 1.4; margin-bottom: 1rem;">
-                    {{ subject.description|truncate(120) if subject.description else 'No description available for this subject.' }}
+                <h3 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1.3rem; color: var(--text); font-weight: 800; line-height: 1.3;">{{ subject.name }}</h3>
+                <p class="muted" style="font-size: 0.875rem; line-height: 1.45; margin-bottom: 1.5rem; color: var(--muted);">
+                    {{ subject.description|truncate(120) if subject.description else 'Syllabus topics, PYQ papers, and interactive tests are available for this subject.' }}
                 </p>
             </div>
             
-            <a href="{{ url_for('student.subject_details', id=subject.id) }}" class="btn btn-primary" style="text-align: center; width: 100%; text-decoration: none;">View Course Content</a>
+            <a href="{{ url_for('student.subject_details', id=subject.id) }}" class="btn btn-primary" style="text-align: center; width: 100%; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.85rem; min-height: 38px;">View Course Content &rarr;</a>
         </div>
         {% else %}
-        <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 4rem;">
-            <h3 style="color: var(--muted); font-size: 1.75rem; font-weight: 700;">No Subjects Available</h3>
-            <p>There are no active subjects registered for your college currently.</p>
+        <div class="empty-state" style="grid-column: 1 / -1; padding: 5rem 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
+            <h3 style="color: var(--text); font-size: 1.5rem; font-weight: 800;">No Subjects Registered</h3>
+            <p class="muted">There are no active subjects registered for your college currently.</p>
         </div>
         {% endfor %}
         
         <!-- Empty search results state -->
-        <div id="searchEmptyState" class="card" style="display: none; grid-column: 1 / -1; text-align: center; padding: 4rem; margin-bottom: 0;">
-            <h3 style="color: var(--muted); font-size: 1.75rem; font-weight: 700;">No subjects match your search.</h3>
+        <div id="searchEmptyState" class="empty-state" style="display: none; grid-column: 1 / -1; padding: 5rem 2rem; margin-bottom: 0;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+            <h3 style="color: var(--text); font-size: 1.5rem; font-weight: 800;">No Subjects Match Search</h3>
             <p class="muted" style="margin-top: 0.5rem;">Try searching for a different subject name, code, or description.</p>
         </div>
     </div>

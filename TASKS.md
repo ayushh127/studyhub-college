@@ -294,7 +294,7 @@ This document tracks the granular development tasks for the StudyHub College MVP
 
 ## Phase 19: React Frontend Migration (Version 2)
 - [ ] Initialize React frontend integration strategy (Vite bundle integration or Next.js hybrid setups)
-- [ ] Setup API JSON routes/endpoints on Flask backend to feed React components
+- [x] Setup API JSON routes/endpoints on Flask backend to feed React components (Implemented GET /api/student/dashboard)
 - [ ] Migrate Student Dashboard page (Step 1 of frontend refactor)
 - [ ] Migrate Onboarding Flow wizard interfaces
 - [ ] Migrate Subjects Directory & Unit Details grids

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app, jsonify
 from flask_login import login_required, current_user
 from app.models import User, College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial, CommunityMaterialLike, CommunityMaterialRating, CommunityMaterialReport, CommunityMaterialView, CollegeSubscription
 from app.extensions import db
@@ -11,7 +11,7 @@ from werkzeug.utils import secure_filename
 from ..utils.audit import log_action
 from ..utils.community import update_community_material_moderation
 
-from . import student_bp
+from . import student_bp, public_bp
 
 def student_required(f):
     @wraps(f)
@@ -1098,4 +1098,190 @@ def profile():
     return render_template('student/profile.html', 
                            uploads_count=uploads_count, 
                            quiz_attempts_count=quiz_attempts_count)
+
+
+@public_bp.route('/api/student/dashboard', methods=['GET'])
+def api_student_dashboard():
+    # 1. Auth check
+    if not current_user.is_authenticated:
+        return jsonify({"success": False, "message": "Authentication required."}), 401
+    
+    # 2. Role check
+    if current_user.role != 'student':
+        return jsonify({"success": False, "message": "Access denied. Student only."}), 403
+
+    # 3. User info
+    user_data = {
+        "name": current_user.full_name,
+        "email": current_user.email,
+        "role": current_user.role
+    }
+
+    # 4. College info
+    college_data = None
+    if current_user.college_id:
+        college = College.query.get(current_user.college_id)
+        if college:
+            # Initials helper
+            def get_initials(name):
+                if not name:
+                    return ""
+                words = name.split()
+                return "".join(word[0].upper() for word in words[:3] if word)
+
+            logo_url = None
+            if college.logo_path:
+                logo_url = url_for('files.serve_college_logo', id=college.id)
+
+            college_data = {
+                "id": college.id,
+                "name": college.name,
+                "code": college.code,
+                "logo_url": logo_url,
+                "initials": get_initials(college.name)
+            }
+
+    # 5. Followed subjects
+    followed_subjects_data = []
+    if current_user.college_id:
+        subject_subs = SubjectSubscription.query.filter_by(user_id=current_user.id, is_enabled=True).all()
+        for sub in subject_subs:
+            subject = Subject.query.filter_by(id=sub.subject_id, college_id=current_user.college_id, is_active=True).first()
+            if subject:
+                units_count = Unit.query.filter_by(subject_id=subject.id).count()
+                quizzes_count = Quiz.query.filter_by(subject_id=subject.id, is_published=True).count()
+                materials_count = StudyMaterial.query.filter_by(subject_id=subject.id, is_published=True).count()
+                
+                # Compute progress: percentage of published quizzes submitted in this subject
+                quizzes_attempted = QuizAttempt.query.filter_by(student_id=current_user.id, status='submitted').join(Quiz).filter(Quiz.subject_id == subject.id).count()
+                progress = int((quizzes_attempted / quizzes_count) * 100) if quizzes_count > 0 else 0
+                if progress > 100:
+                    progress = 100
+
+                followed_subjects_data.append({
+                    "id": subject.id,
+                    "name": subject.name,
+                    "code": subject.code,
+                    "semester": subject.semester,
+                    "units_count": units_count,
+                    "quizzes_count": quizzes_count,
+                    "materials_count": materials_count,
+                    "progress": progress
+                })
+
+    # 6. Recent quizzes (published quizzes from college)
+    recent_quizzes_data = []
+    if current_user.college_id:
+        quizzes = Quiz.query.filter_by(college_id=current_user.college_id, is_published=True).order_by(Quiz.created_at.desc()).limit(5).all()
+        for q in quizzes:
+            recent_quizzes_data.append({
+                "id": q.id,
+                "title": q.title,
+                "subject_code": q.subject.code if q.subject else None,
+                "subject": q.subject.code if q.subject else None,
+                "unit_number": q.unit.unit_number if q.unit else None,
+                "difficulty": q.difficulty,
+                "duration_minutes": q.time_limit_minutes,
+                "duration": f"{q.time_limit_minutes} mins" if q.time_limit_minutes else None,
+                "question_count": len(q.questions),
+                "questions": len(q.questions)
+            })
+
+    # 7. Notifications preview (timing-aware)
+    notifications_preview_data = []
+    unread_notifications_count = 0
+    if current_user.college_id:
+        college_sub = CollegeSubscription.query.filter_by(
+            user_id=current_user.id,
+            college_id=current_user.college_id,
+            is_enabled=True
+        ).first()
+        
+        subject_subs = SubjectSubscription.query.filter_by(
+            user_id=current_user.id,
+            is_enabled=True
+        ).all()
+        
+        from sqlalchemy import and_
+        filters = []
+        if college_sub:
+            filters.append(Notification.created_at >= college_sub.followed_at)
+        for sub in subject_subs:
+            filters.append(and_(
+                Notification.subject_id == sub.subject_id,
+                Notification.created_at >= sub.followed_at
+            ))
+            
+        if filters:
+            notifications_list = Notification.query.filter(
+                Notification.college_id == current_user.college_id,
+                or_(*filters)
+            ).order_by(Notification.created_at.desc()).limit(5).all()
+            
+            read_notification_ids = {r.notification_id for r in NotificationRead.query.filter_by(user_id=current_user.id).all()}
+            
+            for n in notifications_list:
+                is_read = n.id in read_notification_ids
+                notifications_preview_data.append({
+                    "id": n.id,
+                    "title": n.title,
+                    "message": n.message,
+                    "is_read": is_read,
+                    "isNew": not is_read,
+                    "created_at": n.created_at.isoformat() + 'Z' if n.created_at else None,
+                    "subject_code": n.subject.code if n.subject else None,
+                    "subjectCode": n.subject.code if n.subject else None
+                })
+        
+        unread_notifications_count = current_user.get_unread_notification_count()
+
+    # 8. Community preview
+    community_preview_data = []
+    community_materials = CommunityMaterial.query.filter_by(status='active').order_by(CommunityMaterial.created_at.desc()).limit(5).all()
+    for cm in community_materials:
+        community_preview_data.append({
+            "id": cm.id,
+            "title": cm.title,
+            "subject_name": cm.subject_name,
+            "subject": cm.subject_name,
+            "uploaded_by": cm.uploader.full_name if cm.uploader else "Anonymous",
+            "uploader": cm.uploader.full_name if cm.uploader else "Anonymous",
+            "likes_count": cm.likes_count,
+            "likes": cm.likes_count,
+            "rating": cm.average_rating,
+            "type": cm.material_type.upper() if cm.material_type else "PDF",
+            "created_at": cm.created_at.isoformat() + 'Z' if cm.created_at else None
+        })
+
+    # 9. Quick Stats & Stats
+    quizzes_completed = QuizAttempt.query.filter_by(student_id=current_user.id, status='submitted').count()
+    community_uploads = CommunityMaterial.query.filter_by(uploaded_by=current_user.id, status='active').count()
+
+    quick_stats_data = {
+        "followed_subjects_count": len(followed_subjects_data),
+        "quizzes_completed_count": quizzes_completed,
+        "unread_notifications_count": unread_notifications_count,
+        "community_uploads_count": community_uploads
+    }
+
+    stats_data = {
+        "followed_subjects_count": len(followed_subjects_data),
+        "unread_notifications_count": unread_notifications_count,
+        "pending_quizzes_count": len(recent_quizzes_data),
+        "community_uploads_count": community_uploads
+    }
+
+    return jsonify({
+        "success": True,
+        "user": user_data,
+        "college": college_data,
+        "followed_subjects": followed_subjects_data,
+        "recent_quizzes": recent_quizzes_data,
+        "notifications_preview": notifications_preview_data,
+        "community_preview": community_preview_data,
+        "community_materials_preview": community_preview_data,
+        "quick_stats": quick_stats_data,
+        "stats": stats_data
+    }), 200
+
 

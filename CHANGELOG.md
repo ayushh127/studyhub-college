@@ -3,7 +3,13 @@
 All notable changes to the StudyHub College project will be documented in this file.
 
 ## [Unreleased]
-- **React Frontend page-by-page migration (planned)**
+### Added
+- **GET /api/student/dashboard Endpoint**
+  - Added the endpoint to serve structured, secure JSON data representing the student dashboard workspace.
+  - Implemented session-based authentication and role checking (rejects unauthenticated requests with 401 and non-student requests with 403).
+  - Handles missing college settings, empty subject follow states, missing notifications, and blank community uploads gracefully without crashing.
+  - Returns safe metadata for user, college details (initials and logo path), subject lists with chapter progress calculations, recent quizzes, timing-aware alerts, and popular community uploads.
+  - Excluded sensitive data fields (e.g., password hashes, internal session tokens).
 
 ## [1.0.0] - 2026-06-08
 ### Added

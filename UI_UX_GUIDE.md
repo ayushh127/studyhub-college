@@ -84,10 +84,15 @@ h1, h2, h3, h4, h5, h6 {
     - Client-side onboarding filter: On the college selection page, a real-time text input filters the listing of colleges matching name, code, city, or state. Shows a clean, styled empty state with helpful tips when no matching colleges are found.
 
 14. **Student Onboarding & Subscription UI/UX**:
-    - Multi-step wizard: Break onboarding into small progress-tracked steps. Display a clean top progress indicator.
-    - College tiles: Render colleges as clean option cards with logos (or initials fallbacks) and search filters. Highlight the selected card with an Indigo border and scale transition.
-    - Subject checkboxes: Render subjects as a grid of checkbox cards grouped by semester for easy multi-selection.
-    - College update toggles: Renders a prominent CSS toggle switch or follow button, with immediate feedback (e.g. changing text/colors).
+    - Multi-step wizard: Break onboarding into small progress-tracked steps. Display a clean top progress indicator (Step 1: College, Step 2: Subjects, Step 3: Done) that dynamically highlights completed, active, and pending steps.
+    - College selection: Render active colleges as responsive cards containing logos or fallback initials, code, city, and state. Include real-time client-side text filtering and a clean empty search state.
+    - Selected college view: Display selected colleges as a distinct card with a "Change College" toggle to show/hide the search selector.
+    - Subject preview: Render subjects as a grid of clean cards with codes, unit counts, and subscription status badges to show students available courses.
+    - Complete onboarding: Provide a clear finish action button that is active only when a college has been successfully linked.
+    - Onboarding dashboard prompt: If onboarding is incomplete, display a prominent warning banner with a friendly message and a "Complete Setup" CTA button pointing to onboarding.
+    - Selected College Dashboard Card: Render selected college metadata clearly on the dashboard with logo/initials, and an inline AJAX follow updates toggle button (changing status and style instantly).
+    - Followed Subjects Filter: Display only followed subjects in the dashboard list. If no subjects are followed, show an empty state card with a "Browse All Subjects" button.
+    - Quick Access Grid: Provide a responsive navigation row for quick access to Subjects, Quizzes, Community Library, and Notifications.
 
 ### Avoid:
 - Bakery/cafe styling, cream backgrounds, and brown colors.

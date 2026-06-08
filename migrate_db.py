@@ -76,6 +76,30 @@ def migrate():
                     conn.commit()
                 else:
                     print("Column 'is_enabled' already exists in 'subject_subscriptions' table.")
+
+                # Check and add subject_subscriptions.followed_at
+                cursor.execute("PRAGMA table_info(subject_subscriptions);")
+                columns = cursor.fetchall()
+                col_names = [col[1] for col in columns]
+                if 'followed_at' not in col_names:
+                    print("Adding 'followed_at' column to 'subject_subscriptions' table...")
+                    cursor.execute("ALTER TABLE subject_subscriptions ADD COLUMN followed_at DATETIME;")
+                    cursor.execute("UPDATE subject_subscriptions SET followed_at = created_at;")
+                    conn.commit()
+                else:
+                    print("Column 'followed_at' already exists in 'subject_subscriptions' table.")
+
+                # Check and add college_subscriptions.followed_at
+                cursor.execute("PRAGMA table_info(college_subscriptions);")
+                columns = cursor.fetchall()
+                col_names = [col[1] for col in columns]
+                if 'followed_at' not in col_names:
+                    print("Adding 'followed_at' column to 'college_subscriptions' table...")
+                    cursor.execute("ALTER TABLE college_subscriptions ADD COLUMN followed_at DATETIME;")
+                    cursor.execute("UPDATE college_subscriptions SET followed_at = created_at;")
+                    conn.commit()
+                else:
+                    print("Column 'followed_at' already exists in 'college_subscriptions' table.")
                     
                 conn.close()
             else:

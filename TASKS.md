@@ -265,22 +265,38 @@ This document tracks the granular development tasks for the StudyHub College MVP
 - [x] Step 3: Update `CHANGELOG.md` and `TASKS.md`
 
 ## Phase 18: Student Onboarding and Subscription Flow
-*Note: Student onboarding/subscription database foundation added. Routes/UI/notification logic not implemented yet.*
 - [x] Step 1: Database models & migrations
   - [x] Add `onboarding_completed` and `profile_completed` columns to `User` model in `app/models.py`
   - [x] Add `CollegeSubscription` model in `app/models.py`
   - [x] Add `is_enabled` column to `SubjectSubscription` model in `app/models.py`
   - [x] Update `migrate_db.py` to run safe, idempotent SQLite upgrades for new tables/columns
-- [ ] Step 2: Onboarding controller & redirects
-  - [ ] Implement global onboarding check in `student_bp.before_request`
-  - [ ] Create `/student/onboarding` GET and POST routes in `app/routes/student.py`
-- [ ] Step 3: Onboarding UI templates
-  - [ ] Build multi-step wizard template `student/onboarding.html`
-- [ ] Step 4: AJAX subscription toggles
-  - [ ] Implement `/student/colleges/<id>/follow` and `/student/subjects/<id>/follow` routes
-  - [ ] Add frontend JS triggers for toggles
-- [ ] Step 5: Notifications logic refactoring
-  - [ ] Refactor notification center queries and counts to deduplicate college and subject alerts
-- [ ] Step 6: Dashboard & UI customizations
-  - [ ] Clean up student dashboard to show followed subjects and selected college badge
-  - [ ] Perform manual testing and QA verification
+- [x] Step 2: Onboarding controller & redirects
+  - [x] Implement global onboarding check in `student_bp.before_request`
+  - [x] Create `/student/onboarding` GET and POST routes in `app/routes/student.py`
+- [x] Step 3: Onboarding UI templates
+  - [x] Build multi-step wizard template `student/onboarding.html`
+- [x] Step 4: AJAX subscription toggles
+  - [x] Implement `/student/colleges/<id>/toggle-follow` and `/student/subjects/<id>/toggle-follow` routes with fallback form support
+  - [x] Add AJAX-friendly auth/role checks in before_request middleware
+  - [x] Fix Javascript handlers with correct URL requests, ok-checks, and button state updates
+- [x] Step 5: Notifications logic refactoring
+  - [x] Refactor notification center queries and counts to deduplicate college and subject alerts
+- [x] Step 6: Dashboard & UI customizations & AJAX Toggle Bugfix
+  - [x] Clean up student dashboard to show followed subjects and selected college badge
+  - [x] Perform automated and manual testing for follow/unfollow AJAX and fallback routes
+  - [x] Verify all security, inactive resource, and cross-college subscription block constraints
+- [x] Step 7: Notification subscription timing logic fix
+  - [x] Add `followed_at` (DateTime) column to `SubjectSubscription` and `CollegeSubscription` models
+  - [x] Update database migrations script `migrate_db.py` to add columns and backfill existing rows
+  - [x] Filter notification list, unread badge count, and read actions to only include notifications created after subscription activation (`created_at >= followed_at`)
+  - [x] Support notification deduplication under combined timing window filters
+  - [x] Create timing verification script `scratch/test_notification_timing_qa.py` and verify all cases pass
+
+## Phase 19: React Frontend Migration (Version 2)
+- [ ] Initialize React frontend integration strategy (Vite bundle integration or Next.js hybrid setups)
+- [ ] Setup API JSON routes/endpoints on Flask backend to feed React components
+- [ ] Migrate Student Dashboard page (Step 1 of frontend refactor)
+- [ ] Migrate Onboarding Flow wizard interfaces
+- [ ] Migrate Subjects Directory & Unit Details grids
+- [ ] Migrate Quiz Solver component interface
+- [ ] Migrate Community Library shared folder grids

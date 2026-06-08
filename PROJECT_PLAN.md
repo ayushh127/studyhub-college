@@ -41,8 +41,8 @@ Build the StudyHub College MVP, a multi-role web platform for college content ma
 - [x] Hook content publisher routes to trigger notifications
 
 ## Status
-- **Current Phase:** Completed MVP release (v1), Subject-Wise Notifications (Phase 7), SaaS UI Redesign (Phases 9, 13, 14), Community Library (Phase 10), Navbar Cleanup & Mobile UX Polish (Phase 11), Edit & Delete Permissions Audit (Phase 12), Onboarding & Selection Improvements (Phase 15), Mobile UI Usability Fixes (Phase 16), and Database Migration Improvements (Phase 17).
-- **Next Step:** Implement Student Onboarding and Subscription Flow (Phase 18).
+- **Current Status:** Version 1 Stable Release. All planned Jinja/Flask core features, onboarding wizards, mobile polishes, security audits, and notification timing fixes are fully implemented, verified, and locked.
+- **V2 Roadmap:** Initiating Version 2 React frontend migration. This migration will proceed page-by-page to keep the system continuously stable. The first page targeted for React refactoring is the student dashboard.
 
 ### Phase 10: Community Library
 - [x] Step 1: Database models setup (`CommunityMaterial`, `CommunityMaterialLike`, `CommunityMaterialRating`, `CommunityMaterialReport`)
@@ -154,11 +154,19 @@ Build the StudyHub College MVP, a multi-role web platform for college content ma
 - [x] Updated database migration script `migrate_db.py` to be fully robust and idempotent.
 - [x] Documented the simplified post-pull migration workflow in `DEPLOYMENT_PYTHONANYWHERE_FREE.md`.
 
-## Phase 18: Student Onboarding and Subscription Flow
-*Note: Student onboarding/subscription database foundation added. Routes/UI/notification logic not implemented yet.*
+## Phase 18: Student Onboarding and Subscription Flow (Completed)
 - [x] Create database models & safe idempotent SQLite migrations (added `User.onboarding_completed`, `User.profile_completed`, `SubjectSubscription.is_enabled`, and `CollegeSubscription` table).
-- [ ] Implement onboarding progress check (redirect new students with incomplete profiles).
-- [ ] Create searchable college selection card grid and subject checkbox grid.
-- [ ] Build follow/unfollow college updates routes and controls.
-- [ ] Refactor notification center queries to seamlessly deduplicate college and subject alerts.
-- [ ] Customize the student dashboard to display the selected college logo and hide unsubscribed subjects.
+- [x] Implement onboarding progress check (redirect new students with incomplete profiles).
+- [x] Create searchable college selection card grid and subject checkbox grid.
+- [x] Build follow/unfollow college updates routes and controls.
+- [x] Refactor notification center queries to seamlessly deduplicate college and subject alerts.
+- [x] Customize the student dashboard to display the selected college logo and hide unsubscribed subjects.
+- [x] Fix notification subscription timing logic to ensure students only see notifications created after subscription activation (`created_at >= followed_at`).
+
+## Phase 19: React Frontend Migration (Version 2 - Planned)
+- [ ] Design and set up React framework integration (Vite/Next.js dynamic hybrid approach)
+- [ ] Migrate Student Dashboard page (First page targeted for React)
+- [ ] Migrate Onboarding Flow pages
+- [ ] Migrate Subjects Directory & Course pages
+- [ ] Migrate Community Library pages
+- [ ] Migrate Quiz Engine solver interface

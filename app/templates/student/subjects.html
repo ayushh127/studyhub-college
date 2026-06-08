@@ -33,7 +33,15 @@
                 </p>
             </div>
             
-            <a href="{{ url_for('student.subject_details', id=subject.id) }}" class="btn btn-primary" style="text-align: center; width: 100%; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.85rem; min-height: 38px;">View Course Content &rarr;</a>
+            <div style="display: flex; gap: 0.5rem; margin-top: auto;">
+                <a href="{{ url_for('student.subject_details', id=subject.id) }}" class="btn btn-primary" style="flex: 1; text-align: center; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.85rem; min-height: 38px; padding: 0.5rem;">View Course Content &rarr;</a>
+                {% set is_subscribed = current_user.subscriptions|selectattr('subject_id', 'equalto', subject.id)|list|length > 0 %}
+                <form action="{{ url_for('student.toggle_subject_follow', subject_id=subject.id) }}" method="POST" style="display: inline;" onsubmit="toggleSubjectFollowGrid(event, this)">
+                    <button type="submit" class="btn {% if is_subscribed %}btn-primary{% else %}btn-outline{% endif %}" style="border-radius: 8px; font-weight: 600; font-size: 0.85rem; min-height: 38px; padding: 0.5rem; {% if not is_subscribed %}border-color: var(--primary); color: var(--primary);{% endif %}" title="Toggle Subscription">
+                        {% if is_subscribed %}🔕{% else %}🔔{% endif %}
+                    </button>
+                </form>
+            </div>
         </div>
         {% else %}
         <div class="empty-state" style="grid-column: 1 / -1; padding: 5rem 2rem;">
@@ -86,5 +94,56 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+async function toggleSubjectFollowGrid(event, form) {
+    event.preventDefault();
+    const btn = form.querySelector('button');
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '...';
+    btn.style.pointerEvents = 'none';
+
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        let data;
+        try {
+            data = await response.json();
+        } catch (e) {
+            throw new Error('Invalid response format from server.');
+        }
+
+        if (!response.ok) {
+            throw new Error(data.message || `Server error (Status ${response.status})`);
+        }
+        
+        if (data.success) {
+            if (data.following) {
+                btn.className = 'btn btn-primary';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+                btn.innerHTML = '🔕';
+            } else {
+                btn.className = 'btn btn-outline';
+                btn.style.borderColor = 'var(--primary)';
+                btn.style.color = 'var(--primary)';
+                btn.innerHTML = '🔔';
+            }
+        } else {
+            throw new Error(data.message || 'Error toggling subscription.');
+        }
+    } catch (err) {
+        console.error(err);
+        alert(err.message || 'Network error. Please try again.');
+    } finally {
+        btn.innerHTML = btn.innerHTML === '...' ? originalHTML : btn.innerHTML;
+        btn.style.pointerEvents = 'auto';
+    }
+}
 </script>
 {% endblock %}

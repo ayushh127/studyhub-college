@@ -26,12 +26,10 @@
         </div>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
             {% set is_subscribed = current_user.subscriptions|selectattr('subject_id', 'equalto', subject.id)|list|length > 0 %}
-            <form method="POST" action="{{ url_for('student.toggle_subscription', id=subject.id) }}" style="display: inline; margin: 0;">
-                {% if is_subscribed %}
-                <button type="submit" class="btn btn-primary" style="font-size: 0.85rem; font-weight: 600; min-height: 38px; border-radius: 8px;">🔕 Unsubscribe</button>
-                {% else %}
-                <button type="submit" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary); font-size: 0.85rem; font-weight: 600; min-height: 38px; border-radius: 8px;">🔔 Subscribe</button>
-                {% endif %}
+            <form action="{{ url_for('student.toggle_subject_follow', subject_id=subject.id) }}" method="POST" style="display: inline;" onsubmit="toggleSubjectFollowDetail(event, this)">
+                <button type="submit" id="subjectDetailToggleBtn" class="btn {% if is_subscribed %}btn-primary{% else %}btn-outline{% endif %}" style="font-size: 0.85rem; font-weight: 600; min-height: 38px; border-radius: 8px; {% if not is_subscribed %}border-color: var(--primary); color: var(--primary);{% endif %}">
+                    {% if is_subscribed %}🔕 Unsubscribe{% else %}🔔 Subscribe{% endif %}
+                </button>
             </form>
             <a href="{{ url_for('student.subjects') }}" class="btn btn-outline" style="font-size: 0.85rem; font-weight: 600; min-height: 38px; border-radius: 8px;">Back</a>
         </div>
@@ -152,4 +150,56 @@
         </div>
     </div>
 </div>
+<script>
+async function toggleSubjectFollowDetail(event, form) {
+    event.preventDefault();
+    const btn = form.querySelector('button');
+    const originalText = btn.innerText;
+    btn.innerText = '...';
+    btn.style.pointerEvents = 'none';
+
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        let data;
+        try {
+            data = await response.json();
+        } catch (e) {
+            throw new Error('Invalid response format from server.');
+        }
+
+        if (!response.ok) {
+            throw new Error(data.message || `Server error (Status ${response.status})`);
+        }
+        
+        if (data.success) {
+            if (data.following) {
+                btn.className = 'btn btn-primary';
+                btn.style.borderColor = '';
+                btn.style.color = '';
+                btn.innerText = '🔕 Unsubscribe';
+            } else {
+                btn.className = 'btn btn-outline';
+                btn.style.borderColor = 'var(--primary)';
+                btn.style.color = 'var(--primary)';
+                btn.innerText = '🔔 Subscribe';
+            }
+        } else {
+            throw new Error(data.message || 'Error toggling subscription.');
+        }
+    } catch (err) {
+        console.error(err);
+        alert(err.message || 'Network error. Please try again.');
+    } finally {
+        btn.innerText = btn.innerText === '...' ? originalText : btn.innerText;
+        btn.style.pointerEvents = 'auto';
+    }
+}
+</script>
 {% endblock %}

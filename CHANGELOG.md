@@ -3,12 +3,59 @@
 All notable changes to the StudyHub College project will be documented in this file.
 
 ## [Unreleased]
+- **React Frontend page-by-page migration (planned)**
+
+## [1.0.0] - 2026-06-08
+### Added
+- **StudyHub College v1 Stable Checkpoint**
+  - Created [VERSION_1_RELEASE_NOTES.md](file:///d:/StudyHub/VERSION_1_RELEASE_NOTES.md) detailing completed features, known limitations, and deployment configurations.
+  - Created [V1_BACKUP_AND_ROLLBACK.md](file:///d:/StudyHub/V1_BACKUP_AND_ROLLBACK.md) outlining full processes for backing up the SQLite database (`studyhub.db`), archiving the `uploads/` folder, tagging the release, and restoring or rolling back the code from tags.
+  - Updated [README.md](file:///d:/StudyHub/README.md) and [PROJECT_PLAN.md](file:///d:/StudyHub/PROJECT_PLAN.md) to log Version 1 stable release status and detail the roadmap for the page-by-page React frontend migration in Version 2.
+- **Fixed Notification Subscription Timing Logic**
+  - Added a `followed_at` (DateTime) column to `SubjectSubscription` and `CollegeSubscription` models in `app/models.py`.
+  - Updated `migrate_db.py` to add columns and backfill existing subscriptions using their `created_at` timestamp.
+  - Refactored notification listing, unread counts (`User.get_unread_notification_count`), single mark-as-read, open redirect, and read-all actions in `app/routes/student.py` to restrict visibility to notifications created after subscription activation (`created_at >= followed_at`).
+  - Implemented logic combining college and subject subscription timing windows to deduplicate notifications and display eligible items under either path.
+  - Created automated timing QA test script `test_notification_timing_qa.py` verifying all subscription scenarios, timing boundaries, security restrictions, and deduplication logic.
+- **Student Onboarding & Subscription Dashboard Update & QA (Step 6)**
+  - Redesigned `dashboard.html` to integrate the onboarding setup prompt banner, selected college card with inline AJAX toggle following, and followed subjects filtering.
+  - Created a quick access navigation grid on the dashboard for Subjects, Quizzes, Community Library, and Notifications.
+  - Resolved student dashboard redirection loops by adding `student.dashboard` to the onboarding exceptions allowed list and removing college checks from the route, allowing incomplete profiles to land on the dashboard safely.
+  - Formulated a comprehensive QA manual and automated test script verifying unauthenticated, role check, active status, cross-college, and onboarding flow behaviors.
+  - Documented design standards, route details, and testing summaries in `ONBOARDING_SUBSCRIPTION_QA_REPORT.md` and related documents.
+- **Fixed AJAX Follow/Unfollow Network Error and Standardized Routes**
+  - Standardized subject follow route URL to `/student/subjects/<int:subject_id>/toggle-follow`.
+  - Added AJAX-friendly authentication and role check middleware in student blueprint `before_request`. Returning JSON 401 for unauthenticated and JSON 403 for unauthorized requests instead of HTML redirects.
+  - Implemented strict route security constraints: only student role allowed, inactive colleges/subjects blocked, and cross-college subject subscriptions blocked.
+  - Standardized JSON responses for college and subject follows to return exact keys: `{"success": true, "following": true/false, "label": "...", "message": "..."}`.
+  - Wrapped all follow toggle buttons in HTML forms to support browser fallback redirects with flash messages if Javascript is disabled or fails to execute.
+  - Enhanced Javascript fetch handlers in onboarding, subjects directory, and subject details templates to request form action URLs, handle non-200 JSON errors safely, and dynamically update CSS and text states.
+- **Notifications Logic Refactoring** (Student Onboarding Step 5)
+  - Updated notification center queries to consolidate alerts for students subscribed to the entire college.
+  - Updated unread count and read markers logic to prevent duplicate notifications and accurately reflect subscription status.
+- **Added AJAX Follow/Unfollow Toggles** (Student Onboarding Step 4)
+  - Added new backend endpoints for toggling college and subject subscriptions via AJAX JSON.
+  - Implemented client-side JS buttons in Onboarding, Subject Directory, and Subject Details templates for seamless UI toggling.
+- **Student Onboarding UI Templates (Step 3)**:
+  - Overhauled `app/templates/student/onboarding.html` into a polished, mobile-first multi-step layout.
+  - Added a visual 3-step progress bar (College -> Subjects -> Done) that scales across device widths.
+  - Implemented responsive active colleges card layout with logo or initials avatar, code, and city/state tags.
+  - Integrated real-time client-side text filtering matching name, code, city, and state with empty-state messages.
+  - Created a selected college details card displaying linked college metadata and a "Change College" toggle to show/hide the selection panel.
+  - Rendered a syllabus subjects preview list showing subject name, code, units length, and current subscription badges.
+  - Added a college-wide notifications preference status card to outline student notifications.
+  - Handled conditional submission states for the "Finish Setup" button.
 - **Student Onboarding & Subscription Database Foundation**:
   - Added `onboarding_completed` (Boolean) and `profile_completed` (Boolean) fields to the `User` model in `app/models.py`.
   - Added the `CollegeSubscription` model in `app/models.py` with unique constraint on `(user_id, college_id)` and cascade deletion configuration.
   - Added the `is_enabled` (Boolean) column to the `SubjectSubscription` model in `app/models.py` to enable active subscription states.
   - Updated the migration script `migrate_db.py` to automatically execute safe, idempotent schema upgrades for SQLite databases on local and production servers (PythonAnywhere).
   - *Note: Student onboarding/subscription database foundation added. Routes/UI/notification logic not implemented yet.*
+- **Student Onboarding Routes**: 
+  - Added onboarding flow controller in `app/routes/student.py`.
+  - Implemented `before_request` redirect for students with incomplete profiles.
+  - Added endpoints for college selection (`POST /student/onboarding/college`) and completion (`POST /student/onboarding/complete`).
+  - Created a temporary minimal UI template to facilitate backend testing.
 - Updated database migration script `migrate_db.py` to be fully robust and idempotent. It now runs `db.create_all()` to build standard tables, checks for SQLite databases, and safely runs `ALTER TABLE` queries to add `logo_path` columns to the `colleges` and `college_requests` tables if they do not exist. This prevents database 500 errors on production environments (like PythonAnywhere) when deploying new releases. Updated `DEPLOYMENT_PYTHONANYWHERE_FREE.md` with post-pull migration workflow instructions.
 - Implemented comprehensive visual frontend redesign across StudyHub College templates. Visual transformations cover public landing (`index.html`), about page (`about.html`), login (`login.html`), register (`register.html`), college registration/success views, student dashboard (`dashboard.html`), college onboarding selection (`select_college.html`), subjects explorer (`subjects.html`), subject details (`subject_details.html`), unit details (`unit_details.html`), PYQ directory (`pyqs.html`), PYQ details (`pyq_details.html`), community library hub (`community_list.html`), upload form (`community_upload.html`), edit form (`community_edit.html`), My Uploads (`community_my_uploads.html`), public uploader profile (`community_user_profile.html`), quiz start (`quiz_start.html`), quiz attempt portal (`quiz_attempt.html`), quiz result (`quiz_result.html`), review (`quiz_review.html`), notifications center (`notifications.html`), error pages (403, 404, 413, 500), and platform/college admin dashboards. Standardized fonts, spacing, shadows, and button transitions for a premium modern SaaS feel, completely purging Cormorant Garamond / serif typography in favor of the Inter sans-serif stack. Added interactive client-side search and filtering for the student PYQ directory.
 - Implemented College Logo and Onboarding improvements:

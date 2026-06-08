@@ -14,6 +14,7 @@ Tracks which students are subscribed to which subjects.
 * `user_id` (Integer, ForeignKey('user.id'), nullable=False)
 * `subject_id` (Integer, ForeignKey('subject.id'), nullable=False)
 * `created_at` (DateTime, default=datetime.utcnow)
+* `followed_at` (DateTime, default=datetime.utcnow, nullable=False) -- tracks when subscription became active
 * *Constraint*: UniqueConstraint('user_id', 'subject_id')
 
 ### `Notification` (Model)
@@ -88,8 +89,9 @@ def trigger_notification(college_id, subject_id, title, message, link):
 ## 5. Security & Isolation Rules
 
 * **College Level Isolation**: Students can only retrieve notifications where `Notification.college_id == current_user.college_id`.
-* **Subscription Isolation**: Query notifications by joining on `SubjectSubscription` where `SubjectSubscription.user_id == current_user.id` and `SubjectSubscription.subject_id == Notification.subject_id`.
-* **Read-Status Integrity**: Reading a notification creates a record in `NotificationRead` bound only to `current_user.id`.
+* **Subscription Timing Constraint**: Students only see notifications created after their subscription became active (`Notification.created_at >= Subscription.followed_at`).
+* **Deduplication**: If a student is subscribed to both a college and a subject, notifications are deduplicated and displayed if they qualify under *either* active subscription timing window.
+* **Read-Status Integrity**: Reading a notification creates a record in `NotificationRead` bound only to `current_user.id`. Reading or opening is only permitted if the notification is eligible (matches timing constraint rules).
 * **Impersonation Safety**: Platform admins impersonating a student should not persist read records or subscriptions unless desired, but standard role checks will handle session authentication cleanly.
 
 ---

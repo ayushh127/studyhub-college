@@ -59,8 +59,8 @@
         {% else %}
         <div class="empty-state" style="padding: 5rem 2rem;">
             <span style="font-size: 3rem; display: block; margin-bottom: 1rem;">🔔</span>
-            <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text);">No Notifications</h3>
-            <p class="muted" style="max-width: 380px; margin: 0.5rem auto 1.5rem auto; font-size: 0.9rem;">You haven't received any notifications yet. Subscribe to subjects to get alerts when materials or quizzes are published.</p>
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text);">No Notifications Yet</h3>
+            <p class="muted" style="max-width: 380px; margin: 0.5rem auto 1.5rem auto; font-size: 0.9rem;">No notifications yet. Follow your college or subjects to receive updates.</p>
             <a href="{{ url_for('student.subjects') }}" class="btn btn-primary btn-sm">Browse Subjects</a>
         </div>
         {% endfor %}

@@ -1,0 +1,364 @@
+{% extends "base.html" %}
+
+{% block title %}Set up your StudyHub - StudyHub College{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 2rem auto; padding: 0 1rem; padding-bottom: 4rem;">
+    <!-- Welcome Header & Progress Indicator -->
+    <div style="text-align: center; margin-bottom: 2.5rem;">
+        <span style="font-size: 2.5rem; display: block; margin-bottom: 0.75rem;">🚀</span>
+        <h2 style="margin: 0; font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Set up your StudyHub</h2>
+        <p class="muted" style="margin-top: 0.5rem; font-size: 1rem; font-weight: 500; max-width: 480px; margin-left: auto; margin-right: auto;">
+            Choose your college and follow the subjects you study.
+        </p>
+    </div>
+
+    <!-- Progress Indicator Tracker -->
+    <div class="onboarding-steps" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3.5rem; max-width: 500px; margin-left: auto; margin-right: auto; position: relative;">
+        <!-- Line behind steps -->
+        <div style="position: absolute; top: 20px; left: 10%; right: 10%; height: 2px; background-color: var(--border); z-index: 1;"></div>
+        <!-- Highlighted line if college is selected -->
+        {% if selected_college %}
+        <div style="position: absolute; top: 20px; left: 10%; width: 40%; height: 2px; background-color: var(--primary); z-index: 2;"></div>
+        {% endif %}
+        
+        <!-- Step 1: College Selection -->
+        <div style="display: flex; flex-direction: column; align-items: center; z-index: 3; position: relative; width: 80px; text-align: center;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; 
+                {% if selected_college %}
+                background-color: var(--success); color: white; border: 2px solid var(--success);
+                {% else %}
+                background-color: var(--primary); color: white; border: 2px solid var(--primary);
+                {% endif %}">
+                {% if selected_college %}✓{% else %}1{% endif %}
+            </div>
+            <span style="font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; color: {% if selected_college %}var(--success){% else %}var(--text){% endif %};">College</span>
+        </div>
+        
+        <!-- Step 2: Choose Subjects -->
+        <div style="display: flex; flex-direction: column; align-items: center; z-index: 3; position: relative; width: 80px; text-align: center;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem;
+                {% if selected_college %}
+                background-color: var(--primary); color: white; border: 2px solid var(--primary);
+                {% else %}
+                background-color: var(--surface); color: var(--muted); border: 2px solid var(--border);
+                {% endif %}">
+                2
+            </div>
+            <span style="font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; color: {% if selected_college %}var(--primary){% else %}var(--muted){% endif %};">Subjects</span>
+        </div>
+        
+        <!-- Step 3: Done -->
+        <div style="display: flex; flex-direction: column; align-items: center; z-index: 3; position: relative; width: 80px; text-align: center;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem;
+                background-color: var(--surface); color: var(--muted); border: 2px solid var(--border);">
+                3
+            </div>
+            <span style="font-size: 0.8rem; font-weight: 600; margin-top: 0.5rem; color: var(--muted);">Done</span>
+        </div>
+    </div>
+
+    <!-- Section 1: Selected College (Shown if College is Selected) -->
+    {% if selected_college %}
+    <div class="card animate-fade-in" style="border: 2px solid var(--primary); background: var(--surface-soft); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                {% if selected_college.logo_path %}
+                <img src="{{ url_for('files.serve_college_logo', id=selected_college.id) }}" alt="Logo" style="width: 50px; height: 50px; object-fit: contain; border-radius: 8px; border: 1px solid var(--border); background: white; padding: 2px;">
+                {% else %}
+                <div style="width: 50px; height: 50px; border-radius: 8px; background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; box-shadow: var(--shadow-sm);">
+                    {{ selected_college.code[:3] }}
+                </div>
+                {% endif %}
+                <div>
+                    <h3 style="margin: 0; color: var(--primary-dark); font-size: 1.2rem; font-weight: 800;">Selected: {{ selected_college.name }}</h3>
+                    <p class="muted" style="margin: 0; font-size: 0.85rem; font-weight: 500;">📍 {{ selected_college.city }}, {{ selected_college.state }} • Code: {{ selected_college.code }}</p>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="changeCollegeBtn" class="btn btn-outline btn-sm" onclick="toggleCollegeSearch()" style="font-weight: 600;">Change College</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- College Selector Wrapper (Always rendered but conditionally hidden) -->
+    <div id="collegeSelectionWrapper" {% if selected_college %}style="display: none;"{% endif %}>
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">Select Your Institution</h3>
+        
+        <!-- Search Input Card -->
+        <div class="card animate-fade-in" style="padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid var(--border); background-color: var(--surface);">
+            <div style="position: relative;">
+                <input type="text" id="collegeSearch" placeholder="Search colleges by name, code, city, or state..." class="form-control" style="padding-left: 2.5rem; min-height: 42px; border-radius: 8px;">
+                <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 1rem;">🔍</span>
+            </div>
+        </div>
+
+        <!-- Colleges Card Grid -->
+        <div class="grid-responsive" id="collegesGrid" style="gap: 1.25rem; margin-bottom: 2rem;">
+            {% for college in colleges %}
+            <div class="card college-option-card animate-fade-in" data-name="{{ college.name|lower }}" data-code="{{ college.code|lower }}" data-city="{{ college.city|lower }}" data-state="{{ college.state|lower }}" style="padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--border); border-radius: 12px; min-height: 180px; margin-bottom: 0;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                        {% if college.logo_path %}
+                        <img src="{{ url_for('files.serve_college_logo', id=college.id) }}" alt="Logo" style="width: 44px; height: 44px; object-fit: contain; border-radius: 6px; border: 1px solid var(--border); background: white; padding: 2px;">
+                        {% else %}
+                        <div style="width: 44px; height: 44px; border-radius: 6px; background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; box-shadow: var(--shadow-sm);">
+                            {{ college.code[:3] }}
+                        </div>
+                        {% endif %}
+                        <span class="badge" style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase;">{{ college.code }}</span>
+                    </div>
+                    
+                    <h4 style="margin: 0; margin-bottom: 0.25rem; font-weight: 700; color: var(--text); font-size: 1.05rem; line-height: 1.3;">{{ college.name }}</h4>
+                    <p class="muted" style="font-size: 0.8rem; margin-bottom: 0.5rem; font-weight: 500;">📍 {{ college.city }}, {{ college.state }}</p>
+                </div>
+                
+                <form action="{{ url_for('student.onboarding_college') }}" method="POST" style="margin-top: 1rem; width: 100%;">
+                    <input type="hidden" name="college_id" value="{{ college.id }}">
+                    <button type="submit" class="btn btn-primary btn-sm btn-full" style="font-weight: 600; border-radius: 8px;">Select College</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Empty State for Searches -->
+        <div id="noCollegesFound" class="empty-state animate-fade-in" style="display: none; padding: 3rem 1.5rem; margin-bottom: 2rem; border-radius: 12px;">
+            <div style="font-size: 2.5rem; margin-bottom: 1rem;">🏫</div>
+            <h4 style="font-weight: 700; color: var(--text);">No Colleges Found</h4>
+            <p class="muted" style="margin-bottom: 0;">No active colleges match your search parameters. Try adjusting your query.</p>
+        </div>
+    </div>
+
+    <!-- Section 2: Choose Subjects (Shown only when College is Selected) -->
+    <div style="margin-top: 2rem;">
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.25rem;">Syllabus Subjects</h3>
+        
+        {% if selected_college %}
+            {% if subjects %}
+            <p class="muted" style="font-size: 0.9rem; margin-top: -0.75rem; margin-bottom: 1.25rem; font-weight: 500;">
+                Review the core curriculum subjects established for {{ selected_college.name }}.
+            </p>
+            <div class="grid-responsive" style="gap: 1rem; margin-bottom: 2rem;">
+                {% for subject in subjects %}
+                <div class="card animate-fade-in" style="padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 0;">
+                    <div>
+                        <h4 style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text);">{{ subject.name }}</h4>
+                        <p class="muted" style="margin: 0.25rem 0 0; font-size: 0.8rem; font-weight: 500;">
+                            {% if subject.code %}Code: {{ subject.code }} • {% endif %}
+                            {{ subject.units|length }} Units
+                            {% if subject.semester %} • Semester {{ subject.semester }}{% endif %}
+                        </p>
+                    </div>
+                    <div>
+                        <form action="{{ url_for('student.toggle_subject_follow', subject_id=subject.id) }}" method="POST" style="display: inline;" onsubmit="toggleSubjectFollow(event, this)">
+                            <button type="submit" class="subject-toggle-btn badge" style="border: none; padding: 0.4rem 0.6rem; border-radius: 6px; font-weight: 600; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; {% if subject.id in subscribed_subject_ids %}background-color: var(--success); color: white;{% else %}background-color: var(--surface-soft); color: var(--muted);{% endif %}">
+                                {% if subject.id in subscribed_subject_ids %}✓ Following{% else %}Not Following{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state animate-fade-in" style="padding: 3rem 1.5rem; margin-bottom: 2rem; border-radius: 12px;">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">📚</div>
+                <h4 style="font-weight: 700; color: var(--text);">No Subjects Registered</h4>
+                <p class="muted" style="margin-bottom: 0;">No active subjects have been added for this institution yet.</p>
+            </div>
+            {% endif %}
+
+            <!-- College updates Preference Card -->
+            <div class="card animate-fade-in" style="border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 2rem; background: var(--surface); display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <span style="font-size: 1.75rem;">📣</span>
+                    <div>
+                        <h4 style="margin: 0; font-size: 1.025rem; font-weight: 700; color: var(--text);">College-Wide Notifications</h4>
+                        <p class="muted" style="margin: 0.15rem 0 0; font-size: 0.8rem; font-weight: 500;">Receive all official college updates. (If turned off, you will only receive notifications for subjects you follow.)</p>
+                    </div>
+                </div>
+                <div>
+                    <form action="{{ url_for('student.toggle_college_follow', college_id=selected_college.id) }}" method="POST" style="display: inline;" onsubmit="toggleCollegeFollow(event, this)">
+                        <button type="submit" id="collegeToggleBtn" class="badge" style="border: none; padding: 0.4rem 0.6rem; border-radius: 6px; font-weight: 600; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; {% if college_subscribed %}background-color: var(--success); color: white;{% else %}background-color: var(--surface-soft); color: var(--muted);{% endif %}">
+                            {% if college_subscribed %}✓ Subscribed{% else %}Not Subscribed{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="card animate-fade-in" style="padding: 2.5rem 1.5rem; text-align: center; border: 1px dashed var(--border); border-radius: 12px; background: transparent; margin-bottom: 2rem;">
+                <p class="muted" style="margin: 0; font-weight: 500; font-size: 0.95rem;">Select a college first to see subjects.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Section 3: Done / Complete Button -->
+    <div style="margin-top: 3rem; border-top: 1px solid var(--border); padding-top: 2rem;">
+        {% if selected_college %}
+        <form action="{{ url_for('student.onboarding_complete') }}" method="POST" style="max-width: 320px; margin: 0 auto;">
+            <button type="submit" class="btn btn-primary btn-lg btn-full" style="font-weight: 700; font-size: 1rem; border-radius: 8px; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.15);">Finish Setup</button>
+        </form>
+        {% else %}
+        <div style="max-width: 320px; margin: 0 auto; text-align: center;">
+            <button type="button" class="btn btn-outline btn-lg btn-full" style="cursor: not-allowed; font-weight: 600; font-size: 1rem; border-radius: 8px;" disabled>
+                Finish Setup
+            </button>
+            <p class="muted" style="font-size: 0.75rem; margin-top: 0.5rem; font-weight: 500;">Please select a college above to complete setup.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function toggleCollegeSearch() {
+    var wrapper = document.getElementById('collegeSelectionWrapper');
+    var btn = document.getElementById('changeCollegeBtn');
+    if (wrapper.style.display === 'none') {
+        wrapper.style.display = 'block';
+        btn.innerText = 'Hide Selector';
+        // Scroll to the selector smoothly on mobile
+        setTimeout(function() {
+            wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    } else {
+        wrapper.style.display = 'none';
+        btn.innerText = 'Change College';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('collegeSearch');
+    const cards = document.querySelectorAll('.college-option-card');
+    const noCollegesFound = document.getElementById('noCollegesFound');
+
+    function filterColleges() {
+        const query = searchInput.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name');
+            const code = card.getAttribute('data-code');
+            const city = card.getAttribute('data-city');
+            const state = card.getAttribute('data-state');
+
+            const matches = !query || name.includes(query) || code.includes(query) || city.includes(query) || state.includes(query);
+            
+            if (matches) {
+                card.style.display = 'flex';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        if (visibleCount === 0 && cards.length > 0) {
+            noCollegesFound.style.display = 'block';
+        } else {
+            noCollegesFound.style.display = 'none';
+        }
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', filterColleges);
+    }
+});
+
+async function toggleCollegeFollow(event, form) {
+    event.preventDefault();
+    const btn = form.querySelector('button');
+    const originalText = btn.innerText;
+    btn.innerText = '...';
+    btn.style.pointerEvents = 'none';
+
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        let data;
+        try {
+            data = await response.json();
+        } catch (e) {
+            throw new Error('Invalid response format from server.');
+        }
+
+        if (!response.ok) {
+            throw new Error(data.message || `Server error (Status ${response.status})`);
+        }
+        
+        if (data.success) {
+            if (data.following) {
+                btn.style.backgroundColor = 'var(--success)';
+                btn.style.color = 'white';
+                btn.innerText = '✓ Subscribed';
+            } else {
+                btn.style.backgroundColor = 'var(--surface-soft)';
+                btn.style.color = 'var(--muted)';
+                btn.innerText = 'Not Subscribed';
+            }
+        } else {
+            throw new Error(data.message || 'Error toggling subscription.');
+        }
+    } catch (err) {
+        console.error(err);
+        alert(err.message || 'Network error. Please try again.');
+    } finally {
+        btn.innerText = btn.innerText === '...' ? originalText : btn.innerText;
+        btn.style.pointerEvents = 'auto';
+    }
+}
+
+async function toggleSubjectFollow(event, form) {
+    event.preventDefault();
+    const btn = form.querySelector('button');
+    const originalText = btn.innerText;
+    btn.innerText = '...';
+    btn.style.pointerEvents = 'none';
+
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        let data;
+        try {
+            data = await response.json();
+        } catch (e) {
+            throw new Error('Invalid response format from server.');
+        }
+
+        if (!response.ok) {
+            throw new Error(data.message || `Server error (Status ${response.status})`);
+        }
+        
+        if (data.success) {
+            if (data.following) {
+                btn.style.backgroundColor = 'var(--success)';
+                btn.style.color = 'white';
+                btn.innerText = '✓ Following';
+            } else {
+                btn.style.backgroundColor = 'var(--surface-soft)';
+                btn.style.color = 'var(--muted)';
+                btn.innerText = 'Not Following';
+            }
+        } else {
+            throw new Error(data.message || 'Error toggling subscription.');
+        }
+    } catch (err) {
+        console.error(err);
+        alert(err.message || 'Network error. Please try again.');
+    } finally {
+        btn.innerText = btn.innerText === '...' ? originalText : btn.innerText;
+        btn.style.pointerEvents = 'auto';
+    }
+}
+</script>
+{% endblock %}

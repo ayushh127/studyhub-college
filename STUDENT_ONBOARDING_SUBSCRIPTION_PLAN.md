@@ -1,7 +1,6 @@
 # Student Onboarding & Subscription Flow Plan
 
-> [!NOTE]
-> Student onboarding/subscription database foundation added. Routes/UI/notification logic not implemented yet.
+> Student onboarding/subscription database, routes, and UI template foundations added. Notification logic and AJAX subscription toggles not implemented yet.
 
 This document outlines the design, architecture, routes, database schema, and notification logic to provide a clean, modern, and user-friendly onboarding experience for students on **StudyHub College**.
 
@@ -15,28 +14,34 @@ To track the student's onboarding and registration state, we add the following f
 * **`profile_completed`** (`db.Boolean`, default=`False`, nullable=False): Tracks whether the student's profile setup is finalized.
 
 ### B. College Subscription Model
-To allow students to subscribe to all updates from their selected college, we will introduce a new model **`CollegeSubscription`** in `app/models.py`.
+To allow students to subscribe to all updates from their selected college, we will introduce a new model **`CollegeSubscription`** in `app/models.py` (which includes a `followed_at` timestamp to support subscription timing controls).
 ```python
 class CollegeSubscription(db.Model):
     __tablename__ = 'college_subscriptions'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     college_id = db.Column(db.Integer, db.ForeignKey('colleges.id'), nullable=False)
+    is_enabled = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    followed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     __table_args__ = (db.UniqueConstraint('user_id', 'college_id', name='_user_college_uc'),)
 
     user = db.relationship('User', backref=db.backref('college_subscriptions', cascade='all, delete-orphan'))
-    college = db.relationship('College', backref=db.backref('subscriptions', cascade='all, delete-orphan'))
+    college = db.relationship('College', backref=db.backref('college_subscriptions', cascade='all, delete-orphan'))
 ```
 
-### C. Reuse Existing SubjectSubscription
-The existing `SubjectSubscription` model will be reused as-is to handle individual subject follows/unfollows.
+### C. Subject Subscription Model Updates
+The existing `SubjectSubscription` model in `app/models.py` has been updated with a `followed_at` column as well.
 ```python
-# Reused as-is
 class SubjectSubscription(db.Model):
     __tablename__ = 'subject_subscriptions'
-    ...
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable=False)
+    is_enabled = db.Column(db.Boolean, default=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    followed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 ```
 
 ---
@@ -127,33 +132,41 @@ To prevent duplicate notifications when a student is subscribed to both the coll
   )
   ```
 
-### B. Fetching Notifications (Avoiding Duplicates)
-* We retrieve notifications for a student based on:
-  * Their `college_id`.
-  * If they have a `CollegeSubscription`, return **all** notifications for that `college_id`.
-  * If they do **not** have a `CollegeSubscription`, return **only** notifications for the specific `subject_id`s they follow in `SubjectSubscription`.
+### B. Fetching Notifications (Timing-Aware and Deduplicated)
+* We retrieve notifications for a student matching their college id where:
+  - If a student is subscribed to the college, notifications are shown if `Notification.created_at >= CollegeSubscription.followed_at`.
+  - If they are subscribed to subjects, notifications are shown for those subjects if `Notification.created_at >= SubjectSubscription.followed_at`.
+  - If they are subscribed to both, the timing window filters are combined using a logical `OR` so that notifications are returned without duplication if they qualify through *either* path.
 * **SQL Query Structure:**
   ```python
-  # Check if student follows whole college
-  has_college_sub = CollegeSubscription.query.filter_by(
-      user_id=current_user.id, 
-      college_id=current_user.college_id
-  ).first() is not None
-
-  if has_college_sub:
-      # Retrieve all notifications from this college
-      notifications_query = Notification.query.filter(
-          Notification.college_id == current_user.college_id
-      )
+  college_sub = CollegeSubscription.query.filter_by(
+      user_id=current_user.id,
+      college_id=current_user.college_id,
+      is_enabled=True
+  ).first()
+  
+  subject_subs = SubjectSubscription.query.filter_by(
+      user_id=current_user.id,
+      is_enabled=True
+  ).all()
+  
+  from sqlalchemy import or_, and_
+  filters = []
+  if college_sub:
+      filters.append(Notification.created_at >= college_sub.followed_at)
+  for sub in subject_subs:
+      filters.append(and_(
+          Notification.subject_id == sub.subject_id,
+          Notification.created_at >= sub.followed_at
+      ))
+      
+  if not filters:
+      notifications_list = []
   else:
-      # Retrieve notifications only for subscribed subjects
-      sub_subject_ids = [s.subject_id for s in current_user.subscriptions]
-      notifications_query = Notification.query.filter(
+      notifications_list = Notification.query.filter(
           Notification.college_id == current_user.college_id,
-          Notification.subject_id.in_(sub_subject_ids)
-      )
-
-  notifications = notifications_query.order_by(Notification.created_at.desc()).all()
+          or_(*filters)
+      ).order_by(Notification.created_at.desc()).all()
   ```
 * Since the filter resolves to a single query on the `Notification` table, it naturally deduplicates alerts!
 
@@ -166,15 +179,17 @@ To manage scope safely and keep the project compile-ready at all times, we will 
 * **Step 1: Database Models & Migrations**
   * Update `User` and create `CollegeSubscription` in `app/models.py`.
   * Write and run the SQLite schema migration script `migrate_student_onboarding.py`.
-* **Step 2: Onboarding Controller & Redirects**
-  * Add the global onboarding check in `student_bp.before_request`.
-  * Implement the `/student/onboarding` GET and POST routes in `app/routes/student.py`.
-* **Step 3: Onboarding UI Templates**
-  * Create `app/templates/student/onboarding.html` using a multi-step layout.
-* **Step 4: AJAX Subscription Toggles**
-  * Implement `/student/colleges/<id>/follow` and `/student/subjects/<id>/follow` routes and add frontend JS click triggers.
-* **Step 5: Notifications Logic Refactoring**
-  * Update `User.get_unread_notification_count()` in `app/models.py`.
-  * Update `notifications()` and `read_all_notifications()` endpoints in `app/routes/student.py`.
-* **Step 6: Dashboard Customizations & QA**
-  * Clean up `dashboard.html` to show followed subjects and college subscriptions, and test the full onboarding experience.
+* **Step 2: Onboarding Controller & Redirects (Completed)**
+  * [x] Add the global onboarding check in `student_bp.before_request`.
+  * [x] Implement the `/student/onboarding` GET and POST routes in `app/routes/student.py`.
+* **Step 3: Onboarding UI Templates (Completed)**
+  * [x] Create `app/templates/student/onboarding.html` using a multi-step layout.
+* **Step 4: AJAX Subscription Toggles (Completed)**
+  * [x] Implement `/student/colleges/<id>/toggle-follow` and `/student/subjects/<id>/toggle-subscription` routes.
+  * [x] Add frontend JS click triggers and JSON support.
+* **Step 5: Notifications Logic Refactoring (Completed)**
+  * [x] Update `User.get_unread_notification_count()` in `app/models.py`.
+  * [x] Update `notifications()` and `read_all_notifications()` endpoints in `app/routes/student.py`.
+* **Step 6: Dashboard Customizations & QA (Completed)**
+  * [x] Clean up `dashboard.html` to show followed subjects, selected college subscription card, setup banners, and quick access actions.
+  * [x] Verify the full onboarding experience and toggles using automated and manual QA tests.

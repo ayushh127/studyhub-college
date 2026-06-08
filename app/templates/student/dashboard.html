@@ -3,57 +3,112 @@
 {% block title %}Student Dashboard - StudyHub College{% endblock %}
 
 {% block content %}
-<div style="max-width: 1100px; margin: 1.5rem auto; padding-bottom: 4rem;">
-    <!-- Welcome Header Card -->
-    <div class="welcome-card" style="background: linear-gradient(135deg, #EEF2F6 0%, #E0E7FF 100%); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; box-shadow: var(--shadow-sm);">
-        <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; flex: 1; min-width: 280px;">
-            {% if current_user.college %}
-                {% if current_user.college.logo_path %}
-                <img src="{{ url_for('files.serve_college_logo', id=current_user.college.id) }}" alt="{{ current_user.college.name }} Logo" style="width: 64px; height: 64px; object-fit: contain; border-radius: 8px; border: 1px solid var(--border); background: white; padding: 4px; box-shadow: var(--shadow-sm); flex-shrink: 0;">
-                {% else %}
-                <div style="width: 64px; height: 64px; border-radius: 8px; background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.35rem; flex-shrink: 0; box-shadow: var(--shadow-sm);">
-                    {{ current_user.college.code[:3] }}
-                </div>
-                {% endif %}
-            {% endif %}
-            <div>
-                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
-                    <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem;">Active Student</span>
-                    {% if current_user.college %}
-                    <span class="badge" style="background-color: var(--accent); color: white; border: none; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem;">📍 {{ current_user.college.name }}</span>
-                    {% endif %}
-                </div>
-                <h2 style="margin: 0; font-size: 1.85rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Hello, {{ current_user.full_name }}!</h2>
-                <p class="muted" style="margin: 0.25rem 0 0 0; font-size: 0.95rem; font-weight: 500;">Welcome to your digital learning workspace. Keep track of your courses and test preparation.</p>
+<div style="max-width: 1100px; margin: 1.5rem auto; padding: 0 1rem; padding-bottom: 4rem;">
+    
+    <!-- Onboarding Setup Prompt Banner -->
+    {% if not current_user.onboarding_completed or not current_user.college_id %}
+    <div class="card animate-fade-in" style="background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%); border: 1px solid rgba(37, 99, 235, 0.15); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 280px;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 1.5rem;">👋</span>
+                <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem;">Setup Required</span>
             </div>
+            <h3 style="margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--text);">Complete your StudyHub Setup</h3>
+            <p class="muted" style="margin: 0.5rem 0 0; font-size: 0.95rem; font-weight: 500; line-height: 1.45;">
+                Select your college and follow your subjects to customize your dashboard workspace and receive personalized notifications.
+            </p>
         </div>
-        <div style="display: flex; gap: 0.5rem;">
-            <a href="{{ url_for('student.select_college') }}" class="btn btn-outline" style="background-color: var(--surface); border-color: var(--border); font-size: 0.85rem; font-weight: 600; min-height: 38px;">Change College</a>
+        <a href="{{ url_for('student.onboarding') }}" class="btn btn-primary" style="font-weight: 700; font-size: 0.95rem; padding: 0.6rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(37,99,235,0.2);">Complete Setup &rarr;</a>
+    </div>
+    {% endif %}
+
+    <!-- Welcome Greeting Header -->
+    <div class="welcome-card animate-fade-in" style="background: linear-gradient(135deg, #EEF2F6 0%, #E0E7FF 100%); border: 1px solid var(--border); border-radius: 16px; padding: 1.75rem 2rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; box-shadow: var(--shadow-sm);">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+                <span class="badge" style="background-color: var(--primary); color: white; border: none; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.6rem;">Active Student</span>
+            </div>
+            <h2 style="margin: 0; font-size: 1.85rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text);">Hello, {{ current_user.full_name }}!</h2>
+            <p class="muted" style="margin: 0.25rem 0 0 0; font-size: 0.95rem; font-weight: 500;">Welcome to your digital learning workspace. Keep track of your courses and test preparation.</p>
         </div>
     </div>
     
-    <!-- Dashboard Stats Widget Grid -->
-    <div class="grid-responsive" style="gap: 1rem; margin-bottom: 2.5rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
-        <div class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 0; border-radius: 12px;">
-            <span style="font-size: 2rem; background-color: #EFF6FF; padding: 0.5rem; border-radius: 8px;">📚</span>
+    <!-- Selected College Card -->
+    {% if current_user.college %}
+    <div class="card animate-fade-in" style="border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; background: var(--surface); display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
+            {% if current_user.college.logo_path %}
+            <img src="{{ url_for('files.serve_college_logo', id=current_user.college.id) }}" alt="{{ current_user.college.name }} Logo" style="width: 56px; height: 56px; object-fit: contain; border-radius: 8px; border: 1px solid var(--border); background: white; padding: 4px; box-shadow: var(--shadow-sm);">
+            {% else %}
+            <div style="width: 56px; height: 56px; border-radius: 8px; background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; box-shadow: var(--shadow-sm);">
+                {{ current_user.college.code[:3] }}
+            </div>
+            {% endif %}
             <div>
-                <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700;">{{ subjects|length }}</h4>
-                <p class="muted" style="margin: 0; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Subscribed Courses</p>
+                <h4 style="margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--text);">{{ current_user.college.name }}</h4>
+                <p class="muted" style="margin: 0.15rem 0 0.5rem 0; font-size: 0.85rem; font-weight: 500;">
+                    Code: {{ current_user.college.code }}
+                    {% if current_user.college.city or current_user.college.state %}
+                    • 📍 {{ current_user.college.city }}{% if current_user.college.city and current_user.college.state %}, {% endif %}{{ current_user.college.state }}
+                    {% endif %}
+                </p>
+                
+                {% set is_college_sub = current_user.college_subscriptions|selectattr('college_id', 'equalto', current_user.college_id)|list|length > 0 %}
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; font-weight: 600; color: {% if is_college_sub %}var(--success){% else %}var(--muted){% endif %};">
+                    <span id="collegeFollowIcon">{% if is_college_sub %}📣{% else %}🔔{% endif %}</span>
+                    <span id="collegeFollowStatusText">
+                        {% if is_college_sub %}Following college updates (Receive all official uploads & quizzes){% else %}Not following college updates (Receive followed subjects only){% endif %}
+                    </span>
+                </div>
             </div>
         </div>
-        <div class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 0; border-radius: 12px;">
-            <span style="font-size: 2rem; background-color: #FAF5FF; padding: 0.5rem; border-radius: 8px;">❓</span>
-            <div>
-                <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700;">{{ recent_quizzes|length }}</h4>
-                <p class="muted" style="margin: 0; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Active Quizzes</p>
-            </div>
+        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+            <form action="{{ url_for('student.toggle_college_follow', college_id=current_user.college.id) }}" method="POST" style="display: inline;" onsubmit="toggleDashboardCollegeFollow(event, this)">
+                <button type="submit" id="dashboardCollegeFollowBtn" class="btn {% if is_college_sub %}btn-outline{% else %}btn-primary{% endif %}" style="font-size: 0.8rem; font-weight: 600; min-height: 36px; padding: 0.45rem 1rem; border-radius: 8px;">
+                    {% if is_college_sub %}Unfollow Updates{% else %}Follow Updates{% endif %}
+                </button>
+            </form>
+            <a href="{{ url_for('student.onboarding') }}" class="btn btn-outline" style="font-size: 0.8rem; font-weight: 600; min-height: 36px; padding: 0.45rem 1rem; border-radius: 8px;">Change College</a>
         </div>
-        <div class="card" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 0; border-radius: 12px; cursor: pointer;" onclick="window.location.href='{{ url_for('student.community_library') }}'">
-            <span style="font-size: 2rem; background-color: #ECFDF5; padding: 0.5rem; border-radius: 8px;">🌐</span>
-            <div>
-                <h4 style="margin: 0; font-size: 1.25rem; font-weight: 700;">Library</h4>
-                <p class="muted" style="margin: 0; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Community Library &rarr;</p>
-            </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Access Grid -->
+    <div style="margin-bottom: 2.5rem;">
+        <h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.2rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em;">Quick Access</h3>
+        <div class="grid-responsive" style="gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+            <!-- Subjects -->
+            <a href="{{ url_for('student.subjects') }}" class="card card-clickable animate-fade-in" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 0; border-radius: 12px; text-decoration: none; color: inherit; border: 1px solid var(--border);">
+                <span style="font-size: 1.75rem; background-color: #EFF6FF; padding: 0.5rem; border-radius: 8px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">📚</span>
+                <div>
+                    <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text);">Browse Subjects</h5>
+                    <p class="muted" style="margin: 0.1rem 0 0 0; font-size: 0.75rem; font-weight: 500;">View syllabus & resources</p>
+                </div>
+            </a>
+            <!-- Quizzes -->
+            <a href="{{ url_for('student.quizzes') }}" class="card card-clickable animate-fade-in" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 0; border-radius: 12px; text-decoration: none; color: inherit; border: 1px solid var(--border);">
+                <span style="font-size: 1.75rem; background-color: #FAF5FF; padding: 0.5rem; border-radius: 8px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">❓</span>
+                <div>
+                    <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text);">Active Quizzes</h5>
+                    <p class="muted" style="margin: 0.1rem 0 0 0; font-size: 0.75rem; font-weight: 500;">Take practice tests</p>
+                </div>
+            </a>
+            <!-- Library -->
+            <a href="{{ url_for('student.community_library') }}" class="card card-clickable animate-fade-in" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 0; border-radius: 12px; text-decoration: none; color: inherit; border: 1px solid var(--border);">
+                <span style="font-size: 1.75rem; background-color: #ECFDF5; padding: 0.5rem; border-radius: 8px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">🌐</span>
+                <div>
+                    <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text);">Community Library</h5>
+                    <p class="muted" style="margin: 0.1rem 0 0 0; font-size: 0.75rem; font-weight: 500;">Browse shared materials</p>
+                </div>
+            </a>
+            <!-- Notifications -->
+            <a href="{{ url_for('student.notifications') }}" class="card card-clickable animate-fade-in" style="padding: 1.25rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 0; border-radius: 12px; text-decoration: none; color: inherit; border: 1px solid var(--border);">
+                <span style="font-size: 1.75rem; background-color: #FEF3C7; padding: 0.5rem; border-radius: 8px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;">🔔</span>
+                <div>
+                    <h5 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text);">Notifications</h5>
+                    <p class="muted" style="margin: 0.1rem 0 0 0; font-size: 0.75rem; font-weight: 500;">Check latest updates</p>
+                </div>
+            </a>
         </div>
     </div>
 
@@ -62,7 +117,7 @@
         <!-- Subjects Column -->
         <div>
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
-                <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--text);">Subscribed Subjects</h3>
+                <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--text);">Your Subjects</h3>
                 <a href="{{ url_for('student.subjects') }}" style="font-size: 0.85rem; font-weight: 600; color: var(--primary); text-decoration: none;">View All</a>
             </div>
             
@@ -92,11 +147,11 @@
                     </div>
                 </a>
                 {% else %}
-                <div class="empty-state" style="padding: 3rem 1.5rem;">
+                <div class="empty-state animate-fade-in" style="padding: 3.5rem 1.5rem; border: 1px dashed var(--border); border-radius: 12px; background: transparent;">
                     <div style="font-size: 2.5rem; margin-bottom: 1rem;">📚</div>
-                    <h3>No Subscribed Subjects</h3>
-                    <p class="muted" style="margin-bottom: 1.5rem; max-width: 320px; margin-left: auto; margin-right: auto; font-size: 0.9rem;">You haven't followed any subjects yet. Subscribe to subjects to see them here.</p>
-                    <a href="{{ url_for('student.subjects') }}" class="btn btn-primary btn-sm">Explore Subjects</a>
+                    <h4 style="font-weight: 700; color: var(--text); margin: 0 0 0.5rem 0;">No Followed Subjects</h4>
+                    <p class="muted" style="margin: 0 0 1.5rem 0; font-size: 0.9rem; font-weight: 500;">You have not followed any subjects yet.</p>
+                    <a href="{{ url_for('student.subjects') }}" class="btn btn-primary btn-sm" style="border-radius: 8px; font-weight: 600;">Browse All Subjects</a>
                 </div>
                 {% endfor %}
             </div>
@@ -135,9 +190,9 @@
                     <a href="{{ url_for('student.start_quiz', id=quiz.id) }}" class="btn btn-primary" style="padding: 0.45rem 1.25rem; font-size: 0.85rem; font-weight: 600; border-radius: 6px; white-space: nowrap; min-height: 36px;">Start</a>
                 </div>
                 {% else %}
-                <div class="empty-state" style="padding: 3rem 1.5rem;">
+                <div class="empty-state animate-fade-in" style="padding: 3rem 1.5rem; border: 1px dashed var(--border); border-radius: 12px; background: transparent;">
                     <div style="font-size: 2.5rem; margin-bottom: 1rem;">❓</div>
-                    <h3>No Quizzes Available</h3>
+                    <h4 style="font-weight: 700; color: var(--text); margin: 0 0 0.5rem 0;">No Quizzes Available</h4>
                     <p class="muted" style="margin-bottom: 0; font-size: 0.9rem;">No active quizzes are published for your subscribed courses currently.</p>
                 </div>
                 {% endfor %}
@@ -145,4 +200,62 @@
         </div>
     </div>
 </div>
+
+<script>
+async function toggleDashboardCollegeFollow(event, form) {
+    event.preventDefault();
+    const btn = form.querySelector('button');
+    const originalText = btn.innerText;
+    btn.innerText = '...';
+    btn.style.pointerEvents = 'none';
+
+    try {
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        
+        let data;
+        try {
+            data = await response.json();
+        } catch (e) {
+            throw new Error('Invalid response format from server.');
+        }
+
+        if (!response.ok) {
+            throw new Error(data.message || `Server error (Status ${response.status})`);
+        }
+        
+        if (data.success) {
+            const statusText = document.getElementById('collegeFollowStatusText');
+            const statusIcon = document.getElementById('collegeFollowIcon');
+            
+            if (data.following) {
+                btn.className = 'btn btn-outline';
+                btn.innerText = 'Unfollow Updates';
+                if (statusText) statusText.innerText = 'Following college updates (Receive all official uploads & quizzes)';
+                if (statusText.parentElement) statusText.parentElement.style.color = 'var(--success)';
+                if (statusIcon) statusIcon.innerText = '📣';
+            } else {
+                btn.className = 'btn btn-primary';
+                btn.innerText = 'Follow Updates';
+                if (statusText) statusText.innerText = 'Not following college updates (Receive followed subjects only)';
+                if (statusText.parentElement) statusText.parentElement.style.color = 'var(--muted)';
+                if (statusIcon) statusIcon.innerText = '🔔';
+            }
+        } else {
+            throw new Error(data.message || 'Error toggling subscription.');
+        }
+    } catch (err) {
+        console.error(err);
+        alert(err.message || 'Network error. Please try again.');
+    } finally {
+        btn.innerText = btn.innerText === '...' ? originalText : btn.innerText;
+        btn.style.pointerEvents = 'auto';
+    }
+}
+</script>
 {% endblock %}

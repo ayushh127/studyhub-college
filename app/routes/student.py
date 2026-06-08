@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, abort, current_app
 from flask_login import login_required, current_user
-from app.models import User, College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial, CommunityMaterialLike, CommunityMaterialRating, CommunityMaterialReport, CommunityMaterialView
+from app.models import User, College, Subject, Unit, StudyMaterial, PYQPaper, Quiz, QuizAttempt, Question, QuestionOption, AnswerSubmission, StudentProgress, SubjectSubscription, Notification, NotificationRead, CommunityMaterial, CommunityMaterialLike, CommunityMaterialRating, CommunityMaterialReport, CommunityMaterialView, CollegeSubscription
 from app.extensions import db
 from sqlalchemy import or_
 from datetime import datetime
@@ -26,16 +26,91 @@ def check_college_access(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not current_user.college_id:
+            if request.headers.get('Accept') == 'application/json' or request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.content_type == 'application/json':
+                return {'success': False, 'message': 'Please select your college first.'}, 403
             flash('Please select your college first.', 'warning')
             return redirect(url_for('student.select_college'))
         return f(*args, **kwargs)
     return decorated_function
 
 @student_bp.before_request
-@login_required
-@student_required
 def before_request():
-    pass
+    if not current_user.is_authenticated:
+        if request.headers.get('Accept') == 'application/json' or request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return {'success': False, 'message': 'Authentication required.'}, 401
+        return redirect(url_for('auth.login'))
+        
+    if current_user.role != 'student' and request.endpoint in ['student.toggle_college_follow', 'student.toggle_subject_follow']:
+        if request.headers.get('Accept') == 'application/json' or request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return {'success': False, 'message': 'Only students can follow colleges or subjects.'}, 403
+        flash('Only students can follow colleges or subjects.', 'danger')
+        return redirect(request.referrer or url_for('student.dashboard'))
+
+    if current_user.role != 'student' and current_user.role != 'platform_admin':
+        if request.headers.get('Accept') == 'application/json' or request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return {'success': False, 'message': 'Access denied. Student only.'}, 403
+        flash('Access denied. Student only.', 'danger')
+        return redirect(url_for('public.index'))
+        
+    if not current_user.onboarding_completed:
+        allowed_endpoints = [
+            'student.onboarding', 
+            'student.onboarding_college', 
+            'student.onboarding_complete', 
+            'student.select_college',
+            'student.toggle_college_follow',
+            'student.toggle_subject_follow',
+            'student.dashboard'
+        ]
+        if request.endpoint and request.endpoint not in allowed_endpoints:
+            return redirect(url_for('student.onboarding'))
+
+@student_bp.route('/onboarding', methods=['GET'])
+def onboarding():
+    colleges = College.query.filter_by(status='active').all()
+    selected_college = None
+    subjects = []
+    college_subscribed = False
+    subscribed_subject_ids = []
+
+    if current_user.college_id:
+        selected_college = College.query.get(current_user.college_id)
+        subjects = Subject.query.filter_by(college_id=current_user.college_id, is_active=True).all()
+        college_sub = CollegeSubscription.query.filter_by(user_id=current_user.id, college_id=current_user.college_id).first()
+        if college_sub and college_sub.is_enabled:
+            college_subscribed = True
+        subscribed_subject_ids = [sub.subject_id for sub in current_user.subscriptions if getattr(sub, 'is_enabled', True)]
+
+    return render_template('student/onboarding.html', 
+                           colleges=colleges, 
+                           selected_college=selected_college, 
+                           subjects=subjects,
+                           college_subscribed=college_subscribed,
+                           subscribed_subject_ids=subscribed_subject_ids)
+
+@student_bp.route('/onboarding/college', methods=['POST'])
+def onboarding_college():
+    college_id = request.form.get('college_id', type=int)
+    college = College.query.filter_by(id=college_id, status='active').first()
+    if college:
+        current_user.college_id = college.id
+        current_user.onboarding_completed = False
+        db.session.commit()
+        flash(f'College selected: {college.name}. Now configure your subjects.', 'success')
+    else:
+        flash('Invalid college selected.', 'danger')
+    return redirect(url_for('student.onboarding'))
+
+@student_bp.route('/onboarding/complete', methods=['POST'])
+def onboarding_complete():
+    if not current_user.college_id:
+        flash('Please select your college first.', 'warning')
+        return redirect(url_for('student.onboarding'))
+        
+    current_user.onboarding_completed = True
+    db.session.commit()
+    flash('Onboarding completed! Welcome to your dashboard.', 'success')
+    return redirect(url_for('student.dashboard'))
 
 @student_bp.route('/select-college', methods=['GET', 'POST'])
 def select_college():
@@ -53,14 +128,17 @@ def select_college():
     return render_template('student/select_college.html', colleges=colleges)
 
 @student_bp.route('/dashboard')
-@check_college_access
 def dashboard():
-    subscribed_subject_ids = [sub.subject_id for sub in current_user.subscriptions]
-    if subscribed_subject_ids:
-        subjects = Subject.query.filter(Subject.id.in_(subscribed_subject_ids), Subject.is_active==True, Subject.college_id==current_user.college_id).all()
+    if current_user.college_id:
+        subscribed_subject_ids = [sub.subject_id for sub in current_user.subscriptions if getattr(sub, 'is_enabled', True)]
+        if subscribed_subject_ids:
+            subjects = Subject.query.filter(Subject.id.in_(subscribed_subject_ids), Subject.is_active==True, Subject.college_id==current_user.college_id).all()
+        else:
+            subjects = []
+        recent_quizzes = Quiz.query.filter_by(college_id=current_user.college_id, is_published=True).order_by(Quiz.created_at.desc()).limit(5).all()
     else:
         subjects = []
-    recent_quizzes = Quiz.query.filter_by(college_id=current_user.college_id, is_published=True).order_by(Quiz.created_at.desc()).limit(5).all()
+        recent_quizzes = []
     return render_template('student/dashboard.html', subjects=subjects, recent_quizzes=recent_quizzes)
 
 @student_bp.route('/quizzes')
@@ -266,10 +344,19 @@ def open_notification(id):
     if notification.college_id != current_user.college_id:
         abort(403)
         
-    # Check if subscription exists for that subject
-    sub = SubjectSubscription.query.filter_by(user_id=current_user.id, subject_id=notification.subject_id).first()
-    if not sub:
-        flash('You are not subscribed to this subject.', 'warning')
+    # Check if subscription exists and was active when notification was created
+    eligible = False
+    has_college_sub = CollegeSubscription.query.filter_by(user_id=current_user.id, college_id=current_user.college_id, is_enabled=True).first()
+    if has_college_sub and notification.created_at >= has_college_sub.followed_at:
+        eligible = True
+        
+    if not eligible:
+        sub = SubjectSubscription.query.filter_by(user_id=current_user.id, subject_id=notification.subject_id, is_enabled=True).first()
+        if sub and notification.created_at >= sub.followed_at:
+            eligible = True
+            
+    if not eligible:
+        flash('You are not subscribed to this content or it was created before your subscription.', 'warning')
         return redirect(url_for('student.notifications'))
         
     # Mark as read automatically
@@ -331,13 +418,33 @@ def open_notification(id):
 @student_bp.route('/notifications', methods=['GET'])
 @check_college_access
 def notifications():
-    sub_ids = [s.subject_id for s in current_user.subscriptions]
-    if not sub_ids:
+    college_sub = CollegeSubscription.query.filter_by(
+        user_id=current_user.id,
+        college_id=current_user.college_id,
+        is_enabled=True
+    ).first()
+    
+    subject_subs = SubjectSubscription.query.filter_by(
+        user_id=current_user.id,
+        is_enabled=True
+    ).all()
+    
+    from sqlalchemy import or_, and_
+    filters = []
+    if college_sub:
+        filters.append(Notification.created_at >= college_sub.followed_at)
+    for sub in subject_subs:
+        filters.append(and_(
+            Notification.subject_id == sub.subject_id,
+            Notification.created_at >= sub.followed_at
+        ))
+        
+    if not filters:
         notifications_list = []
     else:
         notifications_list = Notification.query.filter(
             Notification.college_id == current_user.college_id,
-            Notification.subject_id.in_(sub_ids)
+            or_(*filters)
         ).order_by(Notification.created_at.desc()).all()
     
     # Get read notification IDs for this user
@@ -346,8 +453,8 @@ def notifications():
     return render_template('student/notifications.html', 
                            notifications=notifications_list, 
                            read_notification_ids=read_notification_ids)
-
-
+ 
+ 
 @student_bp.route('/notifications/<int:id>/read', methods=['POST'])
 @check_college_access
 def read_notification(id):
@@ -355,10 +462,19 @@ def read_notification(id):
     if notification.college_id != current_user.college_id:
         abort(403)
         
-    # Check if a subscription exists for that subject
-    sub = SubjectSubscription.query.filter_by(user_id=current_user.id, subject_id=notification.subject_id).first()
-    if not sub:
-        flash('You are not subscribed to this subject.', 'warning')
+    # Check if subscription exists and was active when notification was created
+    eligible = False
+    has_college_sub = CollegeSubscription.query.filter_by(user_id=current_user.id, college_id=current_user.college_id, is_enabled=True).first()
+    if has_college_sub and notification.created_at >= has_college_sub.followed_at:
+        eligible = True
+        
+    if not eligible:
+        sub = SubjectSubscription.query.filter_by(user_id=current_user.id, subject_id=notification.subject_id, is_enabled=True).first()
+        if sub and notification.created_at >= sub.followed_at:
+            eligible = True
+            
+    if not eligible:
+        flash('You are not subscribed to this content or it was created before your subscription.', 'warning')
         return redirect(url_for('student.notifications'))
         
     already_read = NotificationRead.query.filter_by(user_id=current_user.id, notification_id=notification.id).first()
@@ -369,18 +485,38 @@ def read_notification(id):
         
     flash('Notification marked as read.', 'success')
     return redirect(url_for('student.notifications'))
-
-
+ 
+ 
 @student_bp.route('/notifications/read-all', methods=['POST'])
 @check_college_access
 def read_all_notifications():
-    sub_ids = [s.subject_id for s in current_user.subscriptions]
-    if not sub_ids:
+    college_sub = CollegeSubscription.query.filter_by(
+        user_id=current_user.id,
+        college_id=current_user.college_id,
+        is_enabled=True
+    ).first()
+    
+    subject_subs = SubjectSubscription.query.filter_by(
+        user_id=current_user.id,
+        is_enabled=True
+    ).all()
+    
+    from sqlalchemy import or_, and_
+    filters = []
+    if college_sub:
+        filters.append(Notification.created_at >= college_sub.followed_at)
+    for sub in subject_subs:
+        filters.append(and_(
+            Notification.subject_id == sub.subject_id,
+            Notification.created_at >= sub.followed_at
+        ))
+        
+    if not filters:
         unread_notifications = []
     else:
         unread_notifications = Notification.query.filter(
             Notification.college_id == current_user.college_id,
-            Notification.subject_id.in_(sub_ids)
+            or_(*filters)
         ).all()
     
     read_notification_ids = {r.notification_id for r in NotificationRead.query.filter_by(user_id=current_user.id).all()}
@@ -401,25 +537,101 @@ def read_all_notifications():
     return redirect(url_for('student.notifications'))
 
 
-@student_bp.route('/subjects/<int:id>/toggle-subscription', methods=['POST'])
+@student_bp.route('/subjects/<int:subject_id>/toggle-follow', methods=['POST'])
 @check_college_access
-def toggle_subscription(id):
-    subject = Subject.query.get_or_404(id)
+def toggle_subject_follow(subject_id):
+    if current_user.role != 'student':
+        if request.headers.get('Accept') == 'application/json' or request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return {'success': False, 'message': 'Only students can follow subjects.'}, 403
+        flash('Only students can follow subjects.', 'danger')
+        return redirect(request.referrer or url_for('student.dashboard'))
+
+    subject = Subject.query.get_or_404(subject_id)
+    
+    if not subject.is_active:
+        if request.headers.get('Accept') == 'application/json' or request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return {'success': False, 'message': 'Subject is not active.'}, 400
+        flash('Subject is not active.', 'danger')
+        return redirect(request.referrer or url_for('student.dashboard'))
+
     if subject.college_id != current_user.college_id:
+        if request.headers.get('Accept') == 'application/json' or request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return {'success': False, 'message': 'Access denied. Subject is outside your selected college.'}, 403
         abort(403)
         
     sub = SubjectSubscription.query.filter_by(user_id=current_user.id, subject_id=subject.id).first()
+    following = False
     if sub:
         db.session.delete(sub)
         db.session.commit()
-        flash(f'Unsubscribed from {subject.name} notifications.', 'info')
+        msg = f'Unsubscribed from {subject.name} notifications.'
     else:
         new_sub = SubjectSubscription(user_id=current_user.id, subject_id=subject.id)
+        new_sub.followed_at = datetime.utcnow()
+        new_sub.is_enabled = True
         db.session.add(new_sub)
         db.session.commit()
-        flash(f'Subscribed to {subject.name} notifications.', 'success')
+        following = True
+        msg = f'Subscribed to {subject.name} notifications.'
         
-    return redirect(url_for('student.subject_details', id=subject.id))
+    if request.headers.get('Accept') == 'application/json' or request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.content_type == 'application/json':
+        return {
+            'success': True,
+            'following': following,
+            'label': 'Following' if following else 'Follow',
+            'message': msg
+        }
+        
+    flash(msg, 'success' if following else 'info')
+    return redirect(request.referrer or url_for('student.subject_details', id=subject.id))
+
+@student_bp.route('/colleges/<int:college_id>/toggle-follow', methods=['POST'])
+@check_college_access
+def toggle_college_follow(college_id):
+    if current_user.role != 'student':
+        if request.headers.get('Accept') == 'application/json' or request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return {'success': False, 'message': 'Only students can follow colleges.'}, 403
+        flash('Only students can follow colleges.', 'danger')
+        return redirect(request.referrer or url_for('student.dashboard'))
+
+    college = College.query.get_or_404(college_id)
+    
+    if college.status != 'active':
+        if request.headers.get('Accept') == 'application/json' or request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return {'success': False, 'message': 'College is not active.'}, 400
+        flash('College is not active.', 'danger')
+        return redirect(request.referrer or url_for('student.dashboard'))
+
+    if college.id != current_user.college_id:
+        if request.headers.get('Accept') == 'application/json' or request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.content_type == 'application/json':
+            return {'success': False, 'message': 'Access denied. You can only follow your selected college.'}, 403
+        abort(403)
+        
+    sub = CollegeSubscription.query.filter_by(user_id=current_user.id, college_id=college.id).first()
+    following = False
+    if sub:
+        db.session.delete(sub)
+        db.session.commit()
+        msg = f'Unsubscribed from {college.name} notifications.'
+    else:
+        new_sub = CollegeSubscription(user_id=current_user.id, college_id=college.id)
+        new_sub.followed_at = datetime.utcnow()
+        new_sub.is_enabled = True
+        db.session.add(new_sub)
+        db.session.commit()
+        following = True
+        msg = f'Subscribed to {college.name} notifications.'
+        
+    if request.headers.get('Accept') == 'application/json' or request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.content_type == 'application/json':
+        return {
+            'success': True,
+            'following': following,
+            'label': 'Following' if following else 'Follow',
+            'message': msg
+        }
+        
+    flash(msg, 'success' if following else 'info')
+    return redirect(request.referrer or url_for('student.onboarding'))
 
 
 @student_bp.route('/community', methods=['GET'])

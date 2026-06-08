@@ -1,4 +1,6 @@
-# StudyHub College MVP
+# StudyHub College MVP (v1 Stable)
+
+> **Important Release Status:** StudyHub College v1 is a stable, fully functional Python Flask and Jinja2 templated web application. We are preparing for a page-by-page React frontend migration in Version 2, starting with the student dashboard page.
 
 StudyHub College is a multi-college study platform designed to help colleges manage their academic materials (PDFs, notes, assignments), previous year question papers (PYQs), and quizzes. It provides a seamless experience for students to select their college, access subject-specific content, and prepare for exams through comprehensive learning and exam modes.
 

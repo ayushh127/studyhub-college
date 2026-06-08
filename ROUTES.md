@@ -118,8 +118,13 @@ This document lists all the proposed routes for the StudyHub College MVP.
 
 ## Student Routes
 - `GET /student/dashboard`
+- `GET /student/onboarding` - First-time onboarding page
+- `POST /student/onboarding/college` - Submit college selection during onboarding
+- `POST /student/onboarding/complete` - Mark onboarding as complete
 - `GET /student/select-college`
 - `POST /student/select-college`
+- `POST /student/colleges/<college_id>/toggle-follow` - Toggle follow status for the selected college (subscribing to all college updates)
+- `POST /student/subjects/<subject_id>/toggle-follow` - Toggle follow status for a subject (subscribing to subject updates)
 - `GET /student/subjects`
 - `GET /student/subjects/<id>`
 - `GET /student/units/<id>`

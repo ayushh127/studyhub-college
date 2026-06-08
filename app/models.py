@@ -29,16 +29,39 @@ class User(UserMixin, db.Model):
     def get_unread_notification_count(self):
         if self.role != 'student' or not self.college_id:
             return 0
-        from .models import Notification, SubjectSubscription, NotificationRead
-        sub_ids = [s.subject_id for s in self.subscriptions]
-        if not sub_ids:
-            return 0
-        total_notifications = Notification.query.filter(
-            Notification.college_id == self.college_id,
-            Notification.subject_id.in_(sub_ids)
+        from .models import Notification, SubjectSubscription, NotificationRead, CollegeSubscription
+        from sqlalchemy import or_, and_
+        
+        college_sub = CollegeSubscription.query.filter_by(
+            user_id=self.id,
+            college_id=self.college_id,
+            is_enabled=True
+        ).first()
+        
+        subject_subs = SubjectSubscription.query.filter_by(
+            user_id=self.id,
+            is_enabled=True
         ).all()
+        
+        filters = []
+        if college_sub:
+            filters.append(Notification.created_at >= college_sub.followed_at)
+        for sub in subject_subs:
+            filters.append(and_(
+                Notification.subject_id == sub.subject_id,
+                Notification.created_at >= sub.followed_at
+            ))
+            
+        if not filters:
+            return 0
+            
+        eligible_notifications = Notification.query.filter(
+            Notification.college_id == self.college_id,
+            or_(*filters)
+        ).all()
+        
         read_ids = {r.notification_id for r in NotificationRead.query.filter_by(user_id=self.id).all()}
-        return sum(1 for n in total_notifications if n.id not in read_ids)
+        return sum(1 for n in eligible_notifications if n.id not in read_ids)
 
 
 class College(db.Model):
@@ -263,6 +286,7 @@ class SubjectSubscription(db.Model):
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable=False)
     is_enabled = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    followed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     __table_args__ = (db.UniqueConstraint('user_id', 'subject_id', name='_user_subject_uc'),)
 
@@ -277,6 +301,7 @@ class CollegeSubscription(db.Model):
     college_id = db.Column(db.Integer, db.ForeignKey('colleges.id'), nullable=False)
     is_enabled = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    followed_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
     __table_args__ = (db.UniqueConstraint('user_id', 'college_id', name='_user_college_uc'),)
 

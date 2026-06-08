@@ -10,6 +10,8 @@ The StudyHub College MVP uses SQLite (via Flask-SQLAlchemy). Below is the schema
 - `role` (Enum: `platform_admin`, `college_admin`, `student`)
 - `college_id` (FK to College, nullable for platform_admin)
 - `is_active` (Boolean)
+- `onboarding_completed` (Boolean)
+- `profile_completed` (Boolean)
 - `created_at`
 - `updated_at`
 
@@ -223,3 +225,39 @@ The StudyHub College MVP uses SQLite (via Flask-SQLAlchemy). Below is the schema
 - `material_id` (FK to CommunityMaterial)
 - `viewed_at`
 - *Constraint:* Unique(user_id, material_id)
+
+## 20. SubjectSubscription
+- `id` (PK)
+- `user_id` (FK to User)
+- `subject_id` (FK to Subject)
+- `is_enabled` (Boolean)
+- `created_at`
+- *Constraint:* Unique(user_id, subject_id)
+
+## 21. Notification
+- `id` (PK)
+- `college_id` (FK to College)
+- `subject_id` (FK to Subject)
+- `unit_id` (FK to Unit, Nullable)
+- `notification_type`
+- `title`
+- `message`
+- `link`
+- `created_by` (FK to User, Nullable)
+- `created_at`
+
+## 22. NotificationRead
+- `id` (PK)
+- `user_id` (FK to User)
+- `notification_id` (FK to Notification)
+- `read_at`
+- *Constraint:* Unique(user_id, notification_id)
+
+## 23. CollegeSubscription
+- `id` (PK)
+- `user_id` (FK to User)
+- `college_id` (FK to College)
+- `is_enabled` (Boolean)
+- `created_at`
+- *Constraint:* Unique(user_id, college_id)
+

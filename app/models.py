@@ -12,6 +12,8 @@ class User(UserMixin, db.Model):
     role = db.Column(db.String(20), nullable=False) # platform_admin, college_admin, student
     college_id = db.Column(db.Integer, db.ForeignKey('colleges.id'), nullable=True)
     is_active = db.Column(db.Boolean, default=True)
+    onboarding_completed = db.Column(db.Boolean, default=False, nullable=False)
+    profile_completed = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -259,12 +261,28 @@ class SubjectSubscription(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     subject_id = db.Column(db.Integer, db.ForeignKey('subjects.id'), nullable=False)
+    is_enabled = db.Column(db.Boolean, default=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     __table_args__ = (db.UniqueConstraint('user_id', 'subject_id', name='_user_subject_uc'),)
 
     user = db.relationship('User', backref='subscriptions')
     subject = db.relationship('Subject', backref='subscribers')
+
+
+class CollegeSubscription(db.Model):
+    __tablename__ = 'college_subscriptions'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    college_id = db.Column(db.Integer, db.ForeignKey('colleges.id'), nullable=False)
+    is_enabled = db.Column(db.Boolean, default=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    __table_args__ = (db.UniqueConstraint('user_id', 'college_id', name='_user_college_uc'),)
+
+    user = db.relationship('User', backref=db.backref('college_subscriptions', cascade='all, delete-orphan'))
+    college = db.relationship('College', backref=db.backref('college_subscriptions', cascade='all, delete-orphan'))
+
 
 
 class Notification(db.Model):

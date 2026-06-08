@@ -41,8 +41,8 @@ Build the StudyHub College MVP, a multi-role web platform for college content ma
 - [x] Hook content publisher routes to trigger notifications
 
 ## Status
-- **Current Phase:** Completed MVP release (v1), Subject-Wise Notifications (Phase 7), SaaS UI Redesign (Phases 9, 13, 14), Community Library (Phase 10), Navbar Cleanup & Mobile UX Polish (Phase 11), Edit & Delete Permissions Audit (Phase 12), and Onboarding & Selection Improvements (Phase 15).
-- **Next Step:** Ready for production release.
+- **Current Phase:** Completed MVP release (v1), Subject-Wise Notifications (Phase 7), SaaS UI Redesign (Phases 9, 13, 14), Community Library (Phase 10), Navbar Cleanup & Mobile UX Polish (Phase 11), Edit & Delete Permissions Audit (Phase 12), Onboarding & Selection Improvements (Phase 15), Mobile UI Usability Fixes (Phase 16), and Database Migration Improvements (Phase 17).
+- **Next Step:** Implement Student Onboarding and Subscription Flow (Phase 18).
 
 ### Phase 10: Community Library
 - [x] Step 1: Database models setup (`CommunityMaterial`, `CommunityMaterialLike`, `CommunityMaterialRating`, `CommunityMaterialReport`)
@@ -149,3 +149,16 @@ Build the StudyHub College MVP, a multi-role web platform for college content ma
 - [x] Added a clear, touch-friendly "Browse All Subjects" button below student dashboard subject cards.
 - [x] Improved mobile Community Library filters: made the Search button visible beside the input, added a gears-icon Filters toggle button, and optimized the action buttons row.
 - [x] Refined quiz attempts: made the sidebar non-sticky on mobile, and reduced container and option label padding.
+
+## Phase 17: Database Migration Improvements
+- [x] Updated database migration script `migrate_db.py` to be fully robust and idempotent.
+- [x] Documented the simplified post-pull migration workflow in `DEPLOYMENT_PYTHONANYWHERE_FREE.md`.
+
+## Phase 18: Student Onboarding and Subscription Flow
+*Note: Student onboarding/subscription database foundation added. Routes/UI/notification logic not implemented yet.*
+- [x] Create database models & safe idempotent SQLite migrations (added `User.onboarding_completed`, `User.profile_completed`, `SubjectSubscription.is_enabled`, and `CollegeSubscription` table).
+- [ ] Implement onboarding progress check (redirect new students with incomplete profiles).
+- [ ] Create searchable college selection card grid and subject checkbox grid.
+- [ ] Build follow/unfollow college updates routes and controls.
+- [ ] Refactor notification center queries to seamlessly deduplicate college and subject alerts.
+- [ ] Customize the student dashboard to display the selected college logo and hide unsubscribed subjects.

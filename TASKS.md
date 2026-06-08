@@ -263,3 +263,24 @@ This document tracks the granular development tasks for the StudyHub College MVP
 - [x] Step 1: Update `migrate_db.py` to support safe, idempotent database column alterations (e.g. `logo_path`) in SQLite
 - [x] Step 2: Update `DEPLOYMENT_PYTHONANYWHERE_FREE.md` to document the simplified migration command
 - [x] Step 3: Update `CHANGELOG.md` and `TASKS.md`
+
+## Phase 18: Student Onboarding and Subscription Flow
+*Note: Student onboarding/subscription database foundation added. Routes/UI/notification logic not implemented yet.*
+- [x] Step 1: Database models & migrations
+  - [x] Add `onboarding_completed` and `profile_completed` columns to `User` model in `app/models.py`
+  - [x] Add `CollegeSubscription` model in `app/models.py`
+  - [x] Add `is_enabled` column to `SubjectSubscription` model in `app/models.py`
+  - [x] Update `migrate_db.py` to run safe, idempotent SQLite upgrades for new tables/columns
+- [ ] Step 2: Onboarding controller & redirects
+  - [ ] Implement global onboarding check in `student_bp.before_request`
+  - [ ] Create `/student/onboarding` GET and POST routes in `app/routes/student.py`
+- [ ] Step 3: Onboarding UI templates
+  - [ ] Build multi-step wizard template `student/onboarding.html`
+- [ ] Step 4: AJAX subscription toggles
+  - [ ] Implement `/student/colleges/<id>/follow` and `/student/subjects/<id>/follow` routes
+  - [ ] Add frontend JS triggers for toggles
+- [ ] Step 5: Notifications logic refactoring
+  - [ ] Refactor notification center queries and counts to deduplicate college and subject alerts
+- [ ] Step 6: Dashboard & UI customizations
+  - [ ] Clean up student dashboard to show followed subjects and selected college badge
+  - [ ] Perform manual testing and QA verification

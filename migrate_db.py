@@ -47,6 +47,35 @@ def migrate():
                     conn.commit()
                 else:
                     print("Column 'logo_path' already exists in 'college_requests' table.")
+                
+                # Check and add users.onboarding_completed and profile_completed
+                cursor.execute("PRAGMA table_info(users);")
+                columns = cursor.fetchall()
+                col_names = [col[1] for col in columns]
+                if 'onboarding_completed' not in col_names:
+                    print("Adding 'onboarding_completed' column to 'users' table...")
+                    cursor.execute("ALTER TABLE users ADD COLUMN onboarding_completed BOOLEAN NOT NULL DEFAULT 0;")
+                    conn.commit()
+                else:
+                    print("Column 'onboarding_completed' already exists in 'users' table.")
+                    
+                if 'profile_completed' not in col_names:
+                    print("Adding 'profile_completed' column to 'users' table...")
+                    cursor.execute("ALTER TABLE users ADD COLUMN profile_completed BOOLEAN NOT NULL DEFAULT 0;")
+                    conn.commit()
+                else:
+                    print("Column 'profile_completed' already exists in 'users' table.")
+
+                # Check and add subject_subscriptions.is_enabled
+                cursor.execute("PRAGMA table_info(subject_subscriptions);")
+                columns = cursor.fetchall()
+                col_names = [col[1] for col in columns]
+                if 'is_enabled' not in col_names:
+                    print("Adding 'is_enabled' column to 'subject_subscriptions' table...")
+                    cursor.execute("ALTER TABLE subject_subscriptions ADD COLUMN is_enabled BOOLEAN NOT NULL DEFAULT 1;")
+                    conn.commit()
+                else:
+                    print("Column 'is_enabled' already exists in 'subject_subscriptions' table.")
                     
                 conn.close()
             else:

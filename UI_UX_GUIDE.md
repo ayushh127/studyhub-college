@@ -83,6 +83,12 @@ h1, h2, h3, h4, h5, h6 {
     - Initials Avatar fallback: When a college logo is not uploaded, render a clean, high-contrast circular or rounded-rect initials avatar using the college name or code. Use a consistent background (such as soft blue/slate `var(--surface-soft)`) and bold text.
     - Client-side onboarding filter: On the college selection page, a real-time text input filters the listing of colleges matching name, code, city, or state. Shows a clean, styled empty state with helpful tips when no matching colleges are found.
 
+14. **Student Onboarding & Subscription UI/UX**:
+    - Multi-step wizard: Break onboarding into small progress-tracked steps. Display a clean top progress indicator.
+    - College tiles: Render colleges as clean option cards with logos (or initials fallbacks) and search filters. Highlight the selected card with an Indigo border and scale transition.
+    - Subject checkboxes: Render subjects as a grid of checkbox cards grouped by semester for easy multi-selection.
+    - College update toggles: Renders a prominent CSS toggle switch or follow button, with immediate feedback (e.g. changing text/colors).
+
 ### Avoid:
 - Bakery/cafe styling, cream backgrounds, and brown colors.
 - Decorative Roman/serif heading fonts (like Cormorant Garamond).

@@ -60,7 +60,8 @@ def before_request():
             'student.select_college',
             'student.toggle_college_follow',
             'student.toggle_subject_follow',
-            'student.dashboard'
+            'student.dashboard',
+            'student.dashboard_v2'
         ]
         if request.endpoint and request.endpoint not in allowed_endpoints:
             return redirect(url_for('student.onboarding'))
@@ -1283,5 +1284,17 @@ def api_student_dashboard():
         "quick_stats": quick_stats_data,
         "stats": stats_data
     }), 200
+
+
+@student_bp.route('/dashboard-v2')
+@student_required
+def dashboard_v2():
+    react_index_path = os.path.join(current_app.root_path, 'static', 'react', 'index.html')
+    if not os.path.exists(react_index_path):
+        return render_template('student/react_not_built.html')
+    
+    with open(react_index_path, 'r', encoding='utf-8') as f:
+        html_content = f.read()
+    return html_content
 
 

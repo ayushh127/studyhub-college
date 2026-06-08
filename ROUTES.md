@@ -118,6 +118,8 @@ This document lists all the proposed routes for the StudyHub College MVP.
 
 ## Student Routes
 - `GET /student/dashboard`
+- `GET /student/dashboard-v2` - React-based student dashboard v2
+- `GET /api/student/dashboard` - API route serving JSON data for the student dashboard v2
 - `GET /student/onboarding` - First-time onboarding page
 - `POST /student/onboarding/college` - Submit college selection during onboarding
 - `POST /student/onboarding/complete` - Mark onboarding as complete

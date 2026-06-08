@@ -293,9 +293,9 @@ This document tracks the granular development tasks for the StudyHub College MVP
   - [x] Create timing verification script `scratch/test_notification_timing_qa.py` and verify all cases pass
 
 ## Phase 19: React Frontend Migration (Version 2)
-- [ ] Initialize React frontend integration strategy (Vite bundle integration or Next.js hybrid setups)
+- [x] Initialize React frontend integration strategy (Vite bundle integration with static build serving)
 - [x] Setup API JSON routes/endpoints on Flask backend to feed React components (Implemented GET /api/student/dashboard)
-- [ ] Migrate Student Dashboard page (Step 1 of frontend refactor)
+- [x] Migrate Student Dashboard page (Step 1 of frontend refactor - implemented /student/dashboard-v2 in React)
 - [ ] Migrate Onboarding Flow wizard interfaces
 - [ ] Migrate Subjects Directory & Unit Details grids
 - [ ] Migrate Quiz Solver component interface

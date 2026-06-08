@@ -160,18 +160,18 @@ To ensure zero disruption for production environments:
 
 ## 8. Granular Implementation Steps
 
-1. **Step 1: Frontend Setup**
-   - Initialize `/frontend` folder with Vite React-TS or JS framework.
+1. **Step 1: Frontend Setup** [x]
+   - Initialize `/frontend` folder with Vite React framework.
    - Configure `tailwind.config.js` and input directives.
-2. **Step 2: Flask Endpoint Integration**
+2. **Step 2: Flask Endpoint Integration** [x]
    - Implement `/api/student/dashboard` route returning structured JSON data.
-3. **Step 3: Flask Route Wrapper**
-   - Add `/student/dashboard-v2` route and create Jinja template pointing to Vite's local dev assets or built files.
-4. **Step 4: Layouts & Components**
+3. **Step 3: Flask Route Wrapper** [x]
+   - Add `/student/dashboard-v2` route serving the built static `index.html` from `app/static/react/` or rendering `student/react_not_built.html` fallback.
+4. **Step 4: Layouts & Components** [x]
    - Construct sidebars, headers, status cards, and metric rows in React.
-5. **Step 5: API Integration & Data Binding**
-   - Integrate Axios fetch client and bind backend values to cards.
-6. **Step 6: Polish & Animations**
+5. **Step 5: API Integration & Data Binding** [x]
+   - Integrate Axios fetch client (`frontend/src/services/api.js`) and bind backend values to cards.
+6. **Step 6: Polish & Animations** [x]
    - Apply Framer Motion transitions and verify performance.
-7. **Step 7: Verification**
-   - Execute QA tests on `/student/dashboard-v2` to verify session persistence, error redirects, and loading states.
+7. **Step 7: Verification** [x]
+   - Execute QA tests on `/student/dashboard-v2` to verify session persistence, error redirects, and loading/empty states. All 5 QA cases passed.

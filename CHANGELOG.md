@@ -10,6 +10,13 @@ All notable changes to the StudyHub College project will be documented in this f
   - Handles missing college settings, empty subject follow states, missing notifications, and blank community uploads gracefully without crashing.
   - Returns safe metadata for user, college details (initials and logo path), subject lists with chapter progress calculations, recent quizzes, timing-aware alerts, and popular community uploads.
   - Excluded sensitive data fields (e.g., password hashes, internal session tokens).
+- **React Student Dashboard Integration (v2)**
+  - Configured Vite configuration (`vite.config.js`) to build production files directly into `app/static/react/`, using path prefix `/static/react/` (`base` path).
+  - Added a backend proxy configuration in the React dev server to forward API requests (`/api/`), resource downloads (`/files/`), and auth requests (`/login`, `/logout`) to Flask at `localhost:5000` to support complete local dev environment testing.
+  - Implemented Axios API service client helper with session handling capability, credentials integration, and response interception to automatically redirect session expirations back to the login page.
+  - Refactored `StudentDashboard.jsx` to dynamically retrieve real dashboard state statistics, load courses progress, quizzes difficulty details, notifications details, and popular uploads.
+  - Handled loading spinners, error dialog retries, and comprehensive blank placeholder graphics for missing colleges, followed courses, unattempted quizzes, notifications, or shared notes.
+  - Added route `GET /student/dashboard-v2` in Flask to serve the React wrapper, using a graceful fallback template `student/react_not_built.html` detailing compilation steps if assets are not built.
 
 ## [1.0.0] - 2026-06-08
 ### Added
